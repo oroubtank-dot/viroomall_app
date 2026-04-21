@@ -1,19 +1,24 @@
+// lib/core/widgets/viroo_background.dart
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:viroomall_app/core/theme/app_colors.dart';
+import '../theme/app_colors.dart';
 
 class VirooBackground extends StatelessWidget {
   final Widget child;
   final bool showOrbs;
+  final Color? themeColor;
 
   const VirooBackground({
     super.key,
     required this.child,
     this.showOrbs = true,
+    this.themeColor,
   });
 
   @override
   Widget build(BuildContext context) {
+    final effectiveColor = themeColor ?? VirooColors.primary;
+
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
@@ -27,9 +32,6 @@ class VirooBackground extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          // =============================================
-          // الدوائر المتداخلة (Orbs)
-          // =============================================
           if (showOrbs) ...[
             // دائرة بنفسجية كبيرة فوق على اليمين
             Positioned(
@@ -40,10 +42,10 @@ class VirooBackground extends StatelessWidget {
                 height: 400,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: const Color(0xFF4A1D8C).withOpacity(0.4),
+                  color: effectiveColor.withOpacity(0.2),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF4A1D8C).withOpacity(0.3),
+                      color: effectiveColor.withOpacity(0.15),
                       blurRadius: 100,
                       spreadRadius: 50,
                     ),
@@ -61,10 +63,10 @@ class VirooBackground extends StatelessWidget {
                 height: 300,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: VirooColors.primary.withOpacity(0.25),
+                  color: effectiveColor.withOpacity(0.25),
                   boxShadow: [
                     BoxShadow(
-                      color: VirooColors.primary.withOpacity(0.2),
+                      color: effectiveColor.withOpacity(0.2),
                       blurRadius: 120,
                       spreadRadius: 60,
                     ),
@@ -73,7 +75,7 @@ class VirooBackground extends StatelessWidget {
               ),
             ),
 
-            // دائرة وردية/أرجوانية في الأسفل
+            // دائرة وردية/أرجوانية في الأسفل على اليمين
             Positioned(
               bottom: -100,
               right: -50,
@@ -94,7 +96,7 @@ class VirooBackground extends StatelessWidget {
               ),
             ),
 
-            // دائرة بنفسجية فاتحة في النص
+            // دائرة بنفسجية فاتحة في النص على اليمين
             Positioned(
               top: 400,
               right: -50,
@@ -130,20 +132,14 @@ class VirooBackground extends StatelessWidget {
             ),
           ],
 
-          // =============================================
           // طبقة الضبابية السحرية (Blur Layer)
-          // =============================================
           if (showOrbs)
             BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 70, sigmaY: 70),
-              child: Container(
-                color: Colors.transparent,
-              ),
+              child: Container(color: Colors.transparent),
             ),
 
-          // =============================================
           // طبقة تدرج شفافة لتعميق الألوان
-          // =============================================
           if (showOrbs)
             Container(
               decoration: BoxDecoration(
@@ -159,60 +155,7 @@ class VirooBackground extends StatelessWidget {
               ),
             ),
 
-          // =============================================
           // المحتوى الأساسي (الشاشة نفسها)
-          // =============================================
-          child,
-        ],
-      ),
-    );
-  }
-}
-
-// =============================================
-// نسخة مبسطة للخلفية (للشاشات الخفيفة)
-// =============================================
-class VirooSimpleBackground extends StatelessWidget {
-  final Widget child;
-
-  const VirooSimpleBackground({
-    super.key,
-    required this.child,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            VirooColors.background,
-            VirooColors.secondary,
-          ],
-        ),
-      ),
-      child: Stack(
-        children: [
-          // دائرة برتقالية واحدة خفيفة
-          Positioned(
-            top: -100,
-            right: -100,
-            child: Container(
-              width: 300,
-              height: 300,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: VirooColors.primary.withOpacity(0.15),
-              ),
-            ),
-          ),
-          // طبقة Blur خفيفة
-          BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 50, sigmaY: 50),
-            child: Container(color: Colors.transparent),
-          ),
           child,
         ],
       ),

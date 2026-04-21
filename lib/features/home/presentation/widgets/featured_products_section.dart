@@ -37,11 +37,31 @@ class FeaturedProductsSection extends StatelessWidget {
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
-                  return _buildErrorWidget();
+                  print('❌ Firestore Error: ${snapshot.error}');
+                  return Container(
+                    height: 150,
+                    alignment: Alignment.center,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.error_outline,
+                            color: VirooColors.error, size: 48),
+                        const SizedBox(height: 12),
+                        Text(
+                          'خطأ: ${snapshot.error}',
+                          style: TextStyle(
+                              color: VirooColors.error, fontFamily: 'Cairo'),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  );
                 }
+
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const LoadingGrid();
                 }
+
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                   return const EmptyProducts();
                 }
@@ -64,26 +84,6 @@ class FeaturedProductsSection extends StatelessWidget {
                 );
               },
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildErrorWidget() {
-    return Container(
-      height: 150,
-      alignment: Alignment.center,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.error_outline_rounded, size: 48, color: VirooColors.error),
-          const SizedBox(height: 12),
-          Text(
-            'حدث خطأ في تحميل المنتجات',
-            style: TextStyle(
-                color: VirooColors.textSecondary, fontFamily: 'Cairo'),
           ),
         ],
       ),

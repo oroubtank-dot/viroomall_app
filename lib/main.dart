@@ -13,6 +13,7 @@ import 'core/services/auth_service.dart';
 import 'presentation/screens/onboarding/onboarding_screen.dart';
 import 'presentation/screens/auth/login_screen.dart';
 import 'features/home/presentation/screens/home_screen.dart';
+import 'features/cart/presentation/screens/cart_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -67,6 +68,7 @@ class MyApp extends StatelessWidget {
 
       routes: {
         '/home': (context) => const HomeScreen(),
+        '/cart': (context) => const CartScreen(),
       },
       home: const SplashScreen(),
     );
