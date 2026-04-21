@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "634396483295",
+    "project_id": "viroomall-marketplace",
+    "storage_bucket": "viroomall-marketplace.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:634396483295:android:995a299ed2ac5752cc136a",
+        "android_client_info": {
+          "package_name": "com.viroomall.viroomall_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDUk9mLpkz8LWtRX5wyfwl8AlgKZVDiiNk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
