@@ -1,3 +1,4 @@
+// lib/core/services/storage_service.dart
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// =============================================
@@ -15,6 +16,7 @@ class StorageService {
   static const String _selectedModeKey = 'selected_mode';
   static const String _isDarkModeKey = 'is_dark_mode';
   static const String _languageKey = 'language';
+  static const String _biometricEnabledKey = 'biometric_enabled';
 
   // =============================================
   // Singleton Pattern
@@ -42,6 +44,22 @@ class StorageService {
   static Future<bool> isOnboardingSeen() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool(_onboardingSeenKey) ?? false;
+  }
+
+  // =============================================
+  // Biometric Methods
+  // =============================================
+
+  /// حفظ حالة تفعيل البصمة
+  static Future<void> setBiometricEnabled(bool enabled) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_biometricEnabledKey, enabled);
+  }
+
+  /// التحقق من حالة تفعيل البصمة
+  static Future<bool> isBiometricEnabled() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_biometricEnabledKey) ?? false;
   }
 
   // =============================================
@@ -86,6 +104,7 @@ class StorageService {
     await prefs.remove(_userIdKey);
     await prefs.remove(_userPhoneKey);
     await prefs.remove(_userNameKey);
+    // البصمة تفضل مفعلة
   }
 
   // =============================================

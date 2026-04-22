@@ -2,6 +2,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_widgets.dart';
 import '../../../../core/widgets/viroo_background.dart';
@@ -56,7 +57,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
             end: Alignment.bottomCenter,
             colors: [
               Colors.transparent,
-              VirooColors.background.withValues(alpha: 0.9),
+              VirooColors.background.withOpacity(0.9),
             ],
           ),
         ),
@@ -105,9 +106,8 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
           duration: Duration(seconds: 2),
         ),
       );
-      Future.delayed(const Duration(seconds: 2), () {
-        if (mounted) Navigator.pop(context);
-      });
+
+      _showShareReminder(formData['name'] as String);
     } else if (mounted) {
       final error = ref.read(addProductErrorProvider);
       ScaffoldMessenger.of(context).showSnackBar(
@@ -118,5 +118,70 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
         ),
       );
     }
+  }
+
+  void _showShareReminder(String productTitle) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: VirooColors.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        title: Row(
+          children: [
+            Icon(Icons.share_rounded, color: VirooColors.primary),
+            const SizedBox(width: 10),
+            const Text(
+              '🎉 منتجك اتنشر!',
+              style: TextStyle(
+                color: Colors.white,
+                fontFamily: 'Cairo',
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        content: Text(
+          'شارك "$productTitle" مع أصحابك وزود مبيعاتك! 📈',
+          style: TextStyle(
+            color: VirooColors.textSecondary,
+            fontFamily: 'Cairo',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+            child: Text(
+              'لاحقاً',
+              style: TextStyle(
+                color: VirooColors.textSecondary,
+                fontFamily: 'Cairo',
+              ),
+            ),
+          ),
+          GlowingButton(
+            onPressed: () {
+              Navigator.pop(context);
+              final message = '''
+🛍️ *$productTitle*
+📱 شوف المنتج ده على VirooMall!
+
+حمل التطبيق من هنا: https://viroomall.eg/app
+''';
+              Share.share(message, subject: productTitle);
+              Navigator.pop(context);
+            },
+            text: 'مشاركة دلوقتي',
+            icon: Icons.share_rounded,
+            width: 140,
+            height: 40,
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -1,16 +1,34 @@
 // lib/features/home/presentation/widgets/product_card.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_widgets.dart';
 import '../../../../core/models/product_model.dart';
+import '../../../../core/services/auth_service.dart';
 import '../../../cart/presentation/providers/cart_provider.dart';
 import '../../../product/presentation/screens/product_details_screen.dart';
+import '../../../../presentation/screens/auth/widgets/login_bottom_sheet.dart';
 
 class ProductCard extends ConsumerWidget {
   final Map<String, dynamic> data;
 
   const ProductCard({super.key, required this.data});
+
+  void _checkAuthAndNavigate(BuildContext context, VoidCallback action) {
+    if (AuthService.currentUser != null) {
+      action();
+    } else {
+      showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
+        builder: (context) => LoginBottomSheet(
+          onLoginSuccess: action,
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -81,12 +99,14 @@ class ProductCard extends ConsumerWidget {
 
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ProductDetailsScreen(product: product),
-          ),
-        );
+        _checkAuthAndNavigate(context, () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ProductDetailsScreen(product: product),
+            ),
+          );
+        });
       },
       child: Hero(
         tag: 'product_$productId',
@@ -149,9 +169,40 @@ class ProductCard extends ConsumerWidget {
                           ),
                         ),
                       ),
+                    // زر المشاركة
                     Positioned(
                       top: 4,
                       left: 4,
+                      child: GestureDetector(
+                        onTap: () {
+                          final message = '''
+🛍️ *$title*
+💰 السعر: ${price.toStringAsFixed(0)} ج.م
+📍 الموقع: $location
+📱 شوف المنتج ده على VirooMall!
+
+حمل التطبيق من هنا: https://viroomall.eg/app
+''';
+                          Share.share(message, subject: title);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.4),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Icon(
+                            Icons.share_rounded,
+                            color: Colors.white,
+                            size: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                    // نوع المنتج
+                    Positioned(
+                      top: 4,
+                      left: 38,
                       child: Container(
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
@@ -205,32 +256,35 @@ class ProductCard extends ConsumerWidget {
                         ),
                     ],
                   ),
+                  // زرار السلة
                   GestureDetector(
                     onTap: () {
-                      ref.read(cartProvider.notifier).addToCart(product);
+                      _checkAuthAndNavigate(context, () {
+                        ref.read(cartProvider.notifier).addToCart(product);
 
-                      final scaffoldMessenger = ScaffoldMessenger.of(context);
-                      final snackBar = SnackBar(
-                        content: Text(
-                          '✅ تمت إضافة "$title" إلى السلة 🛒',
-                          style: const TextStyle(fontFamily: 'Cairo'),
-                        ),
-                        backgroundColor: VirooColors.success,
-                        duration: const Duration(seconds: 2),
-                        action: SnackBarAction(
-                          label: 'عرض السلة',
-                          textColor: Colors.white,
-                          onPressed: () {
-                            scaffoldMessenger.hideCurrentSnackBar();
-                            Navigator.pushNamed(context, '/cart');
-                          },
-                        ),
-                      );
+                        final scaffoldMessenger = ScaffoldMessenger.of(context);
+                        final snackBar = SnackBar(
+                          content: Text(
+                            '✅ تمت إضافة "$title" إلى السلة 🛒',
+                            style: const TextStyle(fontFamily: 'Cairo'),
+                          ),
+                          backgroundColor: VirooColors.success,
+                          duration: const Duration(seconds: 2),
+                          action: SnackBarAction(
+                            label: 'عرض السلة',
+                            textColor: Colors.white,
+                            onPressed: () {
+                              scaffoldMessenger.hideCurrentSnackBar();
+                              Navigator.pushNamed(context, '/cart');
+                            },
+                          ),
+                        );
 
-                      scaffoldMessenger.showSnackBar(snackBar);
+                        scaffoldMessenger.showSnackBar(snackBar);
 
-                      Future.delayed(const Duration(seconds: 2), () {
-                        scaffoldMessenger.hideCurrentSnackBar();
+                        Future.delayed(const Duration(seconds: 2), () {
+                          scaffoldMessenger.hideCurrentSnackBar();
+                        });
                       });
                     },
                     child: Container(

@@ -1,3 +1,4 @@
+// lib/core/theme/app_colors.dart
 import 'package:flutter/material.dart';
 
 /// =============================================
@@ -21,24 +22,43 @@ class VirooColors {
   static const Color deepDark = Color(0xFF0F0630);
 
   // =============================================
+  // 🆕 الهوية الجديدة - VM-Cart Amber
+  // =============================================
+
+  /// البرتقالي الياقوتي الأساسي (Amber Glow)
+  static const Color amberPrimary = Color(0xFFFF8C00);
+
+  /// البرتقالي الفاتح للتدرجات
+  static const Color amberLight = Color(0xFFFFA726);
+
+  /// البرتقالي الغامق للحدود النيون
+  static const Color amberDark = Color(0xFFE65100);
+
+  /// الأبيض الدافئ (Warm White)
+  static const Color warmWhite = Color(0xFFFDF5E6);
+
+  /// الأبيض الدافئ الشفاف
+  static Color warmWhiteSoft = const Color(0xFFFDF5E6).withOpacity(0.7);
+
+  // =============================================
   // Accent Colors (الألوان المميزة)
   // =============================================
 
-  /// اللون الأساسي - برتقالي نيون
-  static const Color primary = Color(0xFFFF6B35);
+  /// اللون الأساسي - برتقالي نيون (متوافق مع القديم)
+  static const Color primary = Color(0xFFFF8C00); // تم تحديثه للهوية الجديدة
 
   /// برتقالي فاتح للتدرجات
-  static const Color primaryLight = Color(0xFFFF8A5C);
+  static const Color primaryLight = Color(0xFFFFA726);
 
   /// برتقالي غامق للظلال
-  static const Color primaryDark = Color(0xFFE54E1B);
+  static const Color primaryDark = Color(0xFFE65100);
 
   // =============================================
   // ألوان الأوضاع الأربعة
   // =============================================
 
   /// 🛍️ وضع التسوق - برتقالي
-  static const Color shopping = Color(0xFFFF6B35);
+  static const Color shopping = Color(0xFFFF8C00);
 
   /// 🏪 وضع الجملة - أزرق
   static const Color wholesale = Color(0xFF2196F3);
@@ -94,9 +114,6 @@ class VirooColors {
   /// زجاج غامق - 5% شفافية
   static const Color glassDark = Color(0x0DFFFFFF);
 
-  /// زجاج شديد الشفافية - 3% شفافية
-  static const Color glassVeryDark = Color(0x08FFFFFF);
-
   /// حدود زجاجية - 15% شفافية
   static const Color glassBorder = Color(0x26FFFFFF);
 
@@ -112,22 +129,6 @@ class VirooColors {
 
   /// نيلي للتوهج
   static const Color indigoGlow = Color(0xFF4A1D8C);
-
-  // =============================================
-  // ألوان الظلال
-  // =============================================
-
-  /// ظل أسود خفيف
-  static const Color shadowLight = Color(0x1A000000);
-
-  /// ظل أسود متوسط
-  static const Color shadowMedium = Color(0x33000000);
-
-  /// ظل أسود غامق
-  static const Color shadowDark = Color(0x4D000000);
-
-  /// ظل برتقالي متوهج
-  static const Color shadowGlow = Color(0x80FF6B35);
 }
 
 /// =============================================
@@ -144,13 +145,23 @@ class VirooGradients {
     ],
   );
 
+  /// 🆕 تدرج الهوية الجديدة (Amber to Warm White)
+  static LinearGradient amberWarm = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [
+      VirooColors.amberPrimary,
+      VirooColors.amberLight,
+    ],
+  );
+
   /// تدرج برتقالي (للتسوق)
   static const LinearGradient shopping = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     colors: [
-      Color(0xFFFF6B35),
-      Color(0xFFFF8A5C),
+      VirooColors.shopping,
+      Color(0xFFFFA726),
     ],
   );
 
@@ -159,7 +170,7 @@ class VirooGradients {
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     colors: [
-      Color(0xFF2196F3),
+      VirooColors.wholesale,
       Color(0xFF64B5F6),
     ],
   );
@@ -169,7 +180,7 @@ class VirooGradients {
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     colors: [
-      Color(0xFF4CAF50),
+      VirooColors.used,
       Color(0xFF81C784),
     ],
   );
@@ -179,7 +190,7 @@ class VirooGradients {
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     colors: [
-      Color(0xFFF44336),
+      VirooColors.outlet,
       Color(0xFFE57373),
     ],
   );
@@ -190,17 +201,7 @@ class VirooGradients {
     end: Alignment.bottomRight,
     colors: [
       VirooColors.glassLight,
-      VirooColors.glassVeryDark,
-    ],
-  );
-
-  /// تدرج بنفسجي وهمي
-  static LinearGradient purpleDream = const LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [
-      Color(0xFF2D1B69),
-      Color(0xFF1A0B4A),
+      VirooColors.glassDark,
     ],
   );
 }

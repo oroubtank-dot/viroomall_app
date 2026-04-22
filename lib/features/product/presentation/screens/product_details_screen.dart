@@ -1,12 +1,15 @@
 // lib/features/product/presentation/screens/product_details_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_widgets.dart';
 import '../../../../core/widgets/viroo_background.dart';
 import '../../../../core/models/product_model.dart';
+import '../../../../core/services/auth_service.dart';
 import '../../../cart/presentation/providers/cart_provider.dart';
+import '../../../../presentation/screens/auth/widgets/login_bottom_sheet.dart';
 import '../widgets/product_image_section.dart';
 import '../widgets/product_info_section.dart';
 import '../widgets/seller_info_card.dart';
@@ -55,6 +58,38 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen>
     super.dispose();
   }
 
+  void _checkAuthAndNavigate(BuildContext context, VoidCallback action) {
+    if (AuthService.currentUser != null) {
+      action();
+    } else {
+      showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
+        builder: (context) => LoginBottomSheet(
+          onLoginSuccess: action,
+        ),
+      );
+    }
+  }
+
+  void _shareProduct() {
+    final product = widget.product;
+    final message = '''
+🛍️ *${product.title}*
+💰 السعر: ${product.price.toStringAsFixed(0)} ج.م
+📍 الموقع: ${product.location}
+📱 شوف المنتج ده على VirooMall!
+
+حمل التطبيق من هنا: https://viroomall.eg/app
+''';
+
+    Share.share(
+      message,
+      subject: product.title,
+    );
+  }
+
   Future<void> _launchWhatsApp() async {
     final phoneNumber = "+201001234567";
     final productName = widget.product.title;
@@ -86,6 +121,23 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen>
     final modeColor = product.modeColor;
 
     return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          "تفاصيل المنتج",
+          style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_rounded),
+          onPressed: () => Navigator.pop(context),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.share_rounded),
+            onPressed: _shareProduct,
+          ),
+        ],
+      ),
       body: VirooBackground(
         showOrbs: true,
         themeColor: modeColor,
@@ -110,7 +162,9 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen>
                         const SizedBox(height: 24),
                         SellerInfoCard(
                           product: product,
-                          onContactPressed: _launchWhatsApp,
+                          onContactPressed: () {
+                            _checkAuthAndNavigate(context, _launchWhatsApp);
+                          },
                         ),
                         const SizedBox(height: 24),
                         ProductDescriptionSection(
@@ -141,30 +195,32 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen>
         ),
         child: GlowingButton(
           onPressed: () {
-            ref.read(cartProvider.notifier).addToCart(product);
+            _checkAuthAndNavigate(context, () {
+              ref.read(cartProvider.notifier).addToCart(product);
 
-            final scaffoldMessenger = ScaffoldMessenger.of(context);
-            final snackBar = SnackBar(
-              content: Text(
-                '✅ تمت إضافة "${product.title}" إلى السلة 🛒',
-                style: const TextStyle(fontFamily: 'Cairo'),
-              ),
-              backgroundColor: VirooColors.success,
-              duration: const Duration(seconds: 2),
-              action: SnackBarAction(
-                label: 'عرض السلة',
-                textColor: Colors.white,
-                onPressed: () {
-                  scaffoldMessenger.hideCurrentSnackBar();
-                  Navigator.pushNamed(context, '/cart');
-                },
-              ),
-            );
+              final scaffoldMessenger = ScaffoldMessenger.of(context);
+              final snackBar = SnackBar(
+                content: Text(
+                  '✅ تمت إضافة "${product.title}" إلى السلة 🛒',
+                  style: const TextStyle(fontFamily: 'Cairo'),
+                ),
+                backgroundColor: VirooColors.success,
+                duration: const Duration(seconds: 2),
+                action: SnackBarAction(
+                  label: 'عرض السلة',
+                  textColor: Colors.white,
+                  onPressed: () {
+                    scaffoldMessenger.hideCurrentSnackBar();
+                    Navigator.pushNamed(context, '/cart');
+                  },
+                ),
+              );
 
-            scaffoldMessenger.showSnackBar(snackBar);
+              scaffoldMessenger.showSnackBar(snackBar);
 
-            Future.delayed(const Duration(seconds: 2), () {
-              scaffoldMessenger.hideCurrentSnackBar();
+              Future.delayed(const Duration(seconds: 2), () {
+                scaffoldMessenger.hideCurrentSnackBar();
+              });
             });
           },
           text: 'أضف إلى السلة',

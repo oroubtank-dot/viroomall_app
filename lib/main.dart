@@ -1,8 +1,9 @@
+// lib/main.dart
 import 'dart:ui';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:local_auth/local_auth.dart';
 import 'firebase_options.dart';
 import 'core/theme/app_colors.dart';
 import 'core/theme/app_theme.dart';
@@ -35,7 +36,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'VirooMall',
       debugShowCheckedModeBanner: false,
-
       theme: VirooTheme.darkTheme.copyWith(
         textTheme: const TextTheme(
           displayLarge: TextStyle(fontFamily: 'Cairo'),
@@ -55,17 +55,6 @@ class MyApp extends StatelessWidget {
           labelSmall: TextStyle(fontFamily: 'Cairo'),
         ),
       ),
-
-      // =============================================
-      // 👈 اتجاه RTL لكل الشاشات
-      // =============================================
-      builder: (context, child) {
-        return Directionality(
-          textDirection: TextDirection.rtl,
-          child: child!,
-        );
-      },
-
       routes: {
         '/home': (context) => const HomeScreen(),
         '/cart': (context) => const CartScreen(),
@@ -121,7 +110,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.forward();
 
-    Future.delayed(const Duration(seconds: 3), () async {
+    Future.delayed(const Duration(seconds: 2), () async {
       await _navigateToNextScreen();
     });
   }
@@ -129,34 +118,58 @@ class _SplashScreenState extends State<SplashScreen>
   Future<void> _navigateToNextScreen() async {
     if (!mounted) return;
 
+    final biometricEnabled = await StorageService.isBiometricEnabled();
     final user = AuthService.currentUser;
 
-    if (user != null) {
-      await StorageService.setLoggedIn(
-        userId: user.uid,
-        phone: user.phoneNumber ?? '',
-        name: user.displayName,
-      );
-
-      Navigator.pushReplacementNamed(context, '/home');
-    } else {
-      final isLoggedIn = await StorageService.isLoggedIn();
-
-      if (isLoggedIn) {
-        Navigator.pushReplacementNamed(context, '/home');
-      } else {
-        final hasSeenOnboarding = await StorageService.isOnboardingSeen();
-
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => hasSeenOnboarding
-                ? const LoginScreen()
-                : const OnboardingScreen(),
+    if (biometricEnabled && user == null) {
+      final localAuth = LocalAuthentication();
+      try {
+        final authenticated = await localAuth.authenticate(
+          localizedReason: 'استخدم بصمتك لتسجيل الدخول إلى VirooMall',
+          options: const AuthenticationOptions(
+            stickyAuth: true,
+            biometricOnly: true,
           ),
         );
-      }
+
+        if (authenticated) {
+          final userData = await StorageService.getUserData();
+          if (userData['phone'] != null && userData['phone']!.isNotEmpty) {
+            Navigator.pushReplacementNamed(context, '/home');
+            return;
+          }
+        }
+      } catch (e) {}
     }
+
+    final currentUser = AuthService.currentUser;
+
+    if (currentUser != null) {
+      await StorageService.setLoggedIn(
+        userId: currentUser.uid,
+        phone: currentUser.phoneNumber ?? '',
+        name: currentUser.displayName,
+      );
+      Navigator.pushReplacementNamed(context, '/home');
+      return;
+    }
+
+    final isLoggedIn = await StorageService.isLoggedIn();
+
+    if (isLoggedIn) {
+      Navigator.pushReplacementNamed(context, '/home');
+      return;
+    }
+
+    final hasSeenOnboarding = await StorageService.isOnboardingSeen();
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            hasSeenOnboarding ? const LoginScreen() : const OnboardingScreen(),
+      ),
+    );
   }
 
   @override
@@ -184,27 +197,23 @@ class _SplashScreenState extends State<SplashScreen>
                       height: 140,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: VirooColors.primary.withOpacity(
-                          0.1 * _glowAnimation.value,
-                        ),
+                        color: VirooColors.primary
+                            .withOpacity(0.1 * _glowAnimation.value),
                         border: Border.all(
-                          color: VirooColors.primary.withOpacity(
-                            0.5 + (0.5 * _glowAnimation.value),
-                          ),
+                          color: VirooColors.primary
+                              .withOpacity(0.5 + (0.5 * _glowAnimation.value)),
                           width: 3,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: VirooColors.primary.withOpacity(
-                              0.5 * _glowAnimation.value,
-                            ),
+                            color: VirooColors.primary
+                                .withOpacity(0.5 * _glowAnimation.value),
                             blurRadius: 40,
                             spreadRadius: 10,
                           ),
                           BoxShadow(
-                            color: VirooColors.primary.withOpacity(
-                              0.3 * _glowAnimation.value,
-                            ),
+                            color: VirooColors.primary
+                                .withOpacity(0.3 * _glowAnimation.value),
                             blurRadius: 80,
                             spreadRadius: 20,
                           ),
@@ -213,24 +222,13 @@ class _SplashScreenState extends State<SplashScreen>
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
-                          Icon(
-                            Icons.shopping_bag_outlined,
-                            size: 70,
-                            color: VirooColors.primary.withOpacity(
-                              0.7 + (0.3 * _glowAnimation.value),
-                            ),
-                          ),
+                          Icon(Icons.shopping_bag_outlined,
+                              size: 70, color: VirooColors.primary),
                           Positioned(
-                            top: 35,
-                            right: 30,
-                            child: Icon(
-                              Icons.star,
-                              size: 20,
-                              color: VirooColors.primary.withOpacity(
-                                0.9 * _glowAnimation.value,
-                              ),
-                            ),
-                          ),
+                              top: 35,
+                              right: 30,
+                              child: Icon(Icons.star,
+                                  size: 20, color: VirooColors.primary)),
                         ],
                       ),
                     ),
@@ -240,27 +238,18 @@ class _SplashScreenState extends State<SplashScreen>
                     opacity: _fadeAnimation,
                     child: GlassContainer(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 12,
-                      ),
-                      child: Text(
-                        'VirooMall',
-                        style: TextStyle(
-                          fontSize: 44,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Cairo',
-                          color: Colors.white,
-                          letterSpacing: 3,
-                          shadows: [
-                            Shadow(
-                              color: VirooColors.primary.withOpacity(
-                                0.7 * _glowAnimation.value,
-                              ),
-                              blurRadius: 30,
-                            ),
-                          ],
-                        ),
-                      ),
+                          horizontal: 24, vertical: 12),
+                      child: Text('VirooMall',
+                          style: TextStyle(
+                              fontSize: 44,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Cairo',
+                              color: Colors.white,
+                              shadows: [
+                                Shadow(
+                                    color: VirooColors.primary.withOpacity(0.7),
+                                    blurRadius: 30)
+                              ])),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -268,39 +257,25 @@ class _SplashScreenState extends State<SplashScreen>
                     opacity: _fadeAnimation,
                     child: GlassContainer(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 8,
-                      ),
-                      child: Text(
-                        'SHOP EVERYTHING',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontFamily: 'Orbitron',
-                          fontWeight: FontWeight.w400,
-                          color: VirooColors.primary.withOpacity(
-                            0.8 + (0.2 * _glowAnimation.value),
-                          ),
-                          letterSpacing: 8,
-                          wordSpacing: 4,
-                        ),
-                      ),
+                          horizontal: 20, vertical: 8),
+                      child: Text('SHOP EVERYTHING',
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontFamily: 'Orbitron',
+                              color: VirooColors.primary.withOpacity(0.8),
+                              letterSpacing: 8)),
                     ),
                   ),
                   const SizedBox(height: 60),
                   FadeTransition(
                     opacity: _fadeAnimation,
                     child: SizedBox(
-                      width: 40,
-                      height: 40,
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          VirooColors.primary.withOpacity(
-                            0.7 * _glowAnimation.value,
-                          ),
-                        ),
-                        strokeWidth: 2,
-                      ),
-                    ),
+                        width: 40,
+                        height: 40,
+                        child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                                VirooColors.primary),
+                            strokeWidth: 2)),
                   ),
                 ],
               ),
