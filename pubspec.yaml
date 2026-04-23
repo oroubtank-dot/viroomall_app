@@ -31,7 +31,7 @@ dependencies:
   url_launcher: ^6.3.2
   image_picker: ^1.2.1
   firebase_storage: ^12.4.10
-  firebase_messaging: ^15.2.10
+  firebase_messaging: ^15.2.9
   flutter_local_notifications: ^18.0.0
 
 dev_dependencies:
