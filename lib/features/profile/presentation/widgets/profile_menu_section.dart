@@ -7,6 +7,11 @@ import '../../domain/models/user_model.dart';
 import '../../domain/models/seller_stats.dart';
 import '../../domain/models/buyer_stats.dart';
 import '../screens/my_products_screen.dart';
+import '../screens/seller_dashboard_screen.dart';
+import '../screens/wallet_screen.dart';
+import '../screens/points_screen.dart';
+import '../screens/favorites_screen.dart';
+import '../screens/my_orders_screen.dart';
 
 class ProfileMenuSection extends StatelessWidget {
   final UserModel user;
@@ -37,7 +42,13 @@ class ProfileMenuSection extends StatelessWidget {
               _buildWarningBanner(
                 '⚠️ لديك ${sellerStats!.expiringProducts} منتجات قاربت على الانتهاء',
                 'جددها الآن',
-                () {},
+                () {
+                  Navigator.push(
+                    parentContext,
+                    MaterialPageRoute(
+                        builder: (context) => const MyProductsScreen()),
+                  );
+                },
                 VirooColors.warning,
               ),
               _buildDivider(),
@@ -46,33 +57,60 @@ class ProfileMenuSection extends StatelessWidget {
               _buildWarningBanner(
                 '🔴 لديك ${sellerStats!.expiredProducts} منتجات منتهية',
                 'أعد نشرها',
-                () {},
+                () {
+                  Navigator.push(
+                    parentContext,
+                    MaterialPageRoute(
+                        builder: (context) => const MyProductsScreen()),
+                  );
+                },
                 VirooColors.error,
               ),
               _buildDivider(),
             ],
           ],
 
+          // =============================================
           // طلباتي
+          // =============================================
           _buildMenuItem(
             icon: Icons.shopping_bag_rounded,
             title: 'طلباتي',
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                parentContext,
+                MaterialPageRoute(
+                  builder: (context) => MyOrdersScreen(isSeller: user.isSeller),
+                ),
+              );
+            },
           ),
           _buildDivider(),
 
+          // =============================================
           // المفضلة
+          // =============================================
           _buildMenuItem(
             icon: Icons.favorite_rounded,
             title: user.isBuyer && buyerStats != null
                 ? 'المفضلة (${buyerStats!.favoritesCount})'
                 : 'المفضلة',
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                parentContext,
+                MaterialPageRoute(
+                    builder: (context) => const FavoritesScreen()),
+              );
+            },
           ),
 
+          // =============================================
           // قائمة البائع
+          // =============================================
           if (user.isSeller && sellerStats != null) ...[
             _buildDivider(),
+
+            // منتجاتي
             _buildMenuItem(
               icon: Icons.inventory_2_rounded,
               title: 'منتجاتي (${sellerStats!.totalProducts})',
@@ -88,30 +126,54 @@ class ProfileMenuSection extends StatelessWidget {
               },
             ),
             _buildDivider(),
+
+            // لوحة تحكم البائع
             _buildMenuItem(
               icon: Icons.dashboard_rounded,
               title: 'لوحة تحكم البائع',
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  parentContext,
+                  MaterialPageRoute(
+                      builder: (context) => const SellerDashboardScreen()),
+                );
+              },
             ),
             _buildDivider(),
+
+            // المحفظة
             _buildMenuItem(
               icon: Icons.account_balance_wallet_rounded,
               title: 'المحفظة (${sellerStats!.walletBalance.toInt()} ج.م)',
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  parentContext,
+                  MaterialPageRoute(builder: (context) => const WalletScreen()),
+                );
+              },
             ),
           ],
 
           _buildDivider(),
 
+          // =============================================
           // النقاط والمكافآت
+          // =============================================
           _buildMenuItem(
             icon: Icons.card_giftcard_rounded,
             title: _getPointsTitle(),
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                parentContext,
+                MaterialPageRoute(builder: (context) => const PointsScreen()),
+              );
+            },
           ),
           _buildDivider(),
 
+          // =============================================
           // دعوة صديق
+          // =============================================
           _buildMenuItem(
             icon: Icons.person_add_rounded,
             title: 'دعوة صديق',
@@ -119,7 +181,9 @@ class ProfileMenuSection extends StatelessWidget {
           ),
           _buildDivider(),
 
+          // =============================================
           // تقييم التطبيق
+          // =============================================
           _buildMenuItem(
             icon: Icons.star_border_rounded,
             title: 'تقييم التطبيق',
@@ -127,7 +191,9 @@ class ProfileMenuSection extends StatelessWidget {
           ),
           _buildDivider(),
 
+          // =============================================
           // اتصل بنا
+          // =============================================
           _buildMenuItem(
             icon: Icons.headset_mic_rounded,
             title: 'اتصل بنا',
@@ -135,7 +201,9 @@ class ProfileMenuSection extends StatelessWidget {
           ),
           _buildDivider(),
 
+          // =============================================
           // الإعدادات
+          // =============================================
           _buildMenuItem(
             icon: Icons.settings_rounded,
             title: 'الإعدادات',
@@ -143,12 +211,13 @@ class ProfileMenuSection extends StatelessWidget {
           ),
           _buildDivider(),
 
+          // =============================================
           // تسجيل الخروج
+          // =============================================
           _buildMenuItem(
             icon: Icons.logout_rounded,
             title: 'تسجيل الخروج',
             onTap: () async {
-              // 👇 Dialog تأكيد
               final confirm = await showDialog<bool>(
                 context: parentContext,
                 builder: (context) => AlertDialog(

@@ -11,10 +11,12 @@ import 'core/theme/app_widgets.dart';
 import 'core/widgets/viroo_background.dart';
 import 'core/services/storage_service.dart';
 import 'core/services/auth_service.dart';
+import 'core/services/notification_service.dart'; // 👈 أضفنا الإستيراد
 import 'presentation/screens/onboarding/onboarding_screen.dart';
 import 'presentation/screens/auth/login_screen.dart';
 import 'features/home/presentation/screens/home_screen.dart';
 import 'features/cart/presentation/screens/cart_screen.dart';
+import 'core/services/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,6 +26,12 @@ void main() async {
   );
 
   print('✅ Firebase initialized successfully');
+
+  // 👈 تهيئة الإشعارات
+  await VirooNotificationService.init();
+  print('🔔 Notification service initialized');
+// 👇 تهيئة الإشعارات
+  await VirooNotificationService.init();
 
   runApp(const ProviderScope(child: MyApp()));
 }

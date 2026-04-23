@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_widgets.dart';
 import '../../../../core/widgets/viroo_background.dart';
+import '../../../../core/services/notification_service.dart';
 import '../providers/cart_provider.dart';
 import '../widgets/product_preview_sheet.dart';
 
@@ -121,7 +122,6 @@ class CartScreen extends ConsumerWidget {
                             padding: const EdgeInsets.only(bottom: 15),
                             child: GestureDetector(
                               onTap: () {
-                                // 👈 فتح الشاشة المصغرة
                                 showModalBottomSheet(
                                   context: context,
                                   backgroundColor: Colors.transparent,
@@ -139,7 +139,6 @@ class CartScreen extends ConsumerWidget {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        // صورة المنتج
                                         ClipRRect(
                                           borderRadius:
                                               BorderRadius.circular(12),
@@ -181,8 +180,6 @@ class CartScreen extends ConsumerWidget {
                                                 ),
                                         ),
                                         const SizedBox(width: 12),
-
-                                        // تفاصيل المنتج
                                         Expanded(
                                           child: Column(
                                             crossAxisAlignment:
@@ -200,16 +197,12 @@ class CartScreen extends ConsumerWidget {
                                                 overflow: TextOverflow.ellipsis,
                                               ),
                                               const SizedBox(height: 4),
-
-                                              // 👈 معلومات البائع مختصرة
                                               Row(
                                                 children: [
-                                                  Icon(
-                                                    Icons.store_rounded,
-                                                    color: VirooColors
-                                                        .textSecondary,
-                                                    size: 12,
-                                                  ),
+                                                  Icon(Icons.store_rounded,
+                                                      color: VirooColors
+                                                          .textSecondary,
+                                                      size: 12),
                                                   const SizedBox(width: 4),
                                                   Text(
                                                     'VirooMall',
@@ -221,11 +214,9 @@ class CartScreen extends ConsumerWidget {
                                                     ),
                                                   ),
                                                   const SizedBox(width: 8),
-                                                  Icon(
-                                                    Icons.star_rounded,
-                                                    color: Colors.amber,
-                                                    size: 12,
-                                                  ),
+                                                  Icon(Icons.star_rounded,
+                                                      color: Colors.amber,
+                                                      size: 12),
                                                   const SizedBox(width: 2),
                                                   const Text(
                                                     '4.5',
@@ -238,8 +229,6 @@ class CartScreen extends ConsumerWidget {
                                                 ],
                                               ),
                                               const SizedBox(height: 8),
-
-                                              // السعر
                                               Text(
                                                 "${product.price.toStringAsFixed(0)} ج.م",
                                                 style: TextStyle(
@@ -254,10 +243,7 @@ class CartScreen extends ConsumerWidget {
                                         ),
                                       ],
                                     ),
-
                                     const SizedBox(height: 12),
-
-                                    // 👈 عداد الكمية
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
@@ -282,7 +268,6 @@ class CartScreen extends ConsumerWidget {
                                         ),
                                         Row(
                                           children: [
-                                            // تقليل الكمية
                                             GestureDetector(
                                               onTap: () {
                                                 ref
@@ -305,7 +290,6 @@ class CartScreen extends ConsumerWidget {
                                                     size: 18),
                                               ),
                                             ),
-                                            // الكمية
                                             Container(
                                               margin:
                                                   const EdgeInsets.symmetric(
@@ -330,7 +314,6 @@ class CartScreen extends ConsumerWidget {
                                                 ),
                                               ),
                                             ),
-                                            // زيادة الكمية
                                             GestureDetector(
                                               onTap: () {
                                                 ref
@@ -364,8 +347,6 @@ class CartScreen extends ConsumerWidget {
                       },
                     ),
                   ),
-
-                  // ملخص الحساب
                   Container(
                     padding: const EdgeInsets.all(25),
                     decoration: BoxDecoration(
@@ -402,10 +383,27 @@ class CartScreen extends ConsumerWidget {
                         const SizedBox(height: 20),
                         GlowingButton(
                           onPressed: () {
+                            // 👇 إشعار للبائع بطلب جديد
+                            if (cartItems.isNotEmpty) {
+                              final firstProduct = cartItems.first.product;
+                              VirooNotificationService.notifySellerNewOrder(
+                                firstProduct.title,
+                                'أحمد محمد', // ممكن تجيب اسم المستخدم من AuthService
+                              );
+                            }
+
+                            // 👇 إشعار تذكيري (للتجربة - هيشتغل بعد 5 ثواني)
+                            Future.delayed(const Duration(seconds: 5), () {
+                              VirooNotificationService.showReminderNotification(
+                                '⏰ تذكير',
+                                'لديك منتجات في السلة لم تكمل شرائها',
+                              );
+                            });
+
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text(
-                                  'سيتم توجيهك لصفحة الدفع قريباً 🚀',
+                                  'تم تأكيد الطلب! 🚀 سيتم توجيهك لصفحة الدفع قريباً',
                                   style: TextStyle(fontFamily: 'Cairo'),
                                 ),
                                 backgroundColor: VirooColors.success,

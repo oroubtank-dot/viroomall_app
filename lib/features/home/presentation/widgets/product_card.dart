@@ -6,6 +6,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_widgets.dart';
 import '../../../../core/models/product_model.dart';
 import '../../../../core/services/auth_service.dart';
+import '../../../../core/services/notification_service.dart';
 import '../../../cart/presentation/providers/cart_provider.dart';
 import '../../../product/presentation/screens/product_details_screen.dart';
 import '../../../../presentation/screens/auth/widgets/login_bottom_sheet.dart';
@@ -169,7 +170,6 @@ class ProductCard extends ConsumerWidget {
                           ),
                         ),
                       ),
-                    // زر المشاركة
                     Positioned(
                       top: 4,
                       left: 4,
@@ -199,7 +199,6 @@ class ProductCard extends ConsumerWidget {
                         ),
                       ),
                     ),
-                    // نوع المنتج
                     Positioned(
                       top: 4,
                       left: 38,
@@ -256,11 +255,16 @@ class ProductCard extends ConsumerWidget {
                         ),
                     ],
                   ),
-                  // زرار السلة
                   GestureDetector(
                     onTap: () {
                       _checkAuthAndNavigate(context, () {
                         ref.read(cartProvider.notifier).addToCart(product);
+
+                        // 👇 إشعار فوري
+                        VirooNotificationService.showInstantNotification(
+                          '🎉 تمت الإضافة!',
+                          'تمت إضافة "$title" إلى السلة بنجاح',
+                        );
 
                         final scaffoldMessenger = ScaffoldMessenger.of(context);
                         final snackBar = SnackBar(

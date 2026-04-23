@@ -24,13 +24,15 @@ dependencies:
   share_plus: ^7.2.2
   local_auth: ^2.1.8
   
-  # Firebase - الإصدارات اللي اشتغلت معانا
+  # Firebase
   firebase_core: 3.15.2
   firebase_auth: 5.7.0
   cloud_firestore: 5.6.12
   url_launcher: ^6.3.2
   image_picker: ^1.2.1
   firebase_storage: ^12.4.10
+  firebase_messaging: ^15.2.10
+  flutter_local_notifications: ^18.0.0
 
 dev_dependencies:
   flutter_test:
