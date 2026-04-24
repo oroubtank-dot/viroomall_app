@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/models/product_model.dart';
 import '../../../cart/presentation/providers/cart_provider.dart';
+import '../../../../core/widgets/cart_notification.dart';
 
 class VirooProductCard extends ConsumerWidget {
   final ProductModel product;
@@ -209,22 +210,7 @@ class VirooProductCard extends ConsumerWidget {
                 );
               } else {
                 cartNotifier.addToCart(product);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('✅ تم إضافة "${product.title}" للسلة 🛒',
-                        style: const TextStyle(fontFamily: 'Cairo')),
-                    backgroundColor: VirooColors.success,
-                    duration: const Duration(seconds: 2),
-                    behavior: SnackBarBehavior.floating,
-                    action: SnackBarAction(
-                      label: '🛒 عرض السلة',
-                      textColor: Colors.white,
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/cart');
-                      },
-                    ),
-                  ),
-                );
+                CartNotification.show(context, product);
               }
             },
             child: Container(

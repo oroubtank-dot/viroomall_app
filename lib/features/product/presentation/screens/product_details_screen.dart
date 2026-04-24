@@ -16,6 +16,7 @@ import '../widgets/product_details/seller_contact_section.dart';
 import '../widgets/product_details/wholesale_section.dart';
 import '../widgets/product_details/used_condition_section.dart';
 import '../widgets/product_details/outlet_section.dart';
+import '../../../../core/widgets/cart_notification.dart';
 
 class ProductDetailsScreen extends ConsumerStatefulWidget {
   final String productId;
@@ -132,29 +133,9 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                 cartNotifier.removeFromCart(product.id);
               } else {
                 cartNotifier.addToCart(product);
+                CartNotification.show(context, product);
+                return;
               }
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    isInCart
-                        ? '🗑️ تم حذف المنتج من السلة'
-                        : '✅ تم إضافة المنتج للسلة 🛒',
-                    style: const TextStyle(fontFamily: 'Cairo'),
-                  ),
-                  backgroundColor:
-                      isInCart ? VirooColors.error : VirooColors.success,
-                  duration: const Duration(seconds: 1),
-                  behavior: SnackBarBehavior.floating,
-                  action: isInCart
-                      ? null
-                      : SnackBarAction(
-                          label: '🛒 عرض السلة',
-                          textColor: Colors.white,
-                          onPressed: () =>
-                              Navigator.pushNamed(context, '/cart'),
-                        ),
-                ),
-              );
             },
           ),
         ],
