@@ -1,3 +1,4 @@
+// lib/core/models/product_model.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -63,7 +64,7 @@ class ProductModel {
       originalPrice: data['originalPrice']?.toDouble(),
       productType: data['productType'] ?? 'new',
       categoryId: data['categoryId'] ?? '',
-      images: List<String>.from(data['images'] ?? []),
+      images: data['images'] is List ? List<String>.from(data['images']) : [],
       videoUrl: data['videoUrl'],
       condition: data['condition'] ?? 'new',
       defects: data['defects'],
@@ -183,6 +184,22 @@ class ProductModel {
         return '🔥';
       default:
         return '🛍️';
+    }
+  }
+
+  /// الحصول على اسم الوضع بالعربي
+  String get modeLabel {
+    switch (productType) {
+      case 'new':
+        return '🛍️ تسوق';
+      case 'wholesale':
+        return '🏪 جملة';
+      case 'used':
+        return '♻️ مستعمل';
+      case 'outlet':
+        return '🔥 فرز إنتاج وتصفية';
+      default:
+        return '🛍️ تسوق';
     }
   }
 

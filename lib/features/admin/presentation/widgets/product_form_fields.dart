@@ -1,15 +1,18 @@
 // lib/features/admin/presentation/widgets/product_form_fields.dart
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_widgets.dart';
 
 class ProductFormFields extends StatefulWidget {
   final VoidCallback? onImageTap;
+  final VoidCallback? onVideoTap;
 
   const ProductFormFields({
     super.key,
     this.onImageTap,
+    this.onVideoTap,
   });
 
   @override
@@ -29,6 +32,7 @@ class ProductFormFieldsState extends State<ProductFormFields> {
   String _selectedCondition = 'new';
   String _selectedCategory = 'electronics';
   File? _imageFile;
+  File? _videoFile;
 
   final List<String> _categories = const [
     'electronics',
@@ -78,7 +82,7 @@ class ProductFormFieldsState extends State<ProductFormFields> {
     {'value': 'new', 'label': '🛍️ تسوق (جديد)'},
     {'value': 'wholesale', 'label': '🏪 جملة'},
     {'value': 'used', 'label': '♻️ مستعمل'},
-    {'value': 'outlet', 'label': '🔥 فرز إنتاج'},
+    {'value': 'outlet', 'label': '🔥 فرز إنتاج وتصفية'},
   ];
 
   final List<Map<String, String>> _conditions = const [
@@ -101,13 +105,30 @@ class ProductFormFieldsState extends State<ProductFormFields> {
   }
 
   void setImageFile(File file) {
+    print('📸 صورة: ${file.path}');
     setState(() => _imageFile = file);
   }
 
+  void setVideoFile(File file) {
+    print('🎬 فيديو: ${file.path}');
+    setState(() => _videoFile = file);
+  }
+
   Map<String, dynamic> getFormData() {
-    if (_nameController.text.isEmpty ||
-        _priceController.text.isEmpty ||
-        _imageFile == null) {
+    print('📋 getFormData called');
+    print('📋 name: ${_nameController.text}');
+    print('📋 price: ${_priceController.text}');
+    print('📋 imageFile: $_imageFile');
+    print('📋 videoFile: $_videoFile');
+
+    if (_nameController.text.isEmpty || _priceController.text.isEmpty) {
+      print('❌ name or price is empty');
+      return {};
+    }
+
+    // الصورة إجبارية
+    if (_imageFile == null) {
+      print('❌ الصورة إجبارية - لم يتم اختيار صورة');
       return {};
     }
 
@@ -123,6 +144,7 @@ class ProductFormFieldsState extends State<ProductFormFields> {
       'sellerName': _sellerNameController.text.trim(),
       'sellerPhone': _sellerPhoneController.text.trim(),
       'imageFile': _imageFile,
+      'videoFile': _videoFile, // اختياري
     };
   }
 
@@ -131,14 +153,29 @@ class ProductFormFieldsState extends State<ProductFormFields> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // صورة المنتج
-        const Text(
-          'صورة المنتج *',
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Cairo'),
+        // =============================================
+        // 📸 صورة المنتج (إجبارية) *
+        // =============================================
+        const Row(
+          children: [
+            Text(
+              'صورة المنتج',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Cairo',
+              ),
+            ),
+            Text(
+              ' *',
+              style: TextStyle(
+                color: Colors.red,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 12),
         GestureDetector(
@@ -152,20 +189,151 @@ class ProductFormFieldsState extends State<ProductFormFields> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(Icons.add_a_photo_rounded,
-                          size: 50, color: VirooColors.primary),
+                          size: 50, color: VirooColors.amberPrimary),
                       const SizedBox(height: 8),
-                      Text('اضغط لإضافة صورة',
-                          style: TextStyle(
-                              color: VirooColors.textSecondary,
-                              fontFamily: 'Cairo')),
+                      const Text(
+                        'اضغط لإضافة صورة (إجباري)',
+                        style: TextStyle(
+                          color: VirooColors.textSecondary,
+                          fontFamily: 'Cairo',
+                        ),
+                      ),
                     ],
                   )
-                : ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: Image.file(_imageFile!,
-                        fit: BoxFit.cover,
+                : Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: Image.file(
+                          _imageFile!,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          height: double.infinity,
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 10,
+                        right: 10,
+                        child: GestureDetector(
+                          onTap: widget.onImageTap,
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: VirooColors.amberPrimary.withOpacity(0.9),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: const Icon(
+                              Icons.edit_rounded,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+          ),
+        ),
+        const SizedBox(height: 24),
+
+        // =============================================
+        // 🎬 فيديو المنتج (اختياري)
+        // =============================================
+        const Row(
+          children: [
+            Text(
+              'فيديو المنتج',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Cairo',
+              ),
+            ),
+            Text(
+              ' (اختياري - أقصى 30 ثانية)',
+              style: TextStyle(
+                color: VirooColors.textSecondary,
+                fontSize: 12,
+                fontFamily: 'Cairo',
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        GestureDetector(
+          onTap: widget.onVideoTap,
+          child: GlassContainer(
+            height: 120,
+            width: double.infinity,
+            borderRadius: BorderRadius.circular(20),
+            child: _videoFile == null
+                ? Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.videocam_rounded,
+                          size: 40, color: VirooColors.info),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'اضغط لإضافة فيديو (اختياري)',
+                        style: TextStyle(
+                          color: VirooColors.textSecondary,
+                          fontFamily: 'Cairo',
+                        ),
+                      ),
+                    ],
+                  )
+                : Stack(
+                    children: [
+                      Container(
                         width: double.infinity,
-                        height: double.infinity),
+                        height: double.infinity,
+                        color: Colors.black,
+                        child: const Center(
+                          child: Icon(Icons.play_circle_fill_rounded,
+                              color: VirooColors.amberPrimary, size: 50),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 10,
+                        right: 10,
+                        child: GestureDetector(
+                          onTap: widget.onVideoTap,
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: VirooColors.error.withOpacity(0.9),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: const Icon(
+                              Icons.delete_rounded,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        top: 10,
+                        left: 10,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.7),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Text(
+                            '🎬 فيديو',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 11,
+                              fontFamily: 'Cairo',
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
           ),
         ),
@@ -175,9 +343,10 @@ class ProductFormFieldsState extends State<ProductFormFields> {
         _buildSectionTitle('اسم المنتج *'),
         const SizedBox(height: 8),
         _buildTextField(
-            controller: _nameController,
-            hint: 'مثال: آيفون 15 برو ماكس',
-            icon: Icons.shopping_bag_rounded),
+          controller: _nameController,
+          hint: 'مثال: آيفون 15 برو ماكس',
+          icon: Icons.shopping_bag_rounded,
+        ),
         const SizedBox(height: 20),
 
         // السعر
@@ -190,10 +359,11 @@ class ProductFormFieldsState extends State<ProductFormFields> {
                   _buildSectionTitle('السعر (ج.م) *'),
                   const SizedBox(height: 8),
                   _buildTextField(
-                      controller: _priceController,
-                      hint: 'مثال: 45999',
-                      icon: Icons.money_rounded,
-                      keyboardType: TextInputType.number),
+                    controller: _priceController,
+                    hint: 'مثال: 45999',
+                    icon: Icons.money_rounded,
+                    keyboardType: TextInputType.number,
+                  ),
                 ],
               ),
             ),
@@ -205,10 +375,11 @@ class ProductFormFieldsState extends State<ProductFormFields> {
                   _buildSectionTitle('السعر الأصلي'),
                   const SizedBox(height: 8),
                   _buildTextField(
-                      controller: _originalPriceController,
-                      hint: 'للعروض فقط',
-                      icon: Icons.discount_rounded,
-                      keyboardType: TextInputType.number),
+                    controller: _originalPriceController,
+                    hint: 'للعروض فقط',
+                    icon: Icons.discount_rounded,
+                    keyboardType: TextInputType.number,
+                  ),
                 ],
               ),
             ),
@@ -252,50 +423,57 @@ class ProductFormFieldsState extends State<ProductFormFields> {
         _buildSectionTitle('الموقع'),
         const SizedBox(height: 8),
         _buildTextField(
-            controller: _locationController,
-            hint: 'مثال: القاهرة',
-            icon: Icons.location_on_rounded),
+          controller: _locationController,
+          hint: 'مثال: القاهرة',
+          icon: Icons.location_on_rounded,
+        ),
         const SizedBox(height: 20),
 
         // اسم البائع
         _buildSectionTitle('اسم البائع'),
         const SizedBox(height: 8),
         _buildTextField(
-            controller: _sellerNameController,
-            hint: 'مثال: متجر الإلكترونيات',
-            icon: Icons.store_rounded),
+          controller: _sellerNameController,
+          hint: 'مثال: متجر الإلكترونيات',
+          icon: Icons.store_rounded,
+        ),
         const SizedBox(height: 20),
 
         // رقم البائع
         _buildSectionTitle('رقم البائع (واتساب)'),
         const SizedBox(height: 8),
         _buildTextField(
-            controller: _sellerPhoneController,
-            hint: 'مثال: +201001234567',
-            icon: Icons.phone_rounded,
-            keyboardType: TextInputType.phone),
+          controller: _sellerPhoneController,
+          hint: 'مثال: +201001234567',
+          icon: Icons.phone_rounded,
+          keyboardType: TextInputType.phone,
+        ),
         const SizedBox(height: 20),
 
         // وصف المنتج
         _buildSectionTitle('وصف المنتج'),
         const SizedBox(height: 8),
         _buildTextField(
-            controller: _descController,
-            hint: 'اكتب وصفاً تفصيلياً للمنتج...',
-            icon: Icons.description_rounded,
-            maxLines: 4),
+          controller: _descController,
+          hint: 'اكتب وصفاً تفصيلياً للمنتج...',
+          icon: Icons.description_rounded,
+          maxLines: 4,
+        ),
         const SizedBox(height: 20),
       ],
     );
   }
 
   Widget _buildSectionTitle(String title) {
-    return Text(title,
-        style: const TextStyle(
-            color: Colors.white,
-            fontSize: 15,
-            fontWeight: FontWeight.w600,
-            fontFamily: 'Cairo'));
+    return Text(
+      title,
+      style: const TextStyle(
+        color: Colors.white,
+        fontSize: 15,
+        fontWeight: FontWeight.w600,
+        fontFamily: 'Cairo',
+      ),
+    );
   }
 
   Widget _buildTextField({
@@ -316,8 +494,9 @@ class ProductFormFieldsState extends State<ProductFormFields> {
         decoration: InputDecoration(
           hintText: hint,
           hintStyle: TextStyle(
-              color: VirooColors.textSecondary.withValues(alpha: 0.6),
-              fontFamily: 'Cairo'),
+            color: VirooColors.textSecondary.withAlpha(150),
+            fontFamily: 'Cairo',
+          ),
           prefixIcon: Icon(icon, color: VirooColors.primary, size: 20),
           border: InputBorder.none,
         ),
@@ -340,12 +519,17 @@ class ProductFormFieldsState extends State<ProductFormFields> {
           dropdownColor: VirooColors.surface,
           icon: Icon(Icons.arrow_drop_down_rounded, color: VirooColors.primary),
           style: const TextStyle(
-              color: Colors.white, fontFamily: 'Cairo', fontSize: 16),
+            color: Colors.white,
+            fontFamily: 'Cairo',
+            fontSize: 16,
+          ),
           items: items
               .map((item) => DropdownMenuItem<T>(
                     value: item['value'] as T,
-                    child: Text(item['label']!,
-                        style: const TextStyle(fontFamily: 'Cairo')),
+                    child: Text(
+                      item['label']!,
+                      style: const TextStyle(fontFamily: 'Cairo'),
+                    ),
                   ))
               .toList(),
           onChanged: onChanged,

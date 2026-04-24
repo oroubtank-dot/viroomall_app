@@ -111,7 +111,9 @@ final cartItemCountProvider = Provider<int>((ref) {
 });
 
 final cartTotalPriceProvider = Provider<double>((ref) {
-  return ref.watch(cartProvider.notifier).totalPrice;
+  final cartItems = ref.watch(cartProvider);
+  return cartItems.fold(
+      0.0, (sum, item) => sum + (item.product.price * item.quantity));
 });
 
 final isInCartProvider = Provider.family<bool, String>((ref, productId) {

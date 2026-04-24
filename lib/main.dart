@@ -11,12 +11,12 @@ import 'core/theme/app_widgets.dart';
 import 'core/widgets/viroo_background.dart';
 import 'core/services/storage_service.dart';
 import 'core/services/auth_service.dart';
-import 'core/services/notification_service.dart'; // 👈 أضفنا الإستيراد
+import 'core/services/notification_service.dart';
 import 'presentation/screens/onboarding/onboarding_screen.dart';
 import 'presentation/screens/auth/login_screen.dart';
 import 'features/home/presentation/screens/home_screen.dart';
 import 'features/cart/presentation/screens/cart_screen.dart';
-import 'core/services/notification_service.dart';
+import 'features/ads/presentation/screens/ad_marketplace_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,11 +27,8 @@ void main() async {
 
   print('✅ Firebase initialized successfully');
 
-  // 👈 تهيئة الإشعارات
   await VirooNotificationService.init();
   print('🔔 Notification service initialized');
-// 👇 تهيئة الإشعارات
-  await VirooNotificationService.init();
 
   runApp(const ProviderScope(child: MyApp()));
 }
@@ -44,6 +41,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'VirooMall',
       debugShowCheckedModeBanner: false,
+      builder: (context, child) {
+        return Directionality(
+          textDirection: TextDirection.rtl,
+          child: child!,
+        );
+      },
       theme: VirooTheme.darkTheme.copyWith(
         textTheme: const TextTheme(
           displayLarge: TextStyle(fontFamily: 'Cairo'),
@@ -66,6 +69,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/home': (context) => const HomeScreen(),
         '/cart': (context) => const CartScreen(),
+        '/ad-marketplace': (context) => const AdMarketplaceScreen(),
       },
       home: const SplashScreen(),
     );

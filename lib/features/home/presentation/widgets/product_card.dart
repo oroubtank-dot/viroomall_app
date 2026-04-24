@@ -1,315 +1,296 @@
 // lib/features/home/presentation/widgets/product_card.dart
+import 'dart:convert';
+import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:share_plus/share_plus.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_widgets.dart';
 import '../../../../core/models/product_model.dart';
-import '../../../../core/services/auth_service.dart';
-import '../../../../core/services/notification_service.dart';
 import '../../../cart/presentation/providers/cart_provider.dart';
-import '../../../product/presentation/screens/product_details_screen.dart';
-import '../../../../presentation/screens/auth/widgets/login_bottom_sheet.dart';
 
-class ProductCard extends ConsumerWidget {
-  final Map<String, dynamic> data;
+class VirooProductCard extends ConsumerWidget {
+  final ProductModel product;
+  final VoidCallback? onTap;
 
-  const ProductCard({super.key, required this.data});
-
-  void _checkAuthAndNavigate(BuildContext context, VoidCallback action) {
-    if (AuthService.currentUser != null) {
-      action();
-    } else {
-      showModalBottomSheet(
-        context: context,
-        backgroundColor: Colors.transparent,
-        isScrollControlled: true,
-        builder: (context) => LoginBottomSheet(
-          onLoginSuccess: action,
-        ),
-      );
-    }
-  }
+  const VirooProductCard({
+    super.key,
+    required this.product,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final title = data['title'] ?? 'منتج';
-    final price = (data['price'] ?? 0).toDouble();
-    final originalPrice = data['originalPrice']?.toDouble();
-    final productType = data['productType'] ?? 'new';
-    final productId =
-        data['id'] ?? DateTime.now().millisecondsSinceEpoch.toString();
-    final description = data['description'] ?? 'لا يوجد وصف';
-    final location = data['location'] ?? 'القاهرة';
-    final condition = data['condition'] ?? 'new';
-    final sellerId = data['sellerId'] ?? 'unknown';
-
-    final imagesData = data['images'];
-    List<String> images = [];
-    if (imagesData is List) {
-      images = List<String>.from(imagesData);
-    } else if (imagesData is String) {
-      String cleanedUrl = imagesData;
-      cleanedUrl = cleanedUrl.replaceAll('[', '').replaceAll(']', '');
-      cleanedUrl = cleanedUrl.replaceAll('"', '').replaceAll("'", '');
-      cleanedUrl = cleanedUrl.trim();
-      images = [cleanedUrl];
-    }
-    final imageUrl = images.isNotEmpty ? images[0].toString() : '';
-
-    Color modeColor;
-    String modeIcon;
-    switch (productType) {
-      case 'wholesale':
-        modeColor = VirooColors.wholesale;
-        modeIcon = '🏪';
-        break;
-      case 'used':
-        modeColor = VirooColors.used;
-        modeIcon = '♻️';
-        break;
-      case 'outlet':
-        modeColor = VirooColors.outlet;
-        modeIcon = '🔥';
-        break;
-      default:
-        modeColor = VirooColors.shopping;
-        modeIcon = '🛍️';
-    }
-
-    int? discountPercentage;
-    if (originalPrice != null && originalPrice > price) {
-      discountPercentage =
-          ((originalPrice - price) / originalPrice * 100).round();
-    }
-
-    final product = ProductModel(
-      id: productId,
-      sellerId: sellerId,
-      title: title,
-      description: description,
-      price: price,
-      originalPrice: originalPrice,
-      productType: productType,
-      categoryId: data['categoryId'] ?? 'electronics',
-      images: images,
-      condition: condition,
-      location: location,
-      createdAt: DateTime.now(),
-    );
+    final cartNotifier = ref.read(cartProvider.notifier);
+    final isInCart = ref.watch(isInCartProvider(product.id));
+    final themeColor = _getModeColor(product.productType);
+    final modeLabel = _getModeLabel(product.productType);
 
     return GestureDetector(
-      onTap: () {
-        _checkAuthAndNavigate(context, () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ProductDetailsScreen(product: product),
-            ),
-          );
-        });
-      },
-      child: Hero(
-        tag: 'product_$productId',
-        child: GlassContainer(
-          padding: const EdgeInsets.all(12),
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Stack(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: modeColor.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Center(
-                        child: imageUrl.isNotEmpty
-                            ? ClipRRect(
-                                borderRadius: BorderRadius.circular(16),
-                                child: Image.network(
-                                  imageUrl,
-                                  fit: BoxFit.cover,
-                                  width: double.infinity,
-                                  height: double.infinity,
-                                  errorBuilder: (c, e, s) => Icon(
-                                    Icons.image_not_supported_rounded,
-                                    size: 40,
-                                    color: modeColor,
-                                  ),
-                                ),
-                              )
-                            : Icon(
-                                Icons.shopping_bag_rounded,
-                                size: 40,
-                                color: modeColor,
-                              ),
-                      ),
-                    ),
-                    if (discountPercentage != null)
-                      Positioned(
-                        top: 4,
-                        right: 4,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 6, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: VirooColors.error,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Text(
-                            '-$discountPercentage%',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 9,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Cairo',
-                            ),
-                          ),
-                        ),
-                      ),
-                    Positioned(
-                      top: 4,
-                      left: 4,
-                      child: GestureDetector(
-                        onTap: () {
-                          final message = '''
-🛍️ *$title*
-💰 السعر: ${price.toStringAsFixed(0)} ج.م
-📍 الموقع: $location
-📱 شوف المنتج ده على VirooMall!
-
-حمل التطبيق من هنا: https://viroomall.eg/app
-''';
-                          Share.share(message, subject: title);
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.4),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Icon(
-                            Icons.share_rounded,
-                            color: Colors.white,
-                            size: 14,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      top: 4,
-                      left: 38,
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.4),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(modeIcon,
-                            style: const TextStyle(fontSize: 12)),
-                      ),
-                    ),
+          boxShadow: [
+            BoxShadow(
+              color: themeColor.withOpacity(0.15),
+              blurRadius: 15,
+              spreadRadius: -2,
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+            child: Container(
+              decoration: BoxDecoration(
+                color: VirooColors.glassDark,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: VirooColors.glassBorder, width: 1),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Colors.white.withOpacity(0.08),
+                    Colors.white.withOpacity(0.02),
                   ],
                 ),
               ),
-              const SizedBox(height: 10),
-              Text(
-                title,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: 'Cairo',
-                  fontSize: 13,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 4),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '${price.toStringAsFixed(0)} ج.م',
-                        style: TextStyle(
-                          color: modeColor,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Orbitron',
-                          fontSize: 14,
-                        ),
-                      ),
-                      if (originalPrice != null)
-                        Text(
-                          '${originalPrice.toStringAsFixed(0)} ج.م',
-                          style: const TextStyle(
-                            color: Colors.grey,
-                            decoration: TextDecoration.lineThrough,
-                            fontFamily: 'Orbitron',
-                            fontSize: 10,
-                          ),
-                        ),
-                    ],
+                  Expanded(
+                    flex: 3,
+                    child: _buildImageSection(themeColor, modeLabel),
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      _checkAuthAndNavigate(context, () {
-                        ref.read(cartProvider.notifier).addToCart(product);
-
-                        // 👇 إشعار فوري
-                        VirooNotificationService.showInstantNotification(
-                          '🎉 تمت الإضافة!',
-                          'تمت إضافة "$title" إلى السلة بنجاح',
-                        );
-
-                        final scaffoldMessenger = ScaffoldMessenger.of(context);
-                        final snackBar = SnackBar(
-                          content: Text(
-                            '✅ تمت إضافة "$title" إلى السلة 🛒',
-                            style: const TextStyle(fontFamily: 'Cairo'),
-                          ),
-                          backgroundColor: VirooColors.success,
-                          duration: const Duration(seconds: 2),
-                          action: SnackBarAction(
-                            label: 'عرض السلة',
-                            textColor: Colors.white,
-                            onPressed: () {
-                              scaffoldMessenger.hideCurrentSnackBar();
-                              Navigator.pushNamed(context, '/cart');
-                            },
-                          ),
-                        );
-
-                        scaffoldMessenger.showSnackBar(snackBar);
-
-                        Future.delayed(const Duration(seconds: 2), () {
-                          scaffoldMessenger.hideCurrentSnackBar();
-                        });
-                      });
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: modeColor.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Icon(
-                        Icons.add_shopping_cart_rounded,
-                        size: 16,
-                        color: modeColor,
-                      ),
-                    ),
-                  ),
+                  _buildProductInfo(
+                      context, themeColor, isInCart, cartNotifier),
                 ],
               ),
-            ],
+            ),
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildImageSection(Color themeColor, String modeLabel) {
+    return Stack(
+      children: [
+        Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: themeColor.withOpacity(0.05),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: product.images.isNotEmpty
+              ? ClipRRect(
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(20)),
+                  child: Image.memory(
+                    base64Decode(product.images.first),
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return _buildPlaceholder(themeColor);
+                    },
+                  ),
+                )
+              : _buildPlaceholder(themeColor),
+        ),
+        Positioned(
+          top: 8,
+          right: 8,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: themeColor.withOpacity(0.85),
+              borderRadius: BorderRadius.circular(8),
+              border:
+                  Border.all(color: Colors.white.withOpacity(0.2), width: 0.5),
+            ),
+            child: Text(modeLabel,
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Cairo')),
+          ),
+        ),
+        Positioned(
+          top: 8,
+          left: 8,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+            decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(6)),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.remove_red_eye_rounded,
+                    color: Colors.white60, size: 12),
+                const SizedBox(width: 3),
+                Text(_formatViews(product.views),
+                    style: const TextStyle(
+                        color: Colors.white60,
+                        fontSize: 10,
+                        fontFamily: 'Cairo')),
+              ],
+            ),
+          ),
+        ),
+        if (product.discountPercentage != null)
+          Positioned(
+            bottom: 8,
+            left: 8,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+              decoration: BoxDecoration(
+                  color: VirooColors.error.withOpacity(0.85),
+                  borderRadius: BorderRadius.circular(6)),
+              child: Text('-${product.discountPercentage}%',
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Cairo')),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildProductInfo(BuildContext context, Color themeColor,
+      bool isInCart, CartNotifier cartNotifier) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  product.title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                      color: VirooColors.textPrimary,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12,
+                      fontFamily: 'Cairo'),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  '${product.price.toStringAsFixed(0)} ج',
+                  style: TextStyle(
+                      color: themeColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      fontFamily: 'Orbitron'),
+                ),
+              ],
+            ),
+          ),
+          GestureDetector(
+            onTap: () {
+              HapticFeedback.lightImpact();
+              if (isInCart) {
+                cartNotifier.removeFromCart(product.id);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('🗑️ تم حذف "${product.title}" من السلة',
+                        style: const TextStyle(fontFamily: 'Cairo')),
+                    backgroundColor: VirooColors.error,
+                    duration: const Duration(seconds: 1),
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              } else {
+                cartNotifier.addToCart(product);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('✅ تم إضافة "${product.title}" للسلة 🛒',
+                        style: const TextStyle(fontFamily: 'Cairo')),
+                    backgroundColor: VirooColors.success,
+                    duration: const Duration(seconds: 2),
+                    behavior: SnackBarBehavior.floating,
+                    action: SnackBarAction(
+                      label: '🛒 عرض السلة',
+                      textColor: Colors.white,
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/cart');
+                      },
+                    ),
+                  ),
+                );
+              }
+            },
+            child: Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: isInCart
+                    ? VirooColors.error.withOpacity(0.2)
+                    : themeColor.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                    color: isInCart
+                        ? VirooColors.error.withOpacity(0.4)
+                        : themeColor.withOpacity(0.3),
+                    width: 1),
+              ),
+              child: Icon(
+                  isInCart
+                      ? Icons.shopping_cart_rounded
+                      : Icons.add_shopping_cart_rounded,
+                  color: isInCart ? VirooColors.error : themeColor,
+                  size: 16),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPlaceholder(Color themeColor) {
+    return Center(
+        child: Icon(Icons.image_rounded,
+            color: themeColor.withOpacity(0.3), size: 40));
+  }
+
+  Color _getModeColor(String productType) {
+    switch (productType) {
+      case 'new':
+        return VirooColors.shopping;
+      case 'wholesale':
+        return VirooColors.wholesale;
+      case 'used':
+        return VirooColors.used;
+      case 'outlet':
+        return VirooColors.outlet;
+      default:
+        return VirooColors.shopping;
+    }
+  }
+
+  String _getModeLabel(String productType) {
+    switch (productType) {
+      case 'new':
+        return '🛍️ تسوق';
+      case 'wholesale':
+        return '🏪 جملة';
+      case 'used':
+        return '♻️ مستعمل';
+      case 'outlet':
+        return '🔥 فرز إنتاج';
+      default:
+        return '🛍️ تسوق';
+    }
+  }
+
+  String _formatViews(int views) {
+    if (views >= 1000) return '${(views / 1000).toStringAsFixed(1)}k';
+    return views.toString();
   }
 }

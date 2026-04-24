@@ -6,9 +6,9 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_widgets.dart';
 
 Future<File?> showImagePickerBottomSheet(BuildContext context) async {
-  File? selectedFile;
+  final ImagePicker picker = ImagePicker();
 
-  await showModalBottomSheet(
+  return await showModalBottomSheet<File?>(
     context: context,
     backgroundColor: Colors.transparent,
     builder: (BuildContext context) {
@@ -36,8 +36,10 @@ Future<File?> showImagePickerBottomSheet(BuildContext context) async {
                   label: 'كاميرا',
                   color: VirooColors.primary,
                   onTap: () async {
-                    Navigator.pop(context);
-                    selectedFile = await _pickImage(ImageSource.camera);
+                    final file = await _pickImage(picker, ImageSource.camera);
+                    if (context.mounted) {
+                      Navigator.pop(context, file);
+                    }
                   },
                 ),
                 _buildOption(
@@ -45,8 +47,10 @@ Future<File?> showImagePickerBottomSheet(BuildContext context) async {
                   label: 'معرض الصور',
                   color: VirooColors.info,
                   onTap: () async {
-                    Navigator.pop(context);
-                    selectedFile = await _pickImage(ImageSource.gallery);
+                    final file = await _pickImage(picker, ImageSource.gallery);
+                    if (context.mounted) {
+                      Navigator.pop(context, file);
+                    }
                   },
                 ),
               ],
@@ -56,19 +60,24 @@ Future<File?> showImagePickerBottomSheet(BuildContext context) async {
       );
     },
   );
-
-  return selectedFile;
 }
 
-Future<File?> _pickImage(ImageSource source) async {
-  final pickedFile = await ImagePicker().pickImage(
-    source: source,
-    imageQuality: 70,
-  );
-  if (pickedFile != null) {
-    return File(pickedFile.path);
+Future<File?> _pickImage(ImagePicker picker, ImageSource source) async {
+  try {
+    final pickedFile = await picker.pickImage(
+      source: source,
+      imageQuality: 70,
+    );
+    if (pickedFile != null) {
+      print('📸 تم اختيار الصورة: ${pickedFile.path}');
+      return File(pickedFile.path);
+    }
+    print('❌ لم يتم اختيار صورة');
+    return null;
+  } catch (e) {
+    print('❌ خطأ في اختيار الصورة: $e');
+    return null;
   }
-  return null;
 }
 
 Widget _buildOption({
@@ -85,16 +94,16 @@ Widget _buildOption({
           width: 70,
           height: 70,
           decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.1),
+            color: color.withAlpha(25),
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: color.withValues(alpha: 0.3)),
+            border: Border.all(color: color.withAlpha(75)),
           ),
           child: Icon(icon, size: 35, color: color),
         ),
         const SizedBox(height: 8),
         Text(
           label,
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 14,
             fontFamily: 'Cairo',

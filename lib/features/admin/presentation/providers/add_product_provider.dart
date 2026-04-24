@@ -22,23 +22,40 @@ class AddProductNotifier extends StateNotifier<void> {
     _ref.read(addProductErrorProvider.notifier).state = null;
 
     try {
-      final imageFile = formData['imageFile'] as File;
-      final bytes = await imageFile.readAsBytes();
-      final base64Image = base64Encode(bytes);
+      // الصورة (إجبارية)
+      String base64Image = '';
+      final imageFile = formData['imageFile'];
+      if (imageFile != null && imageFile is File) {
+        final bytes = await imageFile.readAsBytes();
+        base64Image = base64Encode(bytes);
+        print('✅ صورة Base64 - الحجم: ${bytes.length} bytes');
+      }
+
+      // الفيديو (اختياري)
+      String? base64Video;
+      final videoFile = formData['videoFile'];
+      if (videoFile != null && videoFile is File) {
+        final bytes = await videoFile.readAsBytes();
+        base64Video = base64Encode(bytes);
+        print('✅ فيديو Base64 - الحجم: ${bytes.length} bytes');
+      }
+
+      final price = double.tryParse(formData['price']?.toString() ?? '0') ?? 0;
 
       final productData = {
-        'title': formData['name'],
+        'title': formData['name'] ?? 'منتج بدون اسم',
         'description': formData['description']?.isNotEmpty == true
             ? formData['description']
             : 'لا يوجد وصف',
-        'price': double.parse(formData['price']),
+        'price': price,
         'originalPrice': formData['originalPrice']?.isNotEmpty == true
-            ? double.parse(formData['originalPrice'])
+            ? double.tryParse(formData['originalPrice'])
             : null,
-        'productType': formData['productType'],
-        'categoryId': formData['category'],
-        'images': [base64Image],
-        'condition': formData['condition'],
+        'productType': formData['productType'] ?? 'new',
+        'categoryId': formData['category'] ?? 'general',
+        'images': base64Image.isNotEmpty ? [base64Image] : [],
+        'videoUrl': base64Video, // اختياري
+        'condition': formData['condition'] ?? 'new',
         'location': formData['location']?.isNotEmpty == true
             ? formData['location']
             : 'القاهرة',
@@ -54,16 +71,26 @@ class AddProductNotifier extends StateNotifier<void> {
         'status': 'approved',
         'qualityScore': 85,
         'createdAt': FieldValue.serverTimestamp(),
-        'expiresAt': DateTime.now().add(const Duration(days: 30)),
+        'expiresAt':
+            Timestamp.fromDate(DateTime.now().add(const Duration(days: 30))),
         'averageRating': 0.0,
         'ratingCount': 0,
       };
 
+      print('📦 title: ${productData['title']}');
+      print('📦 price: ${productData['price']}');
+      print('📦 productType: ${productData['productType']}');
+      print('📦 hasImage: ${(productData['images'] as List).isNotEmpty}');
+      print('📦 hasVideo: ${productData['videoUrl'] != null}');
+
       await FirebaseFirestore.instance.collection('products').add(productData);
+
+      print('✅ تم حفظ المنتج في Firestore بنجاح');
 
       _ref.read(addProductLoadingProvider.notifier).state = false;
       return true;
     } catch (e) {
+      print('❌ خطأ في الحفظ: $e');
       _ref.read(addProductLoadingProvider.notifier).state = false;
       _ref.read(addProductErrorProvider.notifier).state = '❌ حدث خطأ: $e';
       return false;

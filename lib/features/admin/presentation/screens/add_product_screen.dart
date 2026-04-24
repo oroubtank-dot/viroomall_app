@@ -2,11 +2,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_widgets.dart';
 import '../../../../core/widgets/viroo_background.dart';
-import '../widgets/image_picker_bottom_sheet.dart';
 import '../widgets/product_form_fields.dart';
 import '../providers/add_product_provider.dart';
 
@@ -46,6 +46,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
           child: ProductFormFields(
             key: _formKey,
             onImageTap: isLoading ? null : () => _pickImage(),
+            onVideoTap: isLoading ? null : () => _pickVideo(),
           ),
         ),
       ),
@@ -72,21 +73,41 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
   }
 
   Future<void> _pickImage() async {
-    final imageFile = await showImagePickerBottomSheet(context);
-    if (imageFile != null) {
-      _formKey.currentState?.setImageFile(imageFile);
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 70,
+    );
+    if (pickedFile != null) {
+      _formKey.currentState?.setImageFile(File(pickedFile.path));
+    }
+  }
+
+  Future<void> _pickVideo() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickVideo(
+      source: ImageSource.gallery,
+      maxDuration: const Duration(seconds: 30),
+    );
+    if (pickedFile != null) {
+      _formKey.currentState?.setVideoFile(File(pickedFile.path));
     }
   }
 
   Future<void> _saveProduct() async {
+    print('🟢 _saveProduct called');
+
     final formData = _formKey.currentState?.getFormData();
-    if (formData == null) {
+    print('📋 formData: $formData');
+
+    if (formData == null || formData.isEmpty) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('من فضلك أكمل جميع الحقول المطلوبة',
+            content: Text(
+                '⚠️ الصورة إجبارية - من فضلك أكمل جميع الحقول المطلوبة',
                 style: TextStyle(fontFamily: 'Cairo')),
-            backgroundColor: VirooColors.error,
+            backgroundColor: VirooColors.warning,
           ),
         );
       }
@@ -96,6 +117,8 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
     final success = await ref
         .read(addProductNotifierProvider.notifier)
         .saveProduct(formData);
+
+    print('✅ success: $success');
 
     if (success && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -107,7 +130,10 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
         ),
       );
 
-      _showShareReminder(formData['name'] as String);
+      final productName = formData['name'] as String? ?? 'المنتج';
+      Future.delayed(const Duration(seconds: 2), () {
+        if (mounted) _showShareReminder(productName);
+      });
     } else if (mounted) {
       final error = ref.read(addProductErrorProvider);
       ScaffoldMessenger.of(context).showSnackBar(

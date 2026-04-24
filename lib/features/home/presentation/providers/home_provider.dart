@@ -28,7 +28,7 @@ final shopModesProvider = Provider<List<Map<String, dynamic>>>((ref) {
     },
     {
       'mode': ShopMode.outlet,
-      'title': 'فرز',
+      'title': 'فرز إنتاج',
       'icon': '🔥',
       'color': const Color(0xFFF44336),
     },
