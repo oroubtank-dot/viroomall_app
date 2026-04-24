@@ -16,7 +16,7 @@ class CartScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final cartItems = ref.watch(cartProvider);
     final totalPrice = ref.watch(cartTotalPriceProvider);
-    final themeColor = VirooColors.primary;
+    const themeColor = VirooColors.primary;
 
     return Scaffold(
       appBar: AppBar(
@@ -39,7 +39,7 @@ class CartScreen extends ConsumerWidget {
                         backgroundColor: VirooColors.surface,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
-                          side: BorderSide(
+                          side: const BorderSide(
                               color: VirooColors.glassBorder, width: 1),
                         ),
                         title: const Text('🗑️ تفريغ السلة',
@@ -54,7 +54,7 @@ class CartScreen extends ConsumerWidget {
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(ctx, false),
-                            child: Text('إلغاء',
+                            child: const Text('إلغاء',
                                 style: TextStyle(
                                     color: VirooColors.textSecondary,
                                     fontFamily: 'Cairo')),
@@ -89,7 +89,7 @@ class CartScreen extends ConsumerWidget {
                     GlassContainer(
                       padding: const EdgeInsets.all(30),
                       borderRadius: BorderRadius.circular(30),
-                      child: Icon(Icons.shopping_cart_outlined,
+                      child: const Icon(Icons.shopping_cart_outlined,
                           size: 80, color: VirooColors.textSecondary),
                     ),
                     const SizedBox(height: 24),
@@ -214,7 +214,7 @@ class CartScreen extends ConsumerWidget {
                                               shape: RoundedRectangleBorder(
                                                 borderRadius:
                                                     BorderRadius.circular(20),
-                                                side: BorderSide(
+                                                side: const BorderSide(
                                                     color:
                                                         VirooColors.glassBorder,
                                                     width: 1),
@@ -234,7 +234,7 @@ class CartScreen extends ConsumerWidget {
                                                 TextButton(
                                                   onPressed: () =>
                                                       Navigator.pop(ctx, false),
-                                                  child: Text('إلغاء',
+                                                  child: const Text('إلغاء',
                                                       style: TextStyle(
                                                           color: VirooColors
                                                               .textSecondary,
@@ -316,7 +316,7 @@ class CartScreen extends ConsumerWidget {
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               20),
-                                                      side: BorderSide(
+                                                      side: const BorderSide(
                                                           color: VirooColors
                                                               .glassBorder,
                                                           width: 1),
@@ -341,7 +341,7 @@ class CartScreen extends ConsumerWidget {
                                                         onPressed: () =>
                                                             Navigator.pop(
                                                                 ctx, false),
-                                                        child: Text('إلغاء',
+                                                        child: const Text('إلغاء',
                                                             style: TextStyle(
                                                                 color: VirooColors
                                                                     .textSecondary,
@@ -460,7 +460,7 @@ class CartScreen extends ConsumerWidget {
                                     fontSize: 18,
                                     fontFamily: 'Cairo')),
                             Text("${totalPrice.toStringAsFixed(0)} ج.م",
-                                style: TextStyle(
+                                style: const TextStyle(
                                     color: themeColor,
                                     fontSize: 22,
                                     fontFamily: 'Orbitron',

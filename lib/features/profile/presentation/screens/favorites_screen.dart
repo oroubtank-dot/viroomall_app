@@ -15,10 +15,10 @@ class FavoritesScreen extends StatelessWidget {
             style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),
-      body: VirooBackground(
+      body: const VirooBackground(
         showOrbs: true,
         themeColor: VirooColors.primary,
-        child: const Center(
+        child: Center(
           child: Text('❤️ المفضلة\n(هتتعمل قريباً)',
               style: TextStyle(
                   color: Colors.white, fontSize: 18, fontFamily: 'Cairo'),

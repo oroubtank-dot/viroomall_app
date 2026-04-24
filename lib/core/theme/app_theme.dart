@@ -92,7 +92,7 @@ class VirooTheme {
         color: VirooColors.glassDark,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(24),
-          side: BorderSide(
+          side: const BorderSide(
             color: VirooColors.glassBorder,
             width: 1.5,
           ),
@@ -112,7 +112,7 @@ class VirooTheme {
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(
+          borderSide: const BorderSide(
             color: VirooColors.glassBorder,
           ),
         ),
@@ -235,7 +235,7 @@ class VirooTheme {
       // =========================================
       // Divider Theme
       // =========================================
-      dividerTheme: DividerThemeData(
+      dividerTheme: const DividerThemeData(
         color: VirooColors.glassBorder,
         thickness: 1,
         space: 1,
@@ -264,17 +264,17 @@ class VirooTheme {
       // =========================================
       // Tab Bar Theme
       // =========================================
-      tabBarTheme: TabBarThemeData(
+      tabBarTheme: const TabBarThemeData(
         labelColor: VirooColors.primary,
         unselectedLabelColor: VirooColors.textSecondary,
         indicatorColor: VirooColors.primary,
         dividerColor: Colors.transparent,
-        labelStyle: const TextStyle(
+        labelStyle: TextStyle(
           fontFamily: 'Cairo',
           fontWeight: FontWeight.bold,
           fontSize: 14,
         ),
-        unselectedLabelStyle: const TextStyle(
+        unselectedLabelStyle: TextStyle(
           fontFamily: 'Cairo',
           fontSize: 14,
         ),
@@ -288,7 +288,7 @@ class VirooTheme {
         backgroundColor: VirooColors.surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(24),
-          side: BorderSide(
+          side: const BorderSide(
             color: VirooColors.glassBorder,
             width: 1,
           ),
@@ -347,7 +347,7 @@ class VirooTheme {
         color: VirooColors.surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: BorderSide(
+          side: const BorderSide(
             color: VirooColors.glassBorder,
           ),
         ),
@@ -360,15 +360,15 @@ class VirooTheme {
       // =========================================
       // List Tile Theme
       // =========================================
-      listTileTheme: ListTileThemeData(
+      listTileTheme: const ListTileThemeData(
         iconColor: VirooColors.primary,
         textColor: VirooColors.textPrimary,
-        titleTextStyle: const TextStyle(
+        titleTextStyle: TextStyle(
           fontFamily: 'Cairo',
           fontWeight: FontWeight.w600,
           fontSize: 16,
         ),
-        subtitleTextStyle: const TextStyle(
+        subtitleTextStyle: TextStyle(
           fontFamily: 'Cairo',
           color: VirooColors.textSecondary,
           fontSize: 14,
@@ -414,7 +414,7 @@ class VirooTheme {
         brightness: Brightness.dark,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
-          side: BorderSide(
+          side: const BorderSide(
             color: VirooColors.glassBorder,
           ),
         ),

@@ -125,7 +125,7 @@ class _VirooRatingDialogState extends State<VirooRatingDialog> {
                 Expanded(
                   child: TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: Text(
+                    child: const Text(
                       'إلغاء',
                       style: TextStyle(
                           color: VirooColors.textSecondary,

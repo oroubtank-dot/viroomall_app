@@ -193,7 +193,7 @@ class ProductStatsCard extends StatelessWidget {
           children: [
             Text(
               value,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
                 fontFamily: 'Orbitron',
@@ -202,7 +202,7 @@ class ProductStatsCard extends StatelessWidget {
             ),
             Text(
               label,
-              style: TextStyle(
+              style: const TextStyle(
                 color: VirooColors.textSecondary,
                 fontFamily: 'Cairo',
                 fontSize: 9,

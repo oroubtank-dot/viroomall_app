@@ -56,7 +56,7 @@ class ProfileHeader extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           '@${user.phone.substring(1)}',
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 14,
             color: VirooColors.textSecondary,
             fontFamily: 'Cairo',
@@ -71,7 +71,7 @@ class ProfileHeader extends StatelessWidget {
               const SizedBox(width: 4),
               Text(
                 '${user.rating.toStringAsFixed(1)} (${user.ratingCount} تقييم)',
-                style: TextStyle(
+                style: const TextStyle(
                   color: VirooColors.textSecondary,
                   fontFamily: 'Cairo',
                   fontSize: 13,

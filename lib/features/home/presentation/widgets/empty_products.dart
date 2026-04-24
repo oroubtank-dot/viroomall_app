@@ -10,7 +10,7 @@ class EmptyProducts extends StatelessWidget {
     return Container(
       height: 150,
       alignment: Alignment.center,
-      child: Column(
+      child: const Column(
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -19,7 +19,7 @@ class EmptyProducts extends StatelessWidget {
             size: 48,
             color: VirooColors.textSecondary,
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           Text(
             'لا توجد منتجات حالياً',
             style: TextStyle(

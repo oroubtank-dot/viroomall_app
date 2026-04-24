@@ -27,7 +27,7 @@ class HotSalesBanner extends StatelessWidget {
               ),
               TextButton(
                 onPressed: () {},
-                child: Text(
+                child: const Text(
                   'عرض الكل',
                   style: TextStyle(
                     color: VirooColors.primary,
@@ -69,10 +69,10 @@ class _BannerContent extends StatelessWidget {
           children: [
             _buildDecorativeCircle(top: -30, right: -20, size: 100),
             _buildDecorativeCircle(bottom: -20, left: -10, size: 80),
-            Padding(
-              padding: const EdgeInsets.all(20),
+            const Padding(
+              padding: EdgeInsets.all(20),
               child: Row(
-                children: const [
+                children: [
                   _BannerText(),
                   _BannerIcon(),
                 ],

@@ -83,7 +83,7 @@ class ProductImageSection extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                   child: Text(
                     'خصم $discountPercentage%',
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: VirooColors.error,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'Cairo',

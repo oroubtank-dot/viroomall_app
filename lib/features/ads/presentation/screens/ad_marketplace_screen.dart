@@ -16,7 +16,7 @@ class AdMarketplaceScreen extends ConsumerStatefulWidget {
 
 class _AdMarketplaceScreenState extends ConsumerState<AdMarketplaceScreen> {
   String _selectedMode = 'shopping';
-  double _userBalance = 2500;
+  final double _userBalance = 2500;
 
   final List<int> _auctionPrices = [750, 520, 380, 290, 220];
   final List<String> _bidders = [
@@ -151,20 +151,20 @@ class _AdMarketplaceScreenState extends ConsumerState<AdMarketplaceScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           child: Row(
             children: [
               Icon(Icons.gavel_rounded, color: VirooColors.error, size: 20),
-              const SizedBox(width: 8),
-              const Text('🔴 مزادات نشطة',
+              SizedBox(width: 8),
+              Text('🔴 مزادات نشطة',
                   style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: VirooColors.textPrimary,
                       fontFamily: 'Cairo')),
-              const Spacer(),
-              const Text('الصفحات 1-5',
+              Spacer(),
+              Text('الصفحات 1-5',
                   style: TextStyle(
                       color: VirooColors.textSecondary,
                       fontSize: 12,
@@ -222,7 +222,7 @@ class _AdMarketplaceScreenState extends ConsumerState<AdMarketplaceScreen> {
                           color: VirooColors.error.withOpacity(0.2),
                           borderRadius: BorderRadius.circular(8)),
                       child: Text('🥇 ${index + 1}',
-                          style: TextStyle(
+                          style: const TextStyle(
                               color: VirooColors.error,
                               fontWeight: FontWeight.bold,
                               fontSize: 14,
@@ -285,13 +285,13 @@ class _AdMarketplaceScreenState extends ConsumerState<AdMarketplaceScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
           child: Row(
             children: [
               Icon(Icons.store_rounded, color: VirooColors.warning, size: 20),
-              const SizedBox(width: 8),
-              const Text('🟡 إعلانات بسعر ثابت',
+              SizedBox(width: 8),
+              Text('🟡 إعلانات بسعر ثابت',
                   style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -335,7 +335,7 @@ class _AdMarketplaceScreenState extends ConsumerState<AdMarketplaceScreen> {
                 decoration: BoxDecoration(
                     color: VirooColors.warning.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(12)),
-                child: Icon(Icons.ads_click_rounded,
+                child: const Icon(Icons.ads_click_rounded,
                     color: VirooColors.warning, size: 24)),
             const SizedBox(width: 14),
             Expanded(

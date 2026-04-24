@@ -17,9 +17,9 @@ class ProductPreviewSheet extends StatelessWidget {
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.65,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: VirooColors.background,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
       ),
       child: Column(
         children: [
@@ -125,11 +125,11 @@ class ProductPreviewSheet extends StatelessWidget {
                                     Icon(Icons.store_rounded, color: modeColor),
                               ),
                               const SizedBox(width: 12),
-                              Expanded(
+                              const Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
+                                    Text(
                                       'بائع VirooMall',
                                       style: TextStyle(
                                         fontSize: 14,
@@ -138,12 +138,12 @@ class ProductPreviewSheet extends StatelessWidget {
                                         fontFamily: 'Cairo',
                                       ),
                                     ),
-                                    const SizedBox(height: 2),
+                                    SizedBox(height: 2),
                                     Row(
                                       children: [
                                         Icon(Icons.star_rounded,
                                             color: Colors.amber, size: 14),
-                                        const SizedBox(width: 4),
+                                        SizedBox(width: 4),
                                         Text(
                                           '4.5 (120 تقييم)',
                                           style: TextStyle(
@@ -175,7 +175,7 @@ class ProductPreviewSheet extends StatelessWidget {
                         const SizedBox(height: 8),
                         Text(
                           product.description,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 14,
                             color: VirooColors.textSecondary,
                             fontFamily: 'Cairo',

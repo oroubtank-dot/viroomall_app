@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_widgets.dart';
-import '../../../../core/providers/order_provider.dart'; // 👈 المسار الصحيح
-import '../../../../core/models/order_model.dart'; // 👈 المسار الصحيح
+// 👈 المسار الصحيح
+// 👈 المسار الصحيح
 
 class SellerOrdersScreen extends ConsumerWidget {
   const SellerOrdersScreen({super.key});
@@ -49,22 +49,22 @@ class SellerOrdersScreen extends ConsumerWidget {
                   color: VirooColors.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(Icons.shopping_bag_rounded,
+                child: const Icon(Icons.shopping_bag_rounded,
                     color: VirooColors.primary),
               ),
               const SizedBox(width: 12),
-              Expanded(
+              const Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'آيفون 15 برو ماكس',
                       style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                           fontFamily: 'Cairo'),
                     ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: 4),
                     Text(
                       'الكمية: 1',
                       style: TextStyle(
@@ -81,7 +81,7 @@ class SellerOrdersScreen extends ConsumerWidget {
                   color: VirooColors.warning.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Text(
+                child: const Text(
                   'قيد الانتظار',
                   style: TextStyle(
                       color: VirooColors.warning,
@@ -112,12 +112,12 @@ class SellerOrdersScreen extends ConsumerWidget {
                     // رفض الطلب
                   },
                   style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: VirooColors.error),
+                    side: const BorderSide(color: VirooColors.error),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12)),
                     padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
-                  child: Text('رفض',
+                  child: const Text('رفض',
                       style: TextStyle(
                           color: VirooColors.error, fontFamily: 'Cairo')),
                 ),

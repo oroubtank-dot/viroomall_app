@@ -88,9 +88,9 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
   Widget build(BuildContext context) {
     return Container(
       height: MediaQuery.of(context).size.height * 0.6,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: VirooColors.background,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
       ),
       child: Column(
         children: [
@@ -105,7 +105,7 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
           GlassContainer(
             padding: const EdgeInsets.all(25),
             borderRadius: BorderRadius.circular(30),
-            child: Icon(Icons.lock_person_rounded,
+            child: const Icon(Icons.lock_person_rounded,
                 size: 60, color: VirooColors.primary),
           ),
           const SizedBox(height: 20),
@@ -116,7 +116,7 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
                   color: Colors.white,
                   fontFamily: 'Cairo')),
           const SizedBox(height: 8),
-          Text('سجل دخولك عشان تقدر تشتري وتتواصل مع البائعين',
+          const Text('سجل دخولك عشان تقدر تشتري وتتواصل مع البائعين',
               style: TextStyle(
                   fontSize: 14,
                   color: VirooColors.textSecondary,
@@ -140,7 +140,7 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
                       color: VirooColors.textSecondary.withOpacity(0.5),
                       fontFamily: 'Cairo'),
                   prefixIcon:
-                      Icon(Icons.phone_android, color: VirooColors.primary),
+                      const Icon(Icons.phone_android, color: VirooColors.primary),
                   prefixText: '+20 ',
                   prefixStyle:
                       const TextStyle(color: Colors.white, fontFamily: 'Cairo'),

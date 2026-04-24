@@ -40,7 +40,7 @@ class BiometricToggle extends StatelessWidget {
               await StorageService.setBiometricEnabled(false);
             }
           },
-          activeColor: VirooColors.primary,
+          activeThumbColor: VirooColors.primary,
         ),
       ],
     );

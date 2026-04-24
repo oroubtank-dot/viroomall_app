@@ -29,7 +29,7 @@ class VirooSearchBar extends StatelessWidget {
           child: Row(
             children: [
               // 🆕 أيقونة VM-Cart بدل البحث
-              VMCartIcon(
+              const VMCartIcon(
                 size: 28,
                 withGlow: false,
               ),
@@ -59,7 +59,7 @@ class VirooSearchBar extends StatelessWidget {
                   color: VirooColors.amberPrimary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.mic_rounded,
                   color: VirooColors.amberPrimary,
                   size: 20,

@@ -18,6 +18,7 @@ import '../../../../core/widgets/settings_portal/settings_portal_button.dart';
 import '../../../admin/presentation/screens/add_product_screen.dart';
 import '../../../../features/ads/presentation/widgets/ads_slider.dart';
 import '../../../../features/ads/presentation/screens/ad_marketplace_screen.dart';
+import '../../../favorites/presentation/screens/favorites_screen.dart';
 
 class HomeContent extends ConsumerWidget {
   const HomeContent({super.key});
@@ -159,10 +160,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
     super.initState();
     _screens = [
       const HomeContent(), // 0: الرئيسية
-      const Center(
-          child: Text("المفضلة",
-              style: TextStyle(
-                  color: Colors.white, fontFamily: 'Cairo'))), // 1: المفضلة
+      const FavoritesScreen(), // 1: المفضلة
       const CartScreen(), // 2: السلة
       const ProfileScreen(), // 3: البروفايل
     ];
@@ -204,7 +202,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context, false),
-                  child: Text(
+                  child: const Text(
                     'إلغاء',
                     style: TextStyle(
                       color: VirooColors.textSecondary,
@@ -339,7 +337,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
                     backgroundColor: VirooColors.surface,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
-                      side: BorderSide(
+                      side: const BorderSide(
                         color: VirooColors.glassBorder,
                         width: 1,
                       ),
@@ -362,7 +360,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(ctx, false),
-                        child: Text(
+                        child: const Text(
                           'إلغاء',
                           style: TextStyle(
                             color: VirooColors.textSecondary,

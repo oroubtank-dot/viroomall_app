@@ -1,5 +1,4 @@
 // lib/features/home/presentation/widgets/floating_nav_bar.dart
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -153,7 +152,7 @@ class _FloatingNavBarState extends State<FloatingNavBar>
                   height: 56,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    gradient: LinearGradient(
+                    gradient: const LinearGradient(
                       colors: [
                         VirooColors.amberPrimary,
                         VirooColors.amberLight,

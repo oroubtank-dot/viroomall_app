@@ -49,7 +49,7 @@ class SellerInfoCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.location_on_rounded,
                       color: VirooColors.textSecondary,
                       size: 14,
@@ -57,7 +57,7 @@ class SellerInfoCard extends StatelessWidget {
                     const SizedBox(width: 4),
                     Text(
                       product.location,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 12,
                         color: VirooColors.textSecondary,
                         fontFamily: 'Cairo',

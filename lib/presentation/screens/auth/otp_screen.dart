@@ -91,7 +91,7 @@ class _OTPScreenState extends State<OTPScreen> {
                           GlassContainer(
                               padding: const EdgeInsets.all(30),
                               borderRadius: BorderRadius.circular(30),
-                              child: Icon(Icons.message_rounded,
+                              child: const Icon(Icons.message_rounded,
                                   size: 80, color: VirooColors.primary)),
                           const SizedBox(height: 40),
                           const Text('تأكيد رقم الهاتف',
@@ -102,7 +102,7 @@ class _OTPScreenState extends State<OTPScreen> {
                                   fontFamily: 'Cairo')),
                           const SizedBox(height: 12),
                           Text('تم إرسال كود التحقق إلى ${widget.phone}',
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontSize: 16,
                                   color: VirooColors.textSecondary,
                                   fontFamily: 'Cairo'),

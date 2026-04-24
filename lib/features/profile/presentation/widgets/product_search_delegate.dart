@@ -67,7 +67,7 @@ class ProductSearchDelegate extends SearchDelegate<String> {
                       style: const TextStyle(
                           color: Colors.white, fontFamily: 'Cairo')),
                   subtitle: Text('${product.price} ج.م',
-                      style: TextStyle(
+                      style: const TextStyle(
                           color: VirooColors.primary, fontFamily: 'Orbitron')),
                   onTap: () => close(context, product.id),
                 );

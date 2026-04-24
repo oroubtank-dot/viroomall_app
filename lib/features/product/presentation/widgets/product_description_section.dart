@@ -40,7 +40,7 @@ class ProductDescriptionSection extends StatelessWidget {
         const SizedBox(height: 12),
         Text(
           description,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 15,
             color: VirooColors.textSecondary,
             fontFamily: 'Cairo',

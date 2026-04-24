@@ -156,7 +156,7 @@ class VirooGradients {
   );
 
   /// 🆕 تدرج الهوية الجديدة (Amber to Warm White)
-  static LinearGradient amberWarm = LinearGradient(
+  static LinearGradient amberWarm = const LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     colors: [
@@ -206,7 +206,7 @@ class VirooGradients {
   );
 
   /// تدرج زجاجي
-  static LinearGradient glass = LinearGradient(
+  static LinearGradient glass = const LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     colors: [

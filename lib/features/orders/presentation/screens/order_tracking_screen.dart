@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_widgets.dart';
 import '../../../../core/widgets/viroo_background.dart';
 import '../../domain/models/order_model.dart';
-import '../../domain/enums/order_status.dart';
 
 class OrderTrackingScreen extends ConsumerWidget {
   final OrderModel order;

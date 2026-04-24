@@ -1,7 +1,6 @@
 // lib/features/admin/presentation/widgets/product_form_fields.dart
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_widgets.dart';
 
@@ -185,13 +184,13 @@ class ProductFormFieldsState extends State<ProductFormFields> {
             width: double.infinity,
             borderRadius: BorderRadius.circular(20),
             child: _imageFile == null
-                ? Column(
+                ? const Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(Icons.add_a_photo_rounded,
                           size: 50, color: VirooColors.amberPrimary),
-                      const SizedBox(height: 8),
-                      const Text(
+                      SizedBox(height: 8),
+                      Text(
                         'اضغط لإضافة صورة (إجباري)',
                         style: TextStyle(
                           color: VirooColors.textSecondary,
@@ -268,13 +267,13 @@ class ProductFormFieldsState extends State<ProductFormFields> {
             width: double.infinity,
             borderRadius: BorderRadius.circular(20),
             child: _videoFile == null
-                ? Column(
+                ? const Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(Icons.videocam_rounded,
                           size: 40, color: VirooColors.info),
-                      const SizedBox(height: 8),
-                      const Text(
+                      SizedBox(height: 8),
+                      Text(
                         'اضغط لإضافة فيديو (اختياري)',
                         style: TextStyle(
                           color: VirooColors.textSecondary,
@@ -517,7 +516,7 @@ class ProductFormFieldsState extends State<ProductFormFields> {
           value: value,
           isExpanded: true,
           dropdownColor: VirooColors.surface,
-          icon: Icon(Icons.arrow_drop_down_rounded, color: VirooColors.primary),
+          icon: const Icon(Icons.arrow_drop_down_rounded, color: VirooColors.primary),
           style: const TextStyle(
             color: Colors.white,
             fontFamily: 'Cairo',

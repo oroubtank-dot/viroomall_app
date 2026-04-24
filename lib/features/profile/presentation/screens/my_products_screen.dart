@@ -62,7 +62,7 @@ class _MyProductsScreenState extends ConsumerState<MyProductsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final themeColor = VirooColors.primary;
+    const themeColor = VirooColors.primary;
     final products = _getFilteredAndSortedProducts();
     final expiringCount = SellerProduct.mockProducts()
         .where((p) => p.status == 'expiring')
@@ -104,19 +104,19 @@ class _MyProductsScreenState extends ConsumerState<MyProductsScreen> {
             ),
             Expanded(
               child: products.isEmpty
-                  ? Center(
+                  ? const Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.inventory_2_rounded,
                               size: 80, color: VirooColors.textSecondary),
-                          const SizedBox(height: 16),
-                          const Text('لا توجد منتجات',
+                          SizedBox(height: 16),
+                          Text('لا توجد منتجات',
                               style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 18,
                                   fontFamily: 'Cairo')),
-                          const SizedBox(height: 8),
+                          SizedBox(height: 8),
                           Text('اضغط على + لإضافة منتج جديد',
                               style: TextStyle(
                                   color: VirooColors.textSecondary,

@@ -75,7 +75,7 @@ class SellerStatsWidget extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           label,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 11,
             color: VirooColors.textSecondary,
             fontFamily: 'Cairo',

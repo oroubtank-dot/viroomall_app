@@ -29,7 +29,7 @@ class ExpiringAlertBanner extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         child: Row(
           children: [
-            Icon(Icons.warning_amber_rounded,
+            const Icon(Icons.warning_amber_rounded,
                 color: VirooColors.warning, size: 24),
             const SizedBox(width: 12),
             Expanded(
@@ -39,7 +39,7 @@ class ExpiringAlertBanner extends StatelessWidget {
                   if (expiringCount > 0)
                     Text(
                       '⏳ $expiringCount منتجات تنتهي قريباً',
-                      style: TextStyle(
+                      style: const TextStyle(
                           color: VirooColors.warning,
                           fontFamily: 'Cairo',
                           fontSize: 13),
@@ -47,7 +47,7 @@ class ExpiringAlertBanner extends StatelessWidget {
                   if (expiredCount > 0)
                     Text(
                       '🔴 $expiredCount منتجات منتهية',
-                      style: TextStyle(
+                      style: const TextStyle(
                           color: VirooColors.error,
                           fontFamily: 'Cairo',
                           fontSize: 13),

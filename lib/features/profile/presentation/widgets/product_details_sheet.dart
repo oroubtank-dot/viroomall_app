@@ -12,13 +12,13 @@ class ProductDetailsSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeColor = VirooColors.primary;
+    const themeColor = VirooColors.primary;
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.6,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: VirooColors.background,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
       ),
       child: Column(
         children: [
@@ -60,7 +60,7 @@ class ProductDetailsSheet extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     '${product.price.toStringAsFixed(0)} ج.م',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                       color: themeColor,
@@ -100,7 +100,7 @@ class ProductDetailsSheet extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label,
-              style: TextStyle(
+              style: const TextStyle(
                   color: VirooColors.textSecondary,
                   fontFamily: 'Cairo',
                   fontSize: 14)),

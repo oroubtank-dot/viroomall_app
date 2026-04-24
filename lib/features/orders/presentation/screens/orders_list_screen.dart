@@ -1,6 +1,5 @@
 // lib/features/orders/presentation/screens/orders_list_screen.dart
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_widgets.dart';
 import '../../../../core/widgets/viroo_background.dart';
@@ -72,7 +71,7 @@ class OrdersListScreen extends StatelessWidget {
                     color: VirooColors.primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(Icons.shopping_bag_rounded,
+                  child: const Icon(Icons.shopping_bag_rounded,
                       color: VirooColors.primary),
                 ),
                 const SizedBox(width: 12),
@@ -91,7 +90,7 @@ class OrdersListScreen extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         '${order.price.toStringAsFixed(0)} ج.م',
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: VirooColors.primary,
                           fontFamily: 'Orbitron',
                           fontWeight: FontWeight.bold,
@@ -102,7 +101,7 @@ class OrdersListScreen extends StatelessWidget {
                         isSeller
                             ? 'المشتري: ${order.buyerName}'
                             : 'البائع: ${order.sellerName}',
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: VirooColors.textSecondary,
                           fontFamily: 'Cairo',
                           fontSize: 12,
@@ -156,7 +155,7 @@ class OrdersListScreen extends StatelessWidget {
                             borderRadius: BorderRadius.circular(12)),
                         padding: const EdgeInsets.symmetric(vertical: 12),
                       ),
-                      child: Text('رفض',
+                      child: const Text('رفض',
                           style: TextStyle(
                               color: VirooColors.error, fontFamily: 'Cairo')),
                     ),

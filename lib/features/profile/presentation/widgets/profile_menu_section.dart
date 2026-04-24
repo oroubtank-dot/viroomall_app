@@ -243,7 +243,7 @@ class ProfileMenuSection extends StatelessWidget {
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(context, false),
-                      child: Text(
+                      child: const Text(
                         'إلغاء',
                         style: TextStyle(
                           color: VirooColors.textSecondary,
@@ -371,7 +371,7 @@ class ProfileMenuSection extends StatelessWidget {
                 color: VirooColors.warning.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Text(
+              child: const Text(
                 '⚠️',
                 style: TextStyle(
                   color: VirooColors.warning,

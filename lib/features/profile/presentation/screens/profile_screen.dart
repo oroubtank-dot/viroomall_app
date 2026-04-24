@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/viroo_background.dart';
-import '../../../../core/services/auth_service.dart';
 import '../providers/profile_provider.dart';
 import '../../domain/models/user_model.dart';
 import '../../domain/models/seller_stats.dart';
@@ -53,14 +52,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final user = ref.watch(profileNotifierProvider);
     final sellerStats = ref.watch(sellerStatsProvider);
     final buyerStats = ref.watch(buyerStatsProvider);
-    final themeColor = VirooColors.primary;
+    const themeColor = VirooColors.primary;
 
     if (user == null) {
-      return Scaffold(
+      return const Scaffold(
         body: VirooBackground(
           showOrbs: true,
           themeColor: themeColor,
-          child: const Center(child: CircularProgressIndicator()),
+          child: Center(child: CircularProgressIndicator()),
         ),
       );
     }

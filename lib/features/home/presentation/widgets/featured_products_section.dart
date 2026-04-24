@@ -72,12 +72,12 @@ class FeaturedProductsSection extends ConsumerWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.error_outline,
+                        const Icon(Icons.error_outline,
                             color: VirooColors.error, size: 48),
                         const SizedBox(height: 12),
                         Text(
                           'خطأ: ${snapshot.error}',
-                          style: TextStyle(
+                          style: const TextStyle(
                               color: VirooColors.error, fontFamily: 'Cairo'),
                           textAlign: TextAlign.center,
                         ),

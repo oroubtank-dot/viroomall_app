@@ -1,7 +1,6 @@
 // lib/presentation/screens/auth/login_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:local_auth/local_auth.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_widgets.dart';
 import '../../../core/widgets/viroo_background.dart';
@@ -131,7 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ]),
                               textAlign: TextAlign.center),
                           const SizedBox(height: 12),
-                          Text('سجل دخولك لبدء التجربة الأسطورية',
+                          const Text('سجل دخولك لبدء التجربة الأسطورية',
                               style: TextStyle(
                                   fontSize: 16,
                                   color: VirooColors.textSecondary,
@@ -184,7 +183,7 @@ class _LoginScreenState extends State<LoginScreen> {
             child: GlassContainer(
                 padding: const EdgeInsets.all(30),
                 borderRadius: BorderRadius.circular(30),
-                child: Icon(Icons.lock_person_rounded,
+                child: const Icon(Icons.lock_person_rounded,
                     size: 80, color: VirooColors.primary)),
           ),
         );
@@ -207,7 +206,7 @@ class _LoginScreenState extends State<LoginScreen> {
           hintStyle: TextStyle(
               color: VirooColors.textSecondary.withOpacity(0.5),
               fontFamily: 'Cairo'),
-          prefixIcon: Icon(Icons.phone_android, color: VirooColors.primary),
+          prefixIcon: const Icon(Icons.phone_android, color: VirooColors.primary),
           prefixText: '+20 ',
           prefixStyle:
               const TextStyle(color: Colors.white, fontFamily: 'Cairo'),
@@ -226,7 +225,7 @@ class _LoginScreenState extends State<LoginScreen> {
       children: [
         TextButton(
           onPressed: _sendOTP,
-          child: Text('إنشاء حساب جديد',
+          child: const Text('إنشاء حساب جديد',
               style: TextStyle(
                   color: VirooColors.textSecondary, fontFamily: 'Cairo')),
         ),
@@ -236,8 +235,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildTerms() {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 20, top: 20),
+    return const Padding(
+      padding: EdgeInsets.only(bottom: 20, top: 20),
       child: Text('بالتسجيل، أنت توافق على الشروط والأحكام وسياسة الخصوصية',
           style: TextStyle(
               fontSize: 12,

@@ -1,5 +1,4 @@
 // lib/main.dart
-import 'dart:ui';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,6 +16,8 @@ import 'presentation/screens/auth/login_screen.dart';
 import 'features/home/presentation/screens/home_screen.dart';
 import 'features/cart/presentation/screens/cart_screen.dart';
 import 'features/ads/presentation/screens/ad_marketplace_screen.dart';
+import 'features/favorites/presentation/screens/favorites_screen.dart';
+import 'features/reviews/presentation/screens/reviews_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -70,6 +71,7 @@ class MyApp extends StatelessWidget {
         '/home': (context) => const HomeScreen(),
         '/cart': (context) => const CartScreen(),
         '/ad-marketplace': (context) => const AdMarketplaceScreen(),
+        '/favorites': (context) => const FavoritesScreen(),
       },
       home: const SplashScreen(),
     );
@@ -231,7 +233,7 @@ class _SplashScreenState extends State<SplashScreen>
                           ),
                         ],
                       ),
-                      child: Stack(
+                      child: const Stack(
                         alignment: Alignment.center,
                         children: [
                           Icon(Icons.shopping_bag_outlined,
@@ -281,7 +283,7 @@ class _SplashScreenState extends State<SplashScreen>
                   const SizedBox(height: 60),
                   FadeTransition(
                     opacity: _fadeAnimation,
-                    child: SizedBox(
+                    child: const SizedBox(
                         width: 40,
                         height: 40,
                         child: CircularProgressIndicator(
