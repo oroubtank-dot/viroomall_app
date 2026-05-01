@@ -18,6 +18,7 @@ import 'features/cart/presentation/screens/cart_screen.dart';
 import 'features/ads/presentation/screens/ad_marketplace_screen.dart';
 import 'features/favorites/presentation/screens/favorites_screen.dart';
 import 'features/reviews/presentation/screens/reviews_screen.dart';
+import 'features/admin/presentation/screens/add_product_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -72,6 +73,7 @@ class MyApp extends StatelessWidget {
         '/cart': (context) => const CartScreen(),
         '/ad-marketplace': (context) => const AdMarketplaceScreen(),
         '/favorites': (context) => const FavoritesScreen(),
+        '/add-product': (context) => const AddProductScreen(),
       },
       home: const SplashScreen(),
     );

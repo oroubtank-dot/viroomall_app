@@ -8,12 +8,7 @@ import '../theme/app_colors.dart';
 import '../models/product_model.dart';
 
 /// =============================================
-/// 🛒 CartNotification - إشعار زجاجي أنيق
-/// =============================================
-///
-/// يظهر من الأعلى مع Slide Animation
-/// يحتوي على صورة المنتج + اسمه + زرار عرض السلة
-/// يختفي تلقائياً بعد 3 ثواني
+/// 🛒 CartNotification - إشعار زجاجي للسلة
 /// =============================================
 class CartNotification {
   static void show(BuildContext context, ProductModel product) {
@@ -132,7 +127,7 @@ class _CartNotificationWidgetState extends State<_CartNotificationWidget>
                 ),
                 child: Row(
                   children: [
-                    // 📱 صورة المنتج مصغرة
+                    // 📱 صورة المنتج
                     Container(
                       width: 50,
                       height: 50,
@@ -164,7 +159,7 @@ class _CartNotificationWidgetState extends State<_CartNotificationWidget>
                     ),
                     const SizedBox(width: 12),
 
-                    // 📝 تفاصيل المنتج
+                    // 📝 معلومات المنتج
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -172,7 +167,7 @@ class _CartNotificationWidgetState extends State<_CartNotificationWidget>
                         children: [
                           Row(
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.check_circle_rounded,
                                 color: VirooColors.success,
                                 size: 16,
@@ -287,6 +282,217 @@ class _CartNotificationWidgetState extends State<_CartNotificationWidget>
                     ),
                   ],
                 ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// =============================================
+/// ❤️ FavoriteNotification - إشعار زجاجي للمفضلة
+/// =============================================
+class FavoriteNotification {
+  static void show(
+      BuildContext context, ProductModel product, bool isFavorite) {
+    OverlayEntry? entry;
+
+    entry = OverlayEntry(
+      builder: (context) => _FavoriteNotificationWidget(
+        product: product,
+        isFavorite: isFavorite,
+        onClose: () => entry?.remove(),
+      ),
+    );
+
+    Overlay.of(context).insert(entry);
+
+    Timer(const Duration(seconds: 2), () {
+      entry?.remove();
+    });
+  }
+}
+
+class _FavoriteNotificationWidget extends StatefulWidget {
+  final ProductModel product;
+  final bool isFavorite;
+  final VoidCallback onClose;
+
+  const _FavoriteNotificationWidget({
+    required this.product,
+    required this.isFavorite,
+    required this.onClose,
+  });
+
+  @override
+  State<_FavoriteNotificationWidget> createState() =>
+      _FavoriteNotificationWidgetState();
+}
+
+class _FavoriteNotificationWidgetState
+    extends State<_FavoriteNotificationWidget>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _slideAnimation;
+  late Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 400),
+      vsync: this,
+    );
+
+    _slideAnimation = Tween<double>(begin: -1.0, end: 0.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
+    );
+
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
+    );
+
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final themeColor =
+        widget.isFavorite ? VirooColors.error : VirooColors.amberPrimary;
+
+    return Positioned(
+      top: MediaQuery.of(context).padding.top + 10,
+      left: 16,
+      right: 16,
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) {
+          return Transform.translate(
+            offset: Offset(0, _slideAnimation.value * 100),
+            child: Opacity(
+              opacity: _fadeAnimation.value,
+              child: child,
+            ),
+          );
+        },
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: VirooColors.surface.withAlpha(240),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: themeColor.withAlpha(100),
+                  width: 1.5,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: themeColor.withAlpha(50),
+                    blurRadius: 20,
+                    spreadRadius: 1,
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: themeColor.withAlpha(38),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Icon(
+                      widget.isFavorite
+                          ? Icons.favorite_rounded
+                          : Icons.favorite_border_rounded,
+                      color: themeColor,
+                      size: 26,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          widget.isFavorite
+                              ? '❤️ تمت الإضافة للمفضلة!'
+                              : '🗑️ تم الحذف من المفضلة',
+                          style: TextStyle(
+                            color: themeColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                            fontFamily: 'Cairo',
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          widget.product.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: VirooColors.textPrimary,
+                            fontSize: 12,
+                            fontFamily: 'Cairo',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (widget.isFavorite)
+                    GestureDetector(
+                      onTap: () {
+                        widget.onClose();
+                        Navigator.pushNamed(context, '/favorites');
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: themeColor.withAlpha(38),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Text(
+                          '❤️ عرض',
+                          style: TextStyle(
+                            color: VirooColors.error,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 11,
+                            fontFamily: 'Cairo',
+                          ),
+                        ),
+                      ),
+                    ),
+                  const SizedBox(width: 8),
+                  GestureDetector(
+                    onTap: widget.onClose,
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withAlpha(25),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.close_rounded,
+                        color: VirooColors.textSecondary,
+                        size: 14,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

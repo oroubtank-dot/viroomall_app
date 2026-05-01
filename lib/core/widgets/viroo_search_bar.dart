@@ -1,70 +1,82 @@
 // lib/core/widgets/viroo_search_bar.dart
+import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../theme/app_colors.dart';
-import '../theme/app_widgets.dart';
-import 'logo/vm_cart_icon.dart';
+import '../../features/search/presentation/providers/search_provider.dart';
 
-class VirooSearchBar extends StatelessWidget {
-  final VoidCallback? onTap;
-  final TextEditingController? controller;
+class VirooSearchBar extends ConsumerStatefulWidget {
+  const VirooSearchBar({super.key});
 
-  const VirooSearchBar({
-    super.key,
-    this.onTap,
-    this.controller,
-  });
+  @override
+  ConsumerState<VirooSearchBar> createState() => _VirooSearchBarState();
+}
+
+class _VirooSearchBarState extends ConsumerState<VirooSearchBar> {
+  final _controller = TextEditingController();
+  bool _isExpanded = false;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _performSearch() {
+    final query = _controller.text.trim();
+    if (query.isNotEmpty) {
+      ref.read(searchProvider.notifier).search(query);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: NeonBorderContainer(
-        borderColor: VirooColors.amberPrimary,
-        borderWidth: 2,
-        glowRadius: 15,
-        borderRadius: BorderRadius.circular(15),
-        child: GlassContainer(
-          borderRadius: BorderRadius.circular(15),
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 4),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          decoration: BoxDecoration(
+            color: VirooColors.glassDark,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: VirooColors.glassBorder, width: 1.5),
+          ),
           child: Row(
             children: [
-              // 🆕 أيقونة VM-Cart بدل البحث
-              const VMCartIcon(
-                size: 28,
-                withGlow: false,
+              IconButton(
+                icon: const Icon(Icons.search_rounded,
+                    color: VirooColors.amberPrimary, size: 24),
+                onPressed: _performSearch,
               ),
-              const SizedBox(width: 12),
               Expanded(
                 child: TextField(
-                  controller: controller,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontFamily: 'Cairo',
-                  ),
-                  decoration: InputDecoration(
-                    hintText: "بتدور على إيه في VirooMall؟",
+                  controller: _controller,
+                  style:
+                      const TextStyle(color: Colors.white, fontFamily: 'Cairo'),
+                  onSubmitted: (_) => _performSearch(),
+                  onChanged: (value) {
+                    if (value.length >= 2) {
+                      ref.read(searchProvider.notifier).search(value);
+                    }
+                  },
+                  decoration: const InputDecoration(
+                    hintText: 'ابحث عن منتج...',
                     hintStyle: TextStyle(
-                      color: VirooColors.warmWhite.withOpacity(0.5),
-                      fontSize: 14,
-                      fontFamily: 'Cairo',
-                    ),
+                        color: VirooColors.textSecondary, fontFamily: 'Cairo'),
                     border: InputBorder.none,
                   ),
                 ),
               ),
-              // أيقونة المايك
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: VirooColors.amberPrimary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(20),
+              if (_controller.text.isNotEmpty)
+                IconButton(
+                  icon: const Icon(Icons.close_rounded,
+                      color: VirooColors.textSecondary, size: 20),
+                  onPressed: () {
+                    _controller.clear();
+                    ref.read(searchProvider.notifier).clearSearch();
+                  },
                 ),
-                child: const Icon(
-                  Icons.mic_rounded,
-                  color: VirooColors.amberPrimary,
-                  size: 20,
-                ),
-              ),
             ],
           ),
         ),
