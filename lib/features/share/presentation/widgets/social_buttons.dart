@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/theme/app_colors.dart';
+import 'package:share_plus/share_plus.dart';
 
 class SocialButtons extends StatelessWidget {
   final String shareText;

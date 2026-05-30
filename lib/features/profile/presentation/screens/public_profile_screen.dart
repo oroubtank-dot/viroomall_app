@@ -5,8 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_widgets.dart';
 import '../../../../core/widgets/viroo_background.dart';
-import '../../../product/presentation/widgets/product_card.dart';
-import '../../../product/data/models/product_model.dart';
+import '../../../../features/home/presentation/widgets/product_card.dart';
+import '../../../../core/models/product_model.dart';
 import '../widgets/public_profile_view.dart';
 
 class PublicProfileScreen extends ConsumerStatefulWidget {
@@ -15,7 +15,8 @@ class PublicProfileScreen extends ConsumerStatefulWidget {
   const PublicProfileScreen({super.key, required this.userId});
 
   @override
-  ConsumerState<PublicProfileScreen> createState() => _PublicProfileScreenState();
+  ConsumerState<PublicProfileScreen> createState() =>
+      _PublicProfileScreenState();
 }
 
 class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
@@ -31,7 +32,10 @@ class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
 
   Future<void> _loadProfile() async {
     try {
-      final userDoc = await FirebaseFirestore.instance.collection('users').doc(widget.userId).get();
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(widget.userId)
+          .get();
       if (userDoc.exists) {
         _userData = userDoc.data();
       }
@@ -44,7 +48,9 @@ class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
           .limit(20)
           .get();
 
-      _products = productsSnapshot.docs.map((doc) => ProductModel.fromFirestore(doc)).toList();
+      _products = productsSnapshot.docs
+          .map((doc) => ProductModel.fromFirestore(doc))
+          .toList();
     } catch (e) {
       // Error loading profile
     }
@@ -63,7 +69,10 @@ class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
         elevation: 0,
         title: Text(
           _userData?['name'] ?? 'الملف الشخصي',
-          style: const TextStyle(color: Colors.white, fontFamily: 'Cairo', fontWeight: FontWeight.bold),
+          style: const TextStyle(
+              color: Colors.white,
+              fontFamily: 'Cairo',
+              fontWeight: FontWeight.bold),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
@@ -74,7 +83,9 @@ class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
         showOrbs: true,
         themeColor: themeColor,
         child: _isLoading
-            ? const Center(child: CircularProgressIndicator(color: VirooColors.amberPrimary))
+            ? const Center(
+                child:
+                    CircularProgressIndicator(color: VirooColors.amberPrimary))
             : SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
                 padding: const EdgeInsets.all(20),
@@ -89,15 +100,23 @@ class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
                     ),
                     const SizedBox(height: 24),
                     const Text('📦 المنتجات',
-                        style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'Cairo')),
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Cairo')),
                     const SizedBox(height: 12),
                     if (_products.isEmpty)
-                      const EmptyState(icon: Icons.inventory_2_rounded, title: 'لا توجد منتجات', subtitle: 'هذا البائع لم يضف أي منتجات بعد')
+                      const EmptyState(
+                          icon: Icons.inventory_2_rounded,
+                          title: 'لا توجد منتجات',
+                          subtitle: 'هذا البائع لم يضف أي منتجات بعد')
                     else
                       GridView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           childAspectRatio: 0.72,
                           crossAxisSpacing: 12,
@@ -106,10 +125,11 @@ class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
                         itemCount: _products.length,
                         itemBuilder: (context, index) {
                           final product = _products[index];
-                          return ProductCard(
+                          return VirooProductCard(
                             product: product,
                             onTap: () {
-                              Navigator.pushNamed(context, '/product', arguments: product.id);
+                              Navigator.pushNamed(context, '/product',
+                                  arguments: product.id);
                             },
                           );
                         },

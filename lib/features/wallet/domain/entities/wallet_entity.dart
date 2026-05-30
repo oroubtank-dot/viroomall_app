@@ -15,5 +15,5 @@ class WalletEntity {
     this.totalSpent = 0.0,
   });
 
-  bool get canAfford => (amount) => balance >= amount;
+  bool canAfford(double amount) => balance >= amount;
 }

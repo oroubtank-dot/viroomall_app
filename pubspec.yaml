@@ -60,6 +60,8 @@ dependencies:
   # Code Generation
   freezed_annotation: ^2.4.1
   json_annotation: ^4.8.1
+  flutter_launcher_icons: ^0.14.4
+  flutter_native_splash: ^2.4.7
 
 dev_dependencies:
   flutter_test:
@@ -89,3 +91,17 @@ flutter:
         - asset: assets/fonts/Orbitron-Regular.ttf
         - asset: assets/fonts/Orbitron-Bold.ttf
           weight: 700
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icons/logo.png"
+  adaptive_icon_background: "#0D0221"
+  adaptive_icon_foreground: "assets/icons/logo.png"
+
+flutter_native_splash:
+  color: "#0D0221"
+  image: assets/icons/logo.png
+  android: true
+  ios: true
+  web: false

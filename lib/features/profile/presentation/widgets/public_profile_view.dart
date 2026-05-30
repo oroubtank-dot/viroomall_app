@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_widgets.dart';
-import 'profile_share_button.dart';
 
 class PublicProfileView extends StatelessWidget {
   final String name;
@@ -32,26 +31,72 @@ class PublicProfileView extends StatelessWidget {
             height: 90,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: const LinearGradient(colors: [VirooColors.amberPrimary, VirooColors.amberLight]),
-              boxShadow: [BoxShadow(color: VirooColors.amberPrimary.withAlpha(76), blurRadius: 25, spreadRadius: 3)],
+              gradient: const LinearGradient(
+                  colors: [VirooColors.amberPrimary, VirooColors.amberLight]),
+              boxShadow: [
+                BoxShadow(
+                    color: VirooColors.amberPrimary.withAlpha(76),
+                    blurRadius: 25,
+                    spreadRadius: 3)
+              ],
             ),
-            child: const Center(child: Icon(Icons.person_rounded, color: Colors.white, size: 45)),
+            child: const Center(
+                child:
+                    Icon(Icons.person_rounded, color: Colors.white, size: 45)),
           ),
           const SizedBox(height: 14),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(name, style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold, fontFamily: 'Cairo')),
+              Text(name,
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Cairo')),
               if (isVerified) ...[
                 const SizedBox(width: 8),
-                const Icon(Icons.verified_rounded, color: VirooColors.success, size: 22),
+                const Icon(Icons.verified_rounded,
+                    color: VirooColors.success, size: 22),
               ],
             ],
           ),
           const SizedBox(height: 4),
-          Text('📦 $productsCount منتج', style: const TextStyle(color: VirooColors.textSecondary, fontSize: 14, fontFamily: 'Cairo')),
+          Text('📦 $productsCount منتج',
+              style: const TextStyle(
+                  color: VirooColors.textSecondary,
+                  fontSize: 14,
+                  fontFamily: 'Cairo')),
           const SizedBox(height: 16),
-          ProfileShareButton(userId: userId, sellerName: name),
+          // زر مشاركة البروفيل
+          GestureDetector(
+            onTap: () {
+              // TODO: Share profile
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              decoration: BoxDecoration(
+                color: VirooColors.amberPrimary.withAlpha(38),
+                borderRadius: BorderRadius.circular(12),
+                border:
+                    Border.all(color: VirooColors.amberPrimary.withAlpha(76)),
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.share_rounded,
+                      color: VirooColors.amberPrimary, size: 18),
+                  SizedBox(width: 8),
+                  Text('مشاركة البروفيل',
+                      style: TextStyle(
+                          color: VirooColors.amberPrimary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                          fontFamily: 'Cairo')),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
