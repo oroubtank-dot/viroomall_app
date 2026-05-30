@@ -19,6 +19,8 @@ import '../../../admin/presentation/screens/add_product_screen.dart';
 import '../../../../features/ads/presentation/widgets/ads_slider.dart';
 import '../../../../features/ads/presentation/screens/ad_marketplace_screen.dart';
 import '../../../favorites/presentation/screens/favorites_screen.dart';
+import '../../../search/presentation/providers/search_provider.dart';
+import '../widgets/product_card.dart';
 
 class HomeContent extends ConsumerWidget {
   const HomeContent({super.key});
@@ -42,6 +44,7 @@ class HomeContent extends ConsumerWidget {
                 padding: EdgeInsets.all(20),
                 child: VirooSearchBar(),
               ),
+              _buildSearchResults(),
               const VirooAdsSlider(),
               const SizedBox(height: 8),
               Padding(
@@ -82,7 +85,7 @@ class HomeContent extends ConsumerWidget {
         children: [
           ShaderMask(
             shaderCallback: (bounds) => LinearGradient(
-              colors: [themeColor, themeColor.withOpacity(0.7)],
+              colors: [themeColor, themeColor.withAlpha(179)],
             ).createShader(bounds),
             child: const Text(
               'VirooMall',
@@ -96,7 +99,6 @@ class HomeContent extends ConsumerWidget {
             ),
           ),
           const Spacer(),
-          // ⚙️ بوابة الإعدادات السحرية
           SettingsPortalButton(
             onSettingsTap: () {
               final homeState =
@@ -107,6 +109,62 @@ class HomeContent extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildSearchResults() {
+    return Consumer(
+      builder: (context, ref, child) {
+        final results = ref.watch(searchProvider);
+        if (results.isEmpty) return const SizedBox.shrink();
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 8),
+              Text(
+                '🔍 نتائج البحث (${results.length})',
+                style: const TextStyle(
+                  color: VirooColors.textPrimary,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  fontFamily: 'Cairo',
+                ),
+              ),
+              const SizedBox(height: 10),
+              SizedBox(
+                height: 200,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: results.length > 10 ? 10 : results.length,
+                  itemBuilder: (context, index) {
+                    final product = results[index];
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 12),
+                      child: SizedBox(
+                        width: 150,
+                        child: VirooProductCard(
+                          product: product,
+                          onTap: () {
+                            Navigator.pushNamed(
+                              context,
+                              '/product',
+                              arguments: product.id,
+                            );
+                          },
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
@@ -159,10 +217,10 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
   void initState() {
     super.initState();
     _screens = [
-      const HomeContent(), // 0: الرئيسية
-      const FavoritesScreen(), // 1: المفضلة
-      const CartScreen(), // 2: السلة
-      const ProfileScreen(), // 3: البروفايل
+      const HomeContent(),
+      const FavoritesScreen(),
+      const CartScreen(),
+      const ProfileScreen(),
     ];
   }
 
@@ -237,7 +295,6 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
             selectedIndex: _currentIndex,
             onTap: (index) {
               if (index == -1) {
-                // ⭐ الزرار الأوسط (إضافة منتج)
                 _checkAuthAndNavigate(context, _navigateToAddProduct);
                 return;
               }
@@ -260,145 +317,130 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ),
       ),
-      settingsPanel: Container(
-        decoration: BoxDecoration(
-          color: VirooColors.surface,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(30),
-            bottomLeft: Radius.circular(30),
-          ),
-          border: Border.all(
-            color: VirooColors.glassBorder,
-            width: 1,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: VirooColors.amberPrimary.withOpacity(0.3),
-              blurRadius: 30,
-              offset: const Offset(-10, 0),
+      settingsPanel: SingleChildScrollView(
+        child: Container(
+          decoration: BoxDecoration(
+            color: VirooColors.surface,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(30),
+              bottomLeft: Radius.circular(30),
             ),
-          ],
-        ),
-        child: Column(
-          children: [
-            const SizedBox(height: 60),
-            Row(
-              children: [
-                const SizedBox(width: 20),
-                GestureDetector(
-                  onTap: closeSettings,
-                  child: const Icon(
-                    Icons.close_rounded,
-                    color: VirooColors.textSecondary,
-                    size: 28,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                const Text(
-                  '⚙️ الإعدادات',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: VirooColors.textPrimary,
-                    fontFamily: 'Cairo',
-                  ),
-                ),
-              ],
+            border: Border.all(
+              color: VirooColors.glassBorder,
+              width: 1,
             ),
-            const SizedBox(height: 30),
-            _buildSettingsItem(Icons.person_outline, 'الملف الشخصي', () {}),
-            _buildSettingsItem(
-                Icons.notifications_outlined, 'الإشعارات', () {}),
-            _buildSettingsItem(Icons.lock_outline, 'الخصوصية والأمان', () {}),
-            _buildSettingsItem(Icons.palette_outlined, 'تخصيص المظهر', () {}),
-            _buildSettingsItem(Icons.language, 'اللغة', () {}),
-            _buildSettingsItem(
-              Icons.campaign_rounded,
-              '🏦 سوق الإعلانات',
-              () {
+            boxShadow: [
+              BoxShadow(
+                color: VirooColors.amberPrimary.withAlpha(76),
+                blurRadius: 30,
+                offset: const Offset(-10, 0),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 60),
+              Row(
+                children: [
+                  const SizedBox(width: 20),
+                  GestureDetector(
+                    onTap: closeSettings,
+                    child: const Icon(
+                      Icons.close_rounded,
+                      color: VirooColors.textSecondary,
+                      size: 28,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  const Text(
+                    '⚙️ الإعدادات',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: VirooColors.textPrimary,
+                      fontFamily: 'Cairo',
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 30),
+              _buildSettingsItem(Icons.person_outline, 'الملف الشخصي', () {
                 closeSettings();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const AdMarketplaceScreen(),
-                  ),
-                );
-              },
-            ),
-            const SizedBox(height: 8),
-            const Spacer(),
-            _buildSettingsItem(
-              Icons.logout_rounded,
-              'تسجيل الخروج',
-              () async {
-                final confirm = await showDialog<bool>(
-                  context: context,
-                  builder: (ctx) => AlertDialog(
-                    backgroundColor: VirooColors.surface,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      side: const BorderSide(
-                        color: VirooColors.glassBorder,
-                        width: 1,
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => const ProfileScreen()));
+              }),
+              _buildSettingsItem(
+                  Icons.notifications_outlined, 'الإشعارات', () {}),
+              _buildSettingsItem(Icons.lock_outline, 'الخصوصية والأمان', () {}),
+              _buildSettingsItem(Icons.palette_outlined, 'تخصيص المظهر', () {}),
+              _buildSettingsItem(Icons.language, 'اللغة', () {}),
+              _buildSettingsItem(
+                Icons.campaign_rounded,
+                '🏦 سوق الإعلانات',
+                () {
+                  closeSettings();
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const AdMarketplaceScreen()));
+                },
+              ),
+              const SizedBox(height: 8),
+              _buildSettingsItem(
+                Icons.logout_rounded,
+                'تسجيل الخروج',
+                () async {
+                  final confirm = await showDialog<bool>(
+                    context: context,
+                    builder: (ctx) => AlertDialog(
+                      backgroundColor: VirooColors.surface,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        side: const BorderSide(
+                            color: VirooColors.glassBorder, width: 1),
                       ),
-                    ),
-                    title: const Text(
-                      'تسجيل الخروج',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontFamily: 'Cairo',
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    content: const Text(
-                      'هل أنت متأكد أنك تريد تسجيل الخروج؟',
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontFamily: 'Cairo',
-                      ),
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(ctx, false),
-                        child: const Text(
-                          'إلغاء',
+                      title: const Text('تسجيل الخروج',
                           style: TextStyle(
-                            color: VirooColors.textSecondary,
-                            fontFamily: 'Cairo',
-                          ),
-                        ),
-                      ),
-                      ElevatedButton(
-                        onPressed: () => Navigator.pop(ctx, true),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: VirooColors.error,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: const Text(
-                          'خروج',
+                              color: Colors.white,
+                              fontFamily: 'Cairo',
+                              fontWeight: FontWeight.bold)),
+                      content: const Text('هل أنت متأكد أنك تريد تسجيل الخروج؟',
                           style: TextStyle(
-                            color: Colors.white,
-                            fontFamily: 'Cairo',
-                          ),
+                              color: Colors.white70, fontFamily: 'Cairo')),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(ctx, false),
+                          child: const Text('إلغاء',
+                              style: TextStyle(
+                                  color: VirooColors.textSecondary,
+                                  fontFamily: 'Cairo')),
                         ),
-                      ),
-                    ],
-                  ),
-                );
-
-                if (confirm == true) {
-                  await AuthService.signOut();
-                  if (context.mounted) {
-                    Navigator.pushReplacementNamed(context, '/');
+                        ElevatedButton(
+                          onPressed: () => Navigator.pop(ctx, true),
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: VirooColors.error,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12))),
+                          child: const Text('خروج',
+                              style: TextStyle(
+                                  color: Colors.white, fontFamily: 'Cairo')),
+                        ),
+                      ],
+                    ),
+                  );
+                  if (confirm == true) {
+                    await AuthService.signOut();
+                    if (context.mounted) {
+                      Navigator.pushReplacementNamed(context, '/');
+                    }
                   }
-                }
-              },
-              isLogout: true,
-            ),
-            const SizedBox(height: 40),
-          ],
+                },
+                isLogout: true,
+              ),
+              const SizedBox(height: 40),
+            ],
+          ),
         ),
       ),
     );
@@ -407,24 +449,24 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
   Widget _buildSettingsItem(IconData icon, String title, VoidCallback onTap,
       {bool isLogout = false}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
       child: GestureDetector(
         onTap: onTap,
         child: GlassContainer(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(14),
           borderRadius: BorderRadius.circular(12),
           child: Row(
             children: [
               Icon(
                 icon,
                 color: isLogout ? VirooColors.error : VirooColors.amberPrimary,
-                size: 22,
+                size: 20,
               ),
               const SizedBox(width: 12),
               Text(
                 title,
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: isLogout ? VirooColors.error : VirooColors.textPrimary,
                   fontFamily: 'Cairo',
@@ -434,9 +476,9 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
               Icon(
                 Icons.arrow_forward_ios_rounded,
                 color: isLogout
-                    ? VirooColors.error.withOpacity(0.5)
+                    ? VirooColors.error.withAlpha(127)
                     : VirooColors.textSecondary,
-                size: 16,
+                size: 14,
               ),
             ],
           ),

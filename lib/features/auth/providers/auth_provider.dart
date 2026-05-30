@@ -1,24 +1,40 @@
-// lib/presentation/screens/auth/providers/auth_provider.dart
-import 'package:firebase_auth/firebase_auth.dart';
+// lib/features/auth/providers/auth_provider.dart
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/services/auth_service.dart';
+import '../data/datasources/auth_remote_datasource.dart';
+import '../data/repositories/auth_repository_impl.dart';
+import '../domain/entities/user_entity.dart';
+import '../domain/repositories/auth_repository.dart';
+import '../domain/usecases/send_otp_usecase.dart';
+import '../domain/usecases/verify_otp_usecase.dart';
+import '../domain/usecases/logout_usecase.dart';
 
-final authStateChangesProvider = StreamProvider<User?>((ref) {
-  return AuthService.authStateChanges;
+final authRemoteDataSourceProvider = Provider<AuthRemoteDataSource>((ref) {
+  return AuthRemoteDataSource();
 });
 
-final currentUserProvider = Provider<User?>((ref) {
-  return AuthService.currentUser;
+final authRepositoryProvider = Provider<AuthRepository>((ref) {
+  final remoteDataSource = ref.watch(authRemoteDataSourceProvider);
+  final firestore = FirebaseFirestore.instance;
+  return AuthRepositoryImpl(remoteDataSource, firestore);
 });
 
-final isLoggedInProvider = Provider<bool>((ref) {
-  return AuthService.currentUser != null;
+final sendOTPUseCaseProvider = Provider<SendOTPUseCase>((ref) {
+  return SendOTPUseCase(ref.watch(authRepositoryProvider));
 });
 
-final authServiceProvider = Provider<AuthService>((ref) {
-  return AuthService();
+final verifyOTPUseCaseProvider = Provider<VerifyOTPUseCase>((ref) {
+  return VerifyOTPUseCase(ref.watch(authRepositoryProvider));
 });
 
-final signOutProvider = FutureProvider.autoDispose<void>((ref) async {
-  await AuthService.signOut();
+final logoutUseCaseProvider = Provider<LogoutUseCase>((ref) {
+  return LogoutUseCase(ref.watch(authRepositoryProvider));
+});
+
+final currentUserProvider = Provider<UserEntity?>((ref) {
+  return ref.watch(authRepositoryProvider).getCurrentUser();
+});
+
+final authStateChangesProvider = StreamProvider<UserEntity?>((ref) {
+  return ref.watch(authRepositoryProvider).authStateChanges;
 });

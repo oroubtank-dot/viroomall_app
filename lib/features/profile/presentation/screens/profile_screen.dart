@@ -12,6 +12,7 @@ import '../widgets/profile_share_button.dart';
 import '../widgets/seller_stats_widget.dart';
 import '../widgets/buyer_stats_widget.dart';
 import '../widgets/profile_menu_section.dart';
+import '../widgets/profile_share_button.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -101,7 +102,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               ProfileHeader(user: user, themeColor: themeColor),
               const SizedBox(height: 24),
               if (user.isSeller) ...[
-                ProfileShareButton(themeColor: themeColor, onTap: () {}),
                 const SizedBox(height: 24),
               ],
               if (user.isSeller && sellerStats != null)
