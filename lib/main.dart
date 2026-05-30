@@ -11,14 +11,13 @@ import 'core/widgets/viroo_background.dart';
 import 'core/services/storage_service.dart';
 import 'core/services/auth_service.dart';
 import 'core/services/notification_service.dart';
-import 'features/auth/login_screen.dart';
-import 'features/onboarding/onboarding_screen.dart';
+import 'presentation/screens/onboarding/onboarding_screen.dart';
+import 'presentation/screens/auth/login_screen.dart';
 import 'features/home/presentation/screens/home_screen.dart';
 import 'features/cart/presentation/screens/cart_screen.dart';
 import 'features/ads/presentation/screens/ad_marketplace_screen.dart';
 import 'features/favorites/presentation/screens/favorites_screen.dart';
 import 'features/reviews/presentation/screens/reviews_screen.dart';
-import 'features/admin/presentation/screens/add_product_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -73,7 +72,6 @@ class MyApp extends StatelessWidget {
         '/cart': (context) => const CartScreen(),
         '/ad-marketplace': (context) => const AdMarketplaceScreen(),
         '/favorites': (context) => const FavoritesScreen(),
-        '/add-product': (context) => const AddProductScreen(),
       },
       home: const SplashScreen(),
     );
@@ -214,22 +212,22 @@ class _SplashScreenState extends State<SplashScreen>
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: VirooColors.primary
-                            .withAlpha((25.5 * _glowAnimation.value).toInt()),
+                            .withOpacity(0.1 * _glowAnimation.value),
                         border: Border.all(
-                          color: VirooColors.primary.withAlpha(
-                              (127 + (127 * _glowAnimation.value)).toInt()),
+                          color: VirooColors.primary
+                              .withOpacity(0.5 + (0.5 * _glowAnimation.value)),
                           width: 3,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: VirooColors.primary.withAlpha(
-                                (127 * _glowAnimation.value).toInt()),
+                            color: VirooColors.primary
+                                .withOpacity(0.5 * _glowAnimation.value),
                             blurRadius: 40,
                             spreadRadius: 10,
                           ),
                           BoxShadow(
                             color: VirooColors.primary
-                                .withAlpha((76 * _glowAnimation.value).toInt()),
+                                .withOpacity(0.3 * _glowAnimation.value),
                             blurRadius: 80,
                             spreadRadius: 20,
                           ),
@@ -263,7 +261,7 @@ class _SplashScreenState extends State<SplashScreen>
                               color: Colors.white,
                               shadows: [
                                 Shadow(
-                                    color: VirooColors.primary.withAlpha(179),
+                                    color: VirooColors.primary.withOpacity(0.7),
                                     blurRadius: 30)
                               ])),
                     ),
@@ -278,7 +276,7 @@ class _SplashScreenState extends State<SplashScreen>
                           style: TextStyle(
                               fontSize: 16,
                               fontFamily: 'Orbitron',
-                              color: VirooColors.primary.withAlpha(204),
+                              color: VirooColors.primary.withOpacity(0.8),
                               letterSpacing: 8)),
                     ),
                   ),
