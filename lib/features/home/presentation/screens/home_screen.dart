@@ -19,6 +19,10 @@ import '../../../admin/presentation/screens/add_product_screen.dart';
 import '../../../../features/ads/presentation/widgets/ads_slider.dart';
 import '../../../../features/ads/presentation/screens/ad_marketplace_screen.dart';
 import '../../../favorites/presentation/screens/favorites_screen.dart';
+import '../../../tasawok/presentation/widgets/tasawok_product_card.dart';
+import '../../../gomla/presentation/widgets/gomla_product_card.dart';
+import '../../../mosta3mal/presentation/widgets/mosta3mal_product_card.dart';
+import '../../../farz/presentation/widgets/farz_product_card.dart';
 
 class HomeContent extends ConsumerWidget {
   const HomeContent({super.key});

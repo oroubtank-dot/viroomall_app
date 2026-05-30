@@ -1,5 +1,5 @@
 Folder PATH listing for volume jop
-Volume serial number is 0000009A CE64:B7E0
+Volume serial number is 0000008C CE64:B7E0
 D:\PROJECTS\VIROOMALL_APP\LIB
 |   firebase_options.dart
 |   main.dart
@@ -9,25 +9,14 @@ D:\PROJECTS\VIROOMALL_APP\LIB
 |   |       market_type.dart
 |   |       pricing_config.dart
 |   |       
-|   +---data
-|   |   \---services
-|   |           secure_storage_service.dart
-|   |           storage_service.dart
-|   |           
-|   +---errors
-|   |       exceptions.dart
-|   |       failures.dart
-|   |       
 |   +---models
+|   |       order_model.dart
 |   |       product_model.dart
 |   |       
-|   +---network
-|   |       dio_client.dart
-|   |       
-|   +---providers
 |   +---services
 |   |   |   auth_service.dart
 |   |   |   notification_service.dart
+|   |   |   product_service.dart
 |   |   |   storage_service.dart
 |   |   |   
 |   |   \---orders
@@ -37,10 +26,6 @@ D:\PROJECTS\VIROOMALL_APP\LIB
 |   |       app_colors.dart
 |   |       app_theme.dart
 |   |       app_widgets.dart
-|   |       
-|   +---utils
-|   |       extensions.dart
-|   |       validators.dart
 |   |       
 |   \---widgets
 |       |   cart_notification.dart
@@ -77,6 +62,11 @@ D:\PROJECTS\VIROOMALL_APP\LIB
 |   |   |       ads_repository.dart
 |   |   |       ads_service.dart
 |   |   |       
+|   |   +---domain
+|   |   |   \---models
+|   |   |           ad_model.dart
+|   |   |           ad_subscription_model.dart
+|   |   |           
 |   |   \---presentation
 |   |       +---providers
 |   |       |       ads_provider.dart
@@ -91,10 +81,6 @@ D:\PROJECTS\VIROOMALL_APP\LIB
 |   |   |   login_screen.dart
 |   |   |   otp_screen.dart
 |   |   |   
-|   |   +---data
-|   |   |   \---models
-|   |   |           user_model.dart
-|   |   |           
 |   |   +---providers
 |   |   |       auth_provider.dart
 |   |   |       
@@ -127,12 +113,12 @@ D:\PROJECTS\VIROOMALL_APP\LIB
 |   |       |       
 |   |       \---widgets
 |   |               favorite_button.dart
-|   |               favorite_icon_button.dart
 |   |               
 |   +---home
 |   |   \---presentation
 |   |       +---providers
 |   |       |       home_provider.dart
+|   |       |       product_provider.dart
 |   |       |       
 |   |       +---screens
 |   |       |       home_screen.dart
@@ -168,16 +154,19 @@ D:\PROJECTS\VIROOMALL_APP\LIB
 |   |       |       seller_orders_screen.dart
 |   |       |       
 |   |       \---widgets
+|   |               rating_dialog.dart
+|   |               
 |   +---product
-|   |   +---data
-|   |   |   \---models
-|   |   |           product_model.dart
-|   |   |           
 |   |   \---presentation
 |   |       +---screens
 |   |       |       product_details_screen.dart
 |   |       |       
 |   |       \---widgets
+|   |           |   product_description_section.dart
+|   |           |   product_image_section.dart
+|   |           |   product_info_section.dart
+|   |           |   seller_info_card.dart
+|   |           |   
 |   |           \---product_details
 |   |                   outlet_section.dart
 |   |                   product_image_gallery.dart
@@ -189,7 +178,6 @@ D:\PROJECTS\VIROOMALL_APP\LIB
 |   |                   
 |   +---profile
 |   |   +---data
-|   |   |   \---models
 |   |   +---domain
 |   |   |   +---models
 |   |   |   |       buyer_stats.dart
@@ -267,6 +255,9 @@ D:\PROJECTS\VIROOMALL_APP\LIB
 |       |       
 |       +---domain
 |       |   \---models
+|       |           transaction_model.dart
+|       |           wallet_model.dart
+|       |           
 |       \---presentation
 |           +---providers
 |           |       wallet_provider.dart
@@ -279,8 +270,20 @@ D:\PROJECTS\VIROOMALL_APP\LIB
 |                   balance_card.dart
 |                   transaction_card.dart
 |                   
-\---l10n
-        10n.dart
-        app_ar.arb
-        app_en.arb
-        
++---l10n
+|       app_ar.arb
+|       app_en.arb
+|       
+\---presentation
+    \---screens
+        +---auth
+        |   |   login_screen.dart
+        |   |   otp_screen.dart
+        |   |   
+        |   \---widgets
+        |           biometric_toggle.dart
+        |           login_bottom_sheet.dart
+        |           
+        \---onboarding
+                onboarding_screen.dart
+                
