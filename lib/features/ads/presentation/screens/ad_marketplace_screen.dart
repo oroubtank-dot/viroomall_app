@@ -5,9 +5,6 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_widgets.dart';
 import '../../../../core/widgets/viroo_background.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/services/auth_service.dart';
-import '../../../wallet/presentation/providers/wallet_provider.dart';
-import '../../../wallet/data/wallet_service.dart';
 
 class AdMarketplaceScreen extends ConsumerStatefulWidget {
   const AdMarketplaceScreen({super.key});
@@ -479,36 +476,12 @@ class _AdMarketplaceScreenState extends ConsumerState<AdMarketplaceScreen> {
                       fontFamily: 'Cairo')),
               const SizedBox(height: 20),
               GlowingButton(
-                onPressed: () async {
+                onPressed: () {
                   Navigator.pop(ctx);
-                  // خصم من المحفظة
-                  final user = AuthService.currentUser;
-                  if (user != null) {
-                    final walletService = ref.read(walletServiceProvider);
-                    final success = await walletService.deduct(
-                      user.uid,
-                      bidAmount,
-                      'مزايدة على الصفحة $pageNumber',
-                    );
-                    if (success && context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                              '✅ تم تقديم عرضك وخصم المبلغ من محفظتك!',
-                              style: TextStyle(fontFamily: 'Cairo')),
-                          backgroundColor: VirooColors.success,
-                        ),
-                      );
-                    } else if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('❌ رصيدك غير كافٍ. اشحن محفظتك أولاً',
-                              style: TextStyle(fontFamily: 'Cairo')),
-                          backgroundColor: VirooColors.error,
-                        ),
-                      );
-                    }
-                  }
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('✅ تم تقديم عرضك بنجاح!',
+                          style: TextStyle(fontFamily: 'Cairo')),
+                      backgroundColor: VirooColors.success));
                 },
                 text: '✅ تأكيد المزايدة بـ ${bidAmount.toInt()} ج',
                 backgroundColor: VirooColors.error,
@@ -569,35 +542,12 @@ class _AdMarketplaceScreenState extends ConsumerState<AdMarketplaceScreen> {
               ]),
               const SizedBox(height: 20),
               GlowingButton(
-                onPressed: () async {
+                onPressed: () {
                   Navigator.pop(ctx);
-                  final price = tier == 2 ? 150.0 : 100.0;
-                  final user = AuthService.currentUser;
-                  if (user != null) {
-                    final walletService = ref.read(walletServiceProvider);
-                    final success = await walletService.deduct(
-                      user.uid,
-                      price,
-                      'حجز إعلان - ${tier == 2 ? "الصفحات 6-10" : "الصفحات 11-20"}',
-                    );
-                    if (success && context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('✅ تم الحجز وخصم المبلغ من محفظتك!',
-                              style: TextStyle(fontFamily: 'Cairo')),
-                          backgroundColor: VirooColors.success,
-                        ),
-                      );
-                    } else if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('❌ رصيدك غير كافٍ. اشحن محفظتك أولاً',
-                              style: TextStyle(fontFamily: 'Cairo')),
-                          backgroundColor: VirooColors.error,
-                        ),
-                      );
-                    }
-                  }
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('✅ تم الحجز بنجاح!',
+                          style: TextStyle(fontFamily: 'Cairo')),
+                      backgroundColor: VirooColors.success));
                 },
                 text: '✅ تأكيد الحجز',
                 backgroundColor: VirooColors.warning,

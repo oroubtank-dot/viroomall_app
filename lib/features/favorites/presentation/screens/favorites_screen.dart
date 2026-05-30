@@ -7,8 +7,8 @@ import '../../../../core/theme/app_widgets.dart';
 import '../../../../core/widgets/viroo_background.dart';
 import '../../../../core/models/product_model.dart';
 import '../../../home/presentation/widgets/product_card.dart';
+import '../../domain/models/favorite_model.dart';
 import '../providers/favorites_provider.dart';
-import '../widgets/favorite_icon_button.dart';
 
 class FavoritesScreen extends ConsumerWidget {
   const FavoritesScreen({super.key});
@@ -36,56 +36,6 @@ class FavoritesScreen extends ConsumerWidget {
           icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
-        actions: favorites.isNotEmpty
-            ? [
-                IconButton(
-                  icon: const Icon(Icons.delete_outline_rounded,
-                      color: VirooColors.error),
-                  onPressed: () async {
-                    final confirm = await showDialog<bool>(
-                      context: context,
-                      builder: (ctx) => AlertDialog(
-                        backgroundColor: VirooColors.surface,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          side: const BorderSide(
-                              color: VirooColors.glassBorder, width: 1),
-                        ),
-                        title: const Text('🗑️ تفريغ المفضلة',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontFamily: 'Cairo',
-                                fontWeight: FontWeight.bold)),
-                        content: const Text(
-                            'هل تريد حذف جميع المنتجات من المفضلة؟',
-                            style: TextStyle(
-                                color: Colors.white70, fontFamily: 'Cairo')),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(ctx, false),
-                            child: const Text('إلغاء',
-                                style: TextStyle(
-                                    color: VirooColors.textSecondary,
-                                    fontFamily: 'Cairo')),
-                          ),
-                          ElevatedButton(
-                            onPressed: () => Navigator.pop(ctx, true),
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: VirooColors.error),
-                            child: const Text('حذف الكل',
-                                style: TextStyle(
-                                    color: Colors.white, fontFamily: 'Cairo')),
-                          ),
-                        ],
-                      ),
-                    );
-                    if (confirm == true) {
-                      ref.read(favoritesProvider.notifier).clearFavorites();
-                    }
-                  },
-                ),
-              ]
-            : null,
       ),
       body: VirooBackground(
         showOrbs: true,
@@ -108,28 +58,15 @@ class FavoritesScreen extends ConsumerWidget {
                 itemCount: favorites.length,
                 itemBuilder: (context, index) {
                   final product = favorites[index];
-                  return Stack(
-                    children: [
-                      VirooProductCard(
-                        product: product,
-                        onTap: () {
-                          Navigator.pushNamed(
-                            context,
-                            '/product',
-                            arguments: product.id,
-                          );
-                        },
-                      ),
-                      // ❤️ زرار الحذف من المفضلة
-                      Positioned(
-                        top: 8,
-                        right: 8,
-                        child: FavoriteIconButton(
-                          product: product,
-                          size: 34,
-                        ),
-                      ),
-                    ],
+                  return VirooProductCard(
+                    product: product,
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        '/product',
+                        arguments: product.id,
+                      );
+                    },
                   );
                 },
               ),

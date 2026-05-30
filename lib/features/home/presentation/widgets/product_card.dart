@@ -6,9 +6,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/models/product_model.dart';
-import '../../../../core/widgets/cart_notification.dart';
 import '../../../cart/presentation/providers/cart_provider.dart';
-import '../../../favorites/presentation/widgets/favorite_icon_button.dart';
+import '../../../../core/widgets/cart_notification.dart';
 
 class VirooProductCard extends ConsumerWidget {
   final ProductModel product;
@@ -34,7 +33,7 @@ class VirooProductCard extends ConsumerWidget {
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: themeColor.withAlpha(38),
+              color: themeColor.withOpacity(0.15),
               blurRadius: 15,
               spreadRadius: -2,
             ),
@@ -53,8 +52,8 @@ class VirooProductCard extends ConsumerWidget {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    Colors.white.withAlpha(20),
-                    Colors.white.withAlpha(5),
+                    Colors.white.withOpacity(0.08),
+                    Colors.white.withOpacity(0.02),
                   ],
                 ),
               ),
@@ -82,7 +81,7 @@ class VirooProductCard extends ConsumerWidget {
         Container(
           width: double.infinity,
           decoration: BoxDecoration(
-            color: themeColor.withAlpha(12),
+            color: themeColor.withOpacity(0.05),
             borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
           ),
           child: product.images.isNotEmpty
@@ -99,16 +98,16 @@ class VirooProductCard extends ConsumerWidget {
                 )
               : _buildPlaceholder(themeColor),
         ),
-        // 🏷️ شارة الوضع
         Positioned(
           top: 8,
           right: 8,
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: themeColor.withAlpha(217),
+              color: themeColor.withOpacity(0.85),
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.white.withAlpha(51), width: 0.5),
+              border:
+                  Border.all(color: Colors.white.withOpacity(0.2), width: 0.5),
             ),
             child: Text(modeLabel,
                 style: const TextStyle(
@@ -118,20 +117,13 @@ class VirooProductCard extends ConsumerWidget {
                     fontFamily: 'Cairo')),
           ),
         ),
-        // ❤️ زرار المفضلة
         Positioned(
           top: 8,
-          left: 8,
-          child: FavoriteIconButton(product: product, size: 34),
-        ),
-        // 👁️ عداد المشاهدات
-        Positioned(
-          top: 46,
           left: 8,
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
             decoration: BoxDecoration(
-                color: Colors.black.withAlpha(127),
+                color: Colors.black.withOpacity(0.5),
                 borderRadius: BorderRadius.circular(6)),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -148,7 +140,6 @@ class VirooProductCard extends ConsumerWidget {
             ),
           ),
         ),
-        // 🏷️ نسبة الخصم
         if (product.discountPercentage != null)
           Positioned(
             bottom: 8,
@@ -156,7 +147,7 @@ class VirooProductCard extends ConsumerWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
               decoration: BoxDecoration(
-                  color: VirooColors.error.withAlpha(217),
+                  color: VirooColors.error.withOpacity(0.85),
                   borderRadius: BorderRadius.circular(6)),
               child: Text('-${product.discountPercentage}%',
                   style: const TextStyle(
@@ -208,6 +199,15 @@ class VirooProductCard extends ConsumerWidget {
               HapticFeedback.lightImpact();
               if (isInCart) {
                 cartNotifier.removeFromCart(product.id);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('🗑️ تم حذف "${product.title}" من السلة',
+                        style: const TextStyle(fontFamily: 'Cairo')),
+                    backgroundColor: VirooColors.error,
+                    duration: const Duration(seconds: 1),
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
               } else {
                 cartNotifier.addToCart(product);
                 CartNotification.show(context, product);
@@ -217,13 +217,13 @@ class VirooProductCard extends ConsumerWidget {
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
                 color: isInCart
-                    ? VirooColors.error.withAlpha(51)
-                    : themeColor.withAlpha(38),
+                    ? VirooColors.error.withOpacity(0.2)
+                    : themeColor.withOpacity(0.15),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
                     color: isInCart
-                        ? VirooColors.error.withAlpha(102)
-                        : themeColor.withAlpha(76),
+                        ? VirooColors.error.withOpacity(0.4)
+                        : themeColor.withOpacity(0.3),
                     width: 1),
               ),
               child: Icon(
@@ -242,7 +242,7 @@ class VirooProductCard extends ConsumerWidget {
   Widget _buildPlaceholder(Color themeColor) {
     return Center(
         child: Icon(Icons.image_rounded,
-            color: themeColor.withAlpha(76), size: 40));
+            color: themeColor.withOpacity(0.3), size: 40));
   }
 
   Color _getModeColor(String productType) {
@@ -269,7 +269,7 @@ class VirooProductCard extends ConsumerWidget {
       case 'used':
         return '♻️ مستعمل';
       case 'outlet':
-        return '🔥 فرز إنتاج وتصفية';
+        return '🔥 فرز إنتاج';
       default:
         return '🛍️ تسوق';
     }

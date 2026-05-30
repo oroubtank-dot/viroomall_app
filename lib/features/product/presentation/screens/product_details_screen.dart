@@ -6,11 +6,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_widgets.dart';
 import '../../../../core/widgets/viroo_background.dart';
-import '../../../../core/widgets/cart_notification.dart';
 import '../../../../core/models/product_model.dart';
 import '../../../cart/presentation/providers/cart_provider.dart';
 import '../../../home/presentation/providers/home_provider.dart';
-import '../../../favorites/presentation/widgets/favorite_icon_button.dart';
 import '../widgets/product_details/product_image_gallery.dart';
 import '../widgets/product_details/product_video_section.dart';
 import '../widgets/product_details/product_info_section.dart';
@@ -18,7 +16,7 @@ import '../widgets/product_details/seller_contact_section.dart';
 import '../widgets/product_details/wholesale_section.dart';
 import '../widgets/product_details/used_condition_section.dart';
 import '../widgets/product_details/outlet_section.dart';
-import '../../../reviews/presentation/screens/reviews_screen.dart';
+import '../../../../core/widgets/cart_notification.dart';
 
 class ProductDetailsScreen extends ConsumerStatefulWidget {
   final String productId;
@@ -122,12 +120,6 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
           overflow: TextOverflow.ellipsis,
         ),
         actions: [
-          // ❤️ زرار المفضلة
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: FavoriteIconButton(product: product, size: 40),
-          ),
-          // 🛒 زرار السلة
           IconButton(
             icon: Icon(
               isInCart
@@ -142,6 +134,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
               } else {
                 cartNotifier.addToCart(product);
                 CartNotification.show(context, product);
+                return;
               }
             },
           ),
@@ -155,21 +148,31 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // 📱 معرض الصور
               ProductImageGallery(images: product.images),
               const SizedBox(height: 16),
+
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // 📝 معلومات المنتج
                     ProductInfoSection(product: product),
                     const SizedBox(height: 16),
+
+                    // 🎬 فيديو المنتج
                     ProductVideoSection(videoBase64: product.videoUrl),
                     const SizedBox(height: 16),
 
+                    // 🏪 قسم الجملة
                     if (product.productType == 'wholesale') ...[
-                      WholesaleSection(price: product.price, minQuantity: 10),
+                      WholesaleSection(
+                        price: product.price,
+                        minQuantity: 10,
+                      ),
                       const SizedBox(height: 10),
+                      // عداد كمية الجملة
                       GlassContainer(
                         padding: const EdgeInsets.all(16),
                         borderRadius: BorderRadius.circular(16),
@@ -233,6 +236,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                       const SizedBox(height: 16),
                     ],
 
+                    // ♻️ قسم المستعمل
                     if (product.productType == 'used') ...[
                       UsedConditionSection(
                         condition: product.condition,
@@ -240,6 +244,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                         negotiable: true,
                       ),
                       const SizedBox(height: 10),
+                      // قسم التفاوض
                       if (_isNegotiating)
                         GlassContainer(
                           padding: const EdgeInsets.all(16),
@@ -314,6 +319,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                       const SizedBox(height: 16),
                     ],
 
+                    // 🔥 قسم الفرز
                     if (product.productType == 'outlet') ...[
                       OutletSection(
                         originalPrice:
@@ -325,44 +331,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                       const SizedBox(height: 16),
                     ],
 
-                    // ⭐ زرار التقييمات
-                    GestureDetector(
-                      onTap: () {
-                        HapticFeedback.lightImpact();
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ReviewsScreen(
-                              productId: product.id,
-                              productTitle: product.title,
-                            ),
-                          ),
-                        );
-                      },
-                      child: GlassContainer(
-                        padding: const EdgeInsets.all(14),
-                        borderRadius: BorderRadius.circular(16),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.star_rounded,
-                                color: Color(0xFFFFB800), size: 22),
-                            const SizedBox(width: 10),
-                            const Expanded(
-                              child: Text('⭐ التقييمات والمراجعات',
-                                  style: TextStyle(
-                                      color: VirooColors.textPrimary,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
-                                      fontFamily: 'Cairo')),
-                            ),
-                            const Icon(Icons.arrow_forward_ios_rounded,
-                                color: VirooColors.textSecondary, size: 14),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
+                    // 👤 معلومات البائع والتواصل
                     SellerContactSection(
                       sellerName: 'بائع VirooMall',
                       sellerPhone: '+201001234567',
@@ -371,6 +340,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                     ),
                     const SizedBox(height: 20),
 
+                    // 🛒 زرار إضافة للسلة
                     GlowingButton(
                       onPressed: () {
                         HapticFeedback.mediumImpact();
@@ -378,7 +348,6 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                           cartNotifier.removeFromCart(product.id);
                         } else {
                           cartNotifier.addToCart(product);
-                          CartNotification.show(context, product);
                         }
                       },
                       text: isInCart ? '🗑️ حذف من السلة' : '🛒 أضف للسلة',

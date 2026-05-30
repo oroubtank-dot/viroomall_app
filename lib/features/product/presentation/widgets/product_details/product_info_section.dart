@@ -82,7 +82,7 @@ class ProductInfoSection extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
-                product.modeIcon,
+                product.modeLabel,
                 style: TextStyle(
                   color: product.modeColor,
                   fontSize: 12,

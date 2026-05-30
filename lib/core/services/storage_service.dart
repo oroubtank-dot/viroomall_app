@@ -17,11 +17,6 @@ class StorageService {
   static const String _isDarkModeKey = 'is_dark_mode';
   static const String _languageKey = 'language';
   static const String _biometricEnabledKey = 'biometric_enabled';
-  static const String _sellerActivatedKey = 'seller_activated';
-  static const String _walletBalanceKey = 'wallet_balance';
-  static const String _firstHomeVisitKey = 'first_home_visit';
-  static const String _sellerVerifiedKey = 'seller_verified';
-  static const String _sellerVerifiedBadgeKey = 'seller_badge';
 
   // =============================================
   // Singleton Pattern
@@ -39,11 +34,13 @@ class StorageService {
   // Onboarding Methods
   // =============================================
 
+  /// حفظ إن المستخدم شاف الـ Onboarding
   static Future<void> setOnboardingSeen() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_onboardingSeenKey, true);
   }
 
+  /// التأكد هل شاف الـ Onboarding قبل كده ولا لأ
   static Future<bool> isOnboardingSeen() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool(_onboardingSeenKey) ?? false;
@@ -53,11 +50,13 @@ class StorageService {
   // Biometric Methods
   // =============================================
 
+  /// حفظ حالة تفعيل البصمة
   static Future<void> setBiometricEnabled(bool enabled) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_biometricEnabledKey, enabled);
   }
 
+  /// التحقق من حالة تفعيل البصمة
   static Future<bool> isBiometricEnabled() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool(_biometricEnabledKey) ?? false;
@@ -67,6 +66,7 @@ class StorageService {
   // Authentication Methods
   // =============================================
 
+  /// حفظ حالة تسجيل الدخول
   static Future<void> setLoggedIn({
     required String userId,
     required String phone,
@@ -81,11 +81,13 @@ class StorageService {
     }
   }
 
+  /// التحقق من حالة تسجيل الدخول
   static Future<bool> isLoggedIn() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool(_isLoggedInKey) ?? false;
   }
 
+  /// الحصول على بيانات المستخدم
   static Future<Map<String, String?>> getUserData() async {
     final prefs = await SharedPreferences.getInstance();
     return {
@@ -95,102 +97,54 @@ class StorageService {
     };
   }
 
+  /// تسجيل الخروج
   static Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_isLoggedInKey, false);
     await prefs.remove(_userIdKey);
     await prefs.remove(_userPhoneKey);
     await prefs.remove(_userNameKey);
+    // البصمة تفضل مفعلة
   }
 
   // =============================================
   // App Settings Methods
   // =============================================
 
+  /// حفظ وضع التصفح المختار
   static Future<void> setSelectedMode(String mode) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_selectedModeKey, mode);
   }
 
+  /// الحصول على وضع التصفح المختار
   static Future<String> getSelectedMode() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(_selectedModeKey) ?? 'shopping';
   }
 
+  /// حفظ حالة الوضع الليلي
   static Future<void> setDarkMode(bool isDark) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_isDarkModeKey, isDark);
   }
 
+  /// الحصول على حالة الوضع الليلي
   static Future<bool> isDarkMode() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool(_isDarkModeKey) ?? true;
   }
 
+  /// حفظ اللغة المختارة
   static Future<void> setLanguage(String language) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_languageKey, language);
   }
 
+  /// الحصول على اللغة المختارة
   static Future<String> getLanguage() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(_languageKey) ?? 'ar';
-  }
-
-  // =============================================
-  // Seller Activation Methods
-  // =============================================
-
-  static Future<void> setSellerActivated(bool activated) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_sellerActivatedKey, activated);
-  }
-
-  static Future<bool> isSellerActivated() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(_sellerActivatedKey) ?? false;
-  }
-
-  // =============================================
-  // First Home Visit (بانر تفعيل البائع)
-  // =============================================
-
-  static Future<void> setFirstHomeVisitDone() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_firstHomeVisitKey, true);
-  }
-
-  static Future<bool> isFirstHomeVisit() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(_firstHomeVisitKey) ?? true;
-  }
-
-  // =============================================
-  // Wallet Methods
-  // =============================================
-
-  static Future<void> setWalletBalance(double balance) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setDouble(_walletBalanceKey, balance);
-  }
-
-  static Future<double> getWalletBalance() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getDouble(_walletBalanceKey) ?? 0.0;
-  }
-
-  // =============================================
-  // Seller Verification Methods
-  // =============================================
-
-  static Future<void> setSellerVerified(bool verified) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_sellerVerifiedKey, verified);
-  }
-
-  static Future<bool> isSellerVerified() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(_sellerVerifiedKey) ?? false;
   }
 
   // =============================================

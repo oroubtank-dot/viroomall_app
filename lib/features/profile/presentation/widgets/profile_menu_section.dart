@@ -8,10 +8,10 @@ import '../../domain/models/seller_stats.dart';
 import '../../domain/models/buyer_stats.dart';
 import '../screens/my_products_screen.dart';
 import '../screens/seller_dashboard_screen.dart';
-import '../screens/points_screen.dart';
-import '../screens/my_orders_screen.dart';
 import '../../../wallet/presentation/screens/wallet_screen.dart';
 import '../../../favorites/presentation/screens/favorites_screen.dart';
+import '../screens/points_screen.dart';
+import '../screens/my_orders_screen.dart';
 
 class ProfileMenuSection extends StatelessWidget {
   final UserModel user;

@@ -52,6 +52,7 @@ class ProductModel {
     this.ratingCount = 0,
   });
 
+  /// تحويل من Firestore Document لـ ProductModel
   factory ProductModel.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     return ProductModel(
@@ -79,6 +80,7 @@ class ProductModel {
     );
   }
 
+  /// تحويل من ProductModel لـ Map (للحفظ في Firestore)
   Map<String, dynamic> toFirestore() {
     return {
       'sellerId': sellerId,
@@ -104,6 +106,7 @@ class ProductModel {
     };
   }
 
+  /// نسخة من المنتج مع تعديل بعض الحقول
   ProductModel copyWith({
     String? id,
     String? sellerId,
@@ -152,6 +155,7 @@ class ProductModel {
     );
   }
 
+  /// الحصول على لون المنتج حسب نوعه
   Color get modeColor {
     switch (productType) {
       case 'new':
@@ -167,6 +171,7 @@ class ProductModel {
     }
   }
 
+  /// الحصول على أيقونة المنتج حسب نوعه
   String get modeIcon {
     switch (productType) {
       case 'new':
@@ -182,37 +187,23 @@ class ProductModel {
     }
   }
 
-  /// اسم الوضع بالعربي أو الإنجليزي
-  String modeLabel(String lang) {
-    if (lang == 'ar') {
-      switch (productType) {
-        case 'new':
-          return '🛍️ تسوق';
-        case 'wholesale':
-          return '🏪 جملة';
-        case 'used':
-          return '♻️ مستعمل';
-        case 'outlet':
-          return '🔥 فرز إنتاج بأسعار مخفضة';
-        default:
-          return '🛍️ تسوق';
-      }
-    } else {
-      switch (productType) {
-        case 'new':
-          return '🛍️ Shopping';
-        case 'wholesale':
-          return '🏪 Wholesale';
-        case 'used':
-          return '♻️ Used';
-        case 'outlet':
-          return '🔥 Factory Outlet';
-        default:
-          return '🛍️ Shopping';
-      }
+  /// الحصول على اسم الوضع بالعربي
+  String get modeLabel {
+    switch (productType) {
+      case 'new':
+        return '🛍️ تسوق';
+      case 'wholesale':
+        return '🏪 جملة';
+      case 'used':
+        return '♻️ مستعمل';
+      case 'outlet':
+        return '🔥 فرز إنتاج وتصفية';
+      default:
+        return '🛍️ تسوق';
     }
   }
 
+  /// حساب نسبة الخصم
   int? get discountPercentage {
     if (originalPrice != null && originalPrice! > price) {
       return ((originalPrice! - price) / originalPrice! * 100).round();
@@ -220,6 +211,7 @@ class ProductModel {
     return null;
   }
 
+  /// منتج وهمي للتجربة
   static ProductModel mock() {
     return ProductModel(
       id: 'mock_${DateTime.now().millisecondsSinceEpoch}',

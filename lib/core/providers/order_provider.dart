@@ -54,12 +54,12 @@ class OrderActions {
   Future<void> acceptOrder(
       String orderId, String buyerId, String productName) async {
     await _firestore.collection('orders').doc(orderId).update({
-      'status': OrderStatus.confirmed.name,
+      'status': OrderStatus.accepted.name,
       'updatedAt': Timestamp.now(),
     });
 
     // إشعار للمشتري
-    VirooNotificationService.notifyBuyerOrderConfirmed(productName);
+    VirooNotificationService.notifyBuyerOrderAccepted(productName);
   }
 
   // =============================================
@@ -73,7 +73,7 @@ class OrderActions {
     });
 
     // إشعار فوري للمشتري: "البائع سلم الطلب، طمنا؟"
-    VirooNotificationService.notifyBuyerOrderConfirmed(productName);
+    VirooNotificationService.notifyBuyerOrderAccepted(productName);
   }
 
   // =============================================
