@@ -9,7 +9,7 @@ import '../../../../core/services/auth_service.dart';
 import '../../../cart/presentation/screens/cart_screen.dart';
 import '../../../profile/presentation/screens/profile_screen.dart';
 import '../../../../presentation/screens/auth/widgets/login_bottom_sheet.dart';
-import '../providers/home_provider.dart';
+import '../../../tasawok/presentation/widgets/tasawok_mode_color.dart';
 import '../widgets/mode_selector.dart';
 import '../widgets/hot_sales_banner.dart';
 import '../widgets/featured_products_section.dart';
@@ -19,19 +19,14 @@ import '../../../admin/presentation/screens/add_product_screen.dart';
 import '../../../../features/ads/presentation/widgets/ads_slider.dart';
 import '../../../../features/ads/presentation/screens/ad_marketplace_screen.dart';
 import '../../../favorites/presentation/screens/favorites_screen.dart';
-import '../../../tasawok/presentation/widgets/tasawok_product_card.dart';
-import '../../../gomla/presentation/widgets/gomla_product_card.dart';
-import '../../../mosta3mal/presentation/widgets/mosta3mal_product_card.dart';
-import '../../../farz/presentation/widgets/farz_product_card.dart';
+import '../providers/home_provider.dart';
 
 class HomeContent extends ConsumerWidget {
   const HomeContent({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedMode = ref.watch(shopModeProvider);
-    final modes = ref.watch(shopModesProvider);
-    final themeColor = ref.watch(modeColorProvider);
+    final themeColor = TasawokModeColor.primary;
 
     return VirooBackground(
       showOrbs: true,
@@ -65,9 +60,9 @@ class HomeContent extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 4),
-              ModeSelector(
-                modes: modes,
-                selectedMode: selectedMode,
+              const ModeSelector(
+                modes: [],
+                selectedMode: ShopMode.shopping,
               ),
               const HotSalesBanner(),
               const FeaturedProductsSection(),
@@ -86,7 +81,7 @@ class HomeContent extends ConsumerWidget {
         children: [
           ShaderMask(
             shaderCallback: (bounds) => LinearGradient(
-              colors: [themeColor, themeColor.withOpacity(0.7)],
+              colors: [themeColor, themeColor.withAlpha(179)],
             ).createShader(bounds),
             child: const Text(
               'VirooMall',
@@ -100,7 +95,6 @@ class HomeContent extends ConsumerWidget {
             ),
           ),
           const Spacer(),
-          // ⚙️ بوابة الإعدادات السحرية
           SettingsPortalButton(
             onSettingsTap: () {
               final homeState =
@@ -127,21 +121,12 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
   late final List<Widget> _screens;
   bool isSettingsOpen = false;
 
-  void openSettings() {
-    setState(() => isSettingsOpen = true);
-  }
-
-  void closeSettings() {
-    setState(() => isSettingsOpen = false);
-  }
+  void openSettings() => setState(() => isSettingsOpen = true);
+  void closeSettings() => setState(() => isSettingsOpen = false);
 
   void _navigateToAddProduct() {
     Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const AddProductScreen(),
-      ),
-    );
+        context, MaterialPageRoute(builder: (_) => const AddProductScreen()));
   }
 
   void _checkAuthAndNavigate(BuildContext context, VoidCallback action) {
@@ -152,9 +137,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
         context: context,
         backgroundColor: Colors.transparent,
         isScrollControlled: true,
-        builder: (context) => LoginBottomSheet(
-          onLoginSuccess: action,
-        ),
+        builder: (_) => LoginBottomSheet(onLoginSuccess: action),
       );
     }
   }
@@ -163,10 +146,10 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
   void initState() {
     super.initState();
     _screens = [
-      const HomeContent(), // 0: الرئيسية
-      const FavoritesScreen(), // 1: المفضلة
-      const CartScreen(), // 2: السلة
-      const ProfileScreen(), // 3: البروفايل
+      const HomeContent(),
+      const FavoritesScreen(),
+      const CartScreen(),
+      const ProfileScreen(),
     ];
   }
 
@@ -183,52 +166,33 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
           }
           final confirm = await showDialog<bool>(
             context: context,
-            builder: (context) => AlertDialog(
+            builder: (ctx) => AlertDialog(
               backgroundColor: VirooColors.surface,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              title: const Text(
-                'خروج',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontFamily: 'Cairo',
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              content: const Text(
-                'هل تريد الخروج من التطبيق؟',
-                style: TextStyle(
-                  color: Colors.white70,
-                  fontFamily: 'Cairo',
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context, false),
-                  child: const Text(
-                    'إلغاء',
-                    style: TextStyle(
-                      color: VirooColors.textSecondary,
-                      fontFamily: 'Cairo',
-                    ),
-                  ),
-                ),
-                ElevatedButton(
-                  onPressed: () => Navigator.pop(context, true),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: VirooColors.error,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: const Text(
-                    'خروج',
-                    style: TextStyle(
+                  borderRadius: BorderRadius.circular(20)),
+              title: const Text('خروج',
+                  style: TextStyle(
                       color: Colors.white,
                       fontFamily: 'Cairo',
-                    ),
-                  ),
+                      fontWeight: FontWeight.bold)),
+              content: const Text('هل تريد الخروج من التطبيق؟',
+                  style: TextStyle(color: Colors.white70, fontFamily: 'Cairo')),
+              actions: [
+                TextButton(
+                    onPressed: () => Navigator.pop(ctx, false),
+                    child: const Text('إلغاء',
+                        style: TextStyle(
+                            color: VirooColors.textSecondary,
+                            fontFamily: 'Cairo'))),
+                ElevatedButton(
+                  onPressed: () => Navigator.pop(ctx, true),
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: VirooColors.error,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12))),
+                  child: const Text('خروج',
+                      style:
+                          TextStyle(color: Colors.white, fontFamily: 'Cairo')),
                 ),
               ],
             ),
@@ -241,24 +205,20 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
             selectedIndex: _currentIndex,
             onTap: (index) {
               if (index == -1) {
-                // ⭐ الزرار الأوسط (إضافة منتج)
                 _checkAuthAndNavigate(context, _navigateToAddProduct);
                 return;
               }
               if (index == 0) {
                 setState(() => _currentIndex = index);
               } else if (index == 1) {
-                _checkAuthAndNavigate(context, () {
-                  setState(() => _currentIndex = index);
-                });
+                _checkAuthAndNavigate(
+                    context, () => setState(() => _currentIndex = index));
               } else if (index == 2) {
-                _checkAuthAndNavigate(context, () {
-                  setState(() => _currentIndex = index);
-                });
+                _checkAuthAndNavigate(
+                    context, () => setState(() => _currentIndex = index));
               } else if (index == 3) {
-                _checkAuthAndNavigate(context, () {
-                  setState(() => _currentIndex = index);
-                });
+                _checkAuthAndNavigate(
+                    context, () => setState(() => _currentIndex = index));
               }
             },
           ),
@@ -268,47 +228,32 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
         decoration: BoxDecoration(
           color: VirooColors.surface,
           borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(30),
-            bottomLeft: Radius.circular(30),
-          ),
-          border: Border.all(
-            color: VirooColors.glassBorder,
-            width: 1,
-          ),
+              topLeft: Radius.circular(30), bottomLeft: Radius.circular(30)),
+          border: Border.all(color: VirooColors.glassBorder, width: 1),
           boxShadow: [
             BoxShadow(
-              color: VirooColors.amberPrimary.withOpacity(0.3),
-              blurRadius: 30,
-              offset: const Offset(-10, 0),
-            ),
+                color: VirooColors.amberPrimary.withAlpha(76),
+                blurRadius: 30,
+                offset: const Offset(-10, 0))
           ],
         ),
         child: Column(
           children: [
             const SizedBox(height: 60),
-            Row(
-              children: [
-                const SizedBox(width: 20),
-                GestureDetector(
+            Row(children: [
+              const SizedBox(width: 20),
+              GestureDetector(
                   onTap: closeSettings,
-                  child: const Icon(
-                    Icons.close_rounded,
-                    color: VirooColors.textSecondary,
-                    size: 28,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                const Text(
-                  '⚙️ الإعدادات',
+                  child: const Icon(Icons.close_rounded,
+                      color: VirooColors.textSecondary, size: 28)),
+              const SizedBox(width: 16),
+              const Text('⚙️ الإعدادات',
                   style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: VirooColors.textPrimary,
-                    fontFamily: 'Cairo',
-                  ),
-                ),
-              ],
-            ),
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: VirooColors.textPrimary,
+                      fontFamily: 'Cairo')),
+            ]),
             const SizedBox(height: 30),
             _buildSettingsItem(Icons.person_outline, 'الملف الشخصي', () {}),
             _buildSettingsItem(
@@ -316,91 +261,58 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
             _buildSettingsItem(Icons.lock_outline, 'الخصوصية والأمان', () {}),
             _buildSettingsItem(Icons.palette_outlined, 'تخصيص المظهر', () {}),
             _buildSettingsItem(Icons.language, 'اللغة', () {}),
-            _buildSettingsItem(
-              Icons.campaign_rounded,
-              '🏦 سوق الإعلانات',
-              () {
-                closeSettings();
-                Navigator.push(
+            _buildSettingsItem(Icons.campaign_rounded, '🏦 سوق الإعلانات', () {
+              closeSettings();
+              Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const AdMarketplaceScreen(),
-                  ),
-                );
-              },
-            ),
+                      builder: (_) => const AdMarketplaceScreen()));
+            }),
             const SizedBox(height: 8),
             const Spacer(),
-            _buildSettingsItem(
-              Icons.logout_rounded,
-              'تسجيل الخروج',
-              () async {
-                final confirm = await showDialog<bool>(
-                  context: context,
-                  builder: (ctx) => AlertDialog(
-                    backgroundColor: VirooColors.surface,
-                    shape: RoundedRectangleBorder(
+            _buildSettingsItem(Icons.logout_rounded, 'تسجيل الخروج', () async {
+              final confirm = await showDialog<bool>(
+                context: context,
+                builder: (ctx) => AlertDialog(
+                  backgroundColor: VirooColors.surface,
+                  shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                       side: const BorderSide(
-                        color: VirooColors.glassBorder,
-                        width: 1,
-                      ),
-                    ),
-                    title: const Text(
-                      'تسجيل الخروج',
+                          color: VirooColors.glassBorder, width: 1)),
+                  title: const Text('تسجيل الخروج',
                       style: TextStyle(
-                        color: Colors.white,
-                        fontFamily: 'Cairo',
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    content: const Text(
-                      'هل أنت متأكد أنك تريد تسجيل الخروج؟',
+                          color: Colors.white,
+                          fontFamily: 'Cairo',
+                          fontWeight: FontWeight.bold)),
+                  content: const Text('هل أنت متأكد أنك تريد تسجيل الخروج؟',
                       style: TextStyle(
-                        color: Colors.white70,
-                        fontFamily: 'Cairo',
-                      ),
-                    ),
-                    actions: [
-                      TextButton(
+                          color: Colors.white70, fontFamily: 'Cairo')),
+                  actions: [
+                    TextButton(
                         onPressed: () => Navigator.pop(ctx, false),
-                        child: const Text(
-                          'إلغاء',
-                          style: TextStyle(
-                            color: VirooColors.textSecondary,
-                            fontFamily: 'Cairo',
-                          ),
-                        ),
-                      ),
-                      ElevatedButton(
+                        child: const Text('إلغاء',
+                            style: TextStyle(
+                                color: VirooColors.textSecondary,
+                                fontFamily: 'Cairo'))),
+                    ElevatedButton(
                         onPressed: () => Navigator.pop(ctx, true),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: VirooColors.error,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: const Text(
-                          'خروج',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontFamily: 'Cairo',
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-
-                if (confirm == true) {
-                  await AuthService.signOut();
-                  if (context.mounted) {
-                    Navigator.pushReplacementNamed(context, '/');
-                  }
+                            backgroundColor: VirooColors.error,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12))),
+                        child: const Text('خروج',
+                            style: TextStyle(
+                                color: Colors.white, fontFamily: 'Cairo'))),
+                  ],
+                ),
+              );
+              if (confirm == true) {
+                await AuthService.signOut();
+                if (context.mounted) {
+                  Navigator.pushReplacementNamed(context, '/');
                 }
-              },
-              isLogout: true,
-            ),
+              }
+            }, isLogout: true),
             const SizedBox(height: 40),
           ],
         ),
@@ -417,33 +329,25 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
         child: GlassContainer(
           padding: const EdgeInsets.all(16),
           borderRadius: BorderRadius.circular(12),
-          child: Row(
-            children: [
-              Icon(
-                icon,
+          child: Row(children: [
+            Icon(icon,
                 color: isLogout ? VirooColors.error : VirooColors.amberPrimary,
-                size: 22,
-              ),
-              const SizedBox(width: 12),
-              Text(
-                title,
+                size: 22),
+            const SizedBox(width: 12),
+            Text(title,
                 style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: isLogout ? VirooColors.error : VirooColors.textPrimary,
-                  fontFamily: 'Cairo',
-                ),
-              ),
-              const Spacer(),
-              Icon(
-                Icons.arrow_forward_ios_rounded,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color:
+                        isLogout ? VirooColors.error : VirooColors.textPrimary,
+                    fontFamily: 'Cairo')),
+            const Spacer(),
+            Icon(Icons.arrow_forward_ios_rounded,
                 color: isLogout
-                    ? VirooColors.error.withOpacity(0.5)
+                    ? VirooColors.error.withAlpha(127)
                     : VirooColors.textSecondary,
-                size: 16,
-              ),
-            ],
-          ),
+                size: 16),
+          ]),
         ),
       ),
     );
