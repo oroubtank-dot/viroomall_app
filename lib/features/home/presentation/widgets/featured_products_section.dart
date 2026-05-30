@@ -5,7 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/models/product_model.dart';
 import '../providers/home_provider.dart';
-import 'product_card.dart';
+import '../../../tasawok/presentation/widgets/tasawok_product_card.dart';
+import '../../../gomla/presentation/widgets/gomla_product_card.dart';
+import '../../../mosta3mal/presentation/widgets/mosta3mal_product_card.dart';
+import '../../../farz/presentation/widgets/farz_product_card.dart';
 import 'loading_grid.dart';
 import 'empty_products.dart';
 
@@ -39,7 +42,7 @@ class FeaturedProductsSection extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: themeColor.withOpacity(0.15),
+                  color: themeColor.withAlpha(38),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
@@ -107,16 +110,38 @@ class FeaturedProductsSection extends ConsumerWidget {
                   itemCount: products.length > 4 ? 4 : products.length,
                   itemBuilder: (context, index) {
                     final product = ProductModel.fromFirestore(products[index]);
-                    return VirooProductCard(
-                      product: product,
-                      onTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          '/product',
-                          arguments: product.id,
+                    
+                    // اختيار الكارت حسب نوع المنتج
+                    switch (product.productType) {
+                      case 'wholesale':
+                        return GomlaProductCard(
+                          product: product,
+                          onTap: () {
+                            Navigator.pushNamed(context, '/product', arguments: product.id);
+                          },
                         );
-                      },
-                    );
+                      case 'used':
+                        return Mosta3malProductCard(
+                          product: product,
+                          onTap: () {
+                            Navigator.pushNamed(context, '/product', arguments: product.id);
+                          },
+                        );
+                      case 'outlet':
+                        return FarzProductCard(
+                          product: product,
+                          onTap: () {
+                            Navigator.pushNamed(context, '/product', arguments: product.id);
+                          },
+                        );
+                      default: // 'new' = تسوق
+                        return TasawokProductCard(
+                          product: product,
+                          onTap: () {
+                            Navigator.pushNamed(context, '/product', arguments: product.id);
+                          },
+                        );
+                    }
                   },
                 );
               },
