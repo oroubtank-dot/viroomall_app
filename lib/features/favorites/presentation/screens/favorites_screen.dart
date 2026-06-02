@@ -1,16 +1,11 @@
 // lib/features/favorites/presentation/screens/favorites_screen.dart
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_widgets.dart';
 import '../../../../core/widgets/viroo_background.dart';
 import '../../../../core/models/product_model.dart';
-import '../../../tasawok/presentation/widgets/tasawok_product_card.dart';
-import '../../../gomla/presentation/widgets/gomla_product_card.dart';
-import '../../../mosta3mal/presentation/widgets/mosta3mal_product_card.dart';
-import '../../../farz/presentation/widgets/farz_product_card.dart';
-import '../../domain/models/favorite_model.dart';
+import '../../../../features/home/presentation/widgets/product_card.dart';
 import '../providers/favorites_provider.dart';
 
 class FavoritesScreen extends ConsumerWidget {
@@ -19,7 +14,7 @@ class FavoritesScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final favorites = ref.watch(favoritesProvider);
-    final themeColor = VirooColors.shopping;
+    const themeColor = VirooColors.amberPrimary;
 
     return Scaffold(
       backgroundColor: VirooColors.background,
@@ -30,10 +25,11 @@ class FavoritesScreen extends ConsumerWidget {
         title: const Text(
           '❤️ المفضلة',
           style: TextStyle(
-              color: Colors.white,
-              fontFamily: 'Cairo',
-              fontWeight: FontWeight.bold,
-              fontSize: 20),
+            color: Colors.white,
+            fontFamily: 'Cairo',
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
@@ -61,28 +57,23 @@ class FavoritesScreen extends ConsumerWidget {
                 itemCount: favorites.length,
                 itemBuilder: (context, index) {
                   final product = favorites[index];
-                  switch (product.productType) {
-                    case 'wholesale':
-                      return GomlaProductCard(
-                        product: product,
-                        onTap: () => Navigator.pushNamed(context, '/product', arguments: product.id),
+                  return VirooProductCard(
+                    product: product,
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        '/product',
+                        arguments: product.id,
                       );
-                    case 'used':
-                      return Mosta3malProductCard(
-                        product: product,
-                        onTap: () => Navigator.pushNamed(context, '/product', arguments: product.id),
-                      );
-                    case 'outlet':
-                      return FarzProductCard(
-                        product: product,
-                        onTap: () => Navigator.pushNamed(context, '/product', arguments: product.id),
-                      );
-                    default:
-                      return TasawokProductCard(
-                        product: product,
-                        onTap: () => Navigator.pushNamed(context, '/product', arguments: product.id),
-                      );
-                  }
+                    },
+                    onFavoriteTap: () {
+                      // إزالة من المفضلة
+                      ref
+                          .read(favoritesProvider.notifier)
+                          .toggleFavorite(product);
+                    },
+                    isFavorite: true,
+                  );
                 },
               ),
       ),

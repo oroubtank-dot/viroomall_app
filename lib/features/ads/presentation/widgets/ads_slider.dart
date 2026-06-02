@@ -9,7 +9,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/cart_notification.dart';
 import '../../../../core/models/product_model.dart';
-import '../../../home/presentation/providers/home_provider.dart';
 
 class VirooAdsSlider extends ConsumerStatefulWidget {
   const VirooAdsSlider({super.key});
@@ -25,6 +24,9 @@ class _VirooAdsSliderState extends ConsumerState<VirooAdsSlider> {
   List<Map<String, dynamic>> _adsData = [];
   bool _isLoading = true;
 
+  // استخدام لون ثابت بدل TasawokModeColor
+  Color get _themeColor => VirooColors.amberPrimary;
+
   @override
   void initState() {
     super.initState();
@@ -34,9 +36,7 @@ class _VirooAdsSliderState extends ConsumerState<VirooAdsSlider> {
 
   Future<void> _loadAds() async {
     try {
-      final mode = ref.read(shopModeProvider);
-      final modeStr = mode.toString().split('.').last;
-
+      const modeStr = 'new';
       final snapshot = await FirebaseFirestore.instance
           .collection('ad_subscriptions')
           .where('mode', isEqualTo: modeStr)
@@ -96,7 +96,7 @@ class _VirooAdsSliderState extends ConsumerState<VirooAdsSlider> {
 
   @override
   Widget build(BuildContext context) {
-    final themeColor = ref.watch(modeColorProvider);
+    final themeColor = _themeColor;
 
     return Column(
       children: [
@@ -185,8 +185,7 @@ class _VirooAdsSliderState extends ConsumerState<VirooAdsSlider> {
                 decoration: BoxDecoration(
                   color: VirooColors.glassDark,
                   borderRadius: BorderRadius.circular(20),
-                  border:
-                      Border.all(color: themeColor.withAlpha(76), width: 1.5),
+                  border: Border.all(color: themeColor.withAlpha(76), width: 1.5),
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -282,8 +281,7 @@ class _VirooAdsSliderState extends ConsumerState<VirooAdsSlider> {
                 decoration: BoxDecoration(
                   color: VirooColors.glassDark,
                   borderRadius: BorderRadius.circular(20),
-                  border:
-                      Border.all(color: VirooColors.glassBorder, width: 1.5),
+                  border: Border.all(color: VirooColors.glassBorder, width: 1.5),
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -304,8 +302,7 @@ class _VirooAdsSliderState extends ConsumerState<VirooAdsSlider> {
                         decoration: BoxDecoration(
                           color: themeColor.withAlpha(25),
                           borderRadius: BorderRadius.circular(15),
-                          border: Border.all(
-                              color: themeColor.withAlpha(76), width: 1),
+                          border: Border.all(color: themeColor.withAlpha(76), width: 1),
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(15),
@@ -360,7 +357,6 @@ class _VirooAdsSliderState extends ConsumerState<VirooAdsSlider> {
                                 GestureDetector(
                                   onTap: () {
                                     HapticFeedback.lightImpact();
-                                    // إنشاء ProductModel مؤقت للإشعار
                                     final tempProduct = ProductModel(
                                       id: ad['productId'] ??
                                           'ad_${DateTime.now().millisecondsSinceEpoch}',

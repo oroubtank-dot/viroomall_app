@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_widgets.dart';
 import '../../../../core/widgets/viroo_background.dart';
-import '../../domain/models/order_model.dart';
-import '../../domain/enums/order_status.dart'; // 👈 أضفنا الإستيراد
+import '../../../../core/models/order_model.dart';
 import 'order_tracking_screen.dart';
 
 class OrdersListScreen extends StatelessWidget {
@@ -22,13 +21,23 @@ class OrdersListScreen extends StatelessWidget {
     ];
 
     return Scaffold(
+      backgroundColor: VirooColors.background,
       appBar: AppBar(
         title: Text(
           isSeller ? 'الطلبات الواردة' : 'طلباتي',
-          style:
-              const TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold),
+          style: const TextStyle(
+            color: Colors.white,
+            fontFamily: 'Cairo',
+            fontWeight: FontWeight.bold,
+          ),
         ),
         centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       body: VirooBackground(
         showOrbs: true,
@@ -68,11 +77,13 @@ class OrdersListScreen extends StatelessWidget {
                   width: 60,
                   height: 60,
                   decoration: BoxDecoration(
-                    color: VirooColors.primary.withOpacity(0.1),
+                    color: VirooColors.primary.withAlpha(25),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(Icons.shopping_bag_rounded,
-                      color: VirooColors.primary),
+                  child: const Icon(
+                    Icons.shopping_bag_rounded,
+                    color: VirooColors.primary,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -91,7 +102,7 @@ class OrdersListScreen extends StatelessWidget {
                       Text(
                         '${order.price.toStringAsFixed(0)} ج.م',
                         style: const TextStyle(
-                          color: VirooColors.primary,
+                          color: VirooColors.amberPrimary,
                           fontFamily: 'Orbitron',
                           fontWeight: FontWeight.bold,
                         ),
@@ -114,7 +125,7 @@ class OrdersListScreen extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: _getStatusColor(order.status).withOpacity(0.2),
+                    color: _getStatusColor(order.status).withAlpha(51),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -152,12 +163,17 @@ class OrdersListScreen extends StatelessWidget {
                       style: OutlinedButton.styleFrom(
                         side: const BorderSide(color: VirooColors.error),
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                         padding: const EdgeInsets.symmetric(vertical: 12),
                       ),
-                      child: const Text('رفض',
-                          style: TextStyle(
-                              color: VirooColors.error, fontFamily: 'Cairo')),
+                      child: const Text(
+                        'رفض',
+                        style: TextStyle(
+                          color: VirooColors.error,
+                          fontFamily: 'Cairo',
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -177,6 +193,9 @@ class OrdersListScreen extends StatelessWidget {
       case OrderStatus.preparing:
         return VirooColors.info;
       case OrderStatus.shipped:
+        return VirooColors.info;
+      case OrderStatus.outForDelivery:
+        return VirooColors.amberPrimary;
       case OrderStatus.delivered:
         return VirooColors.primary;
       case OrderStatus.confirmed:
@@ -196,6 +215,8 @@ class OrdersListScreen extends StatelessWidget {
         return 'جاري التجهيز';
       case OrderStatus.shipped:
         return 'تم الشحن';
+      case OrderStatus.outForDelivery:
+        return 'خارج للتوصيل';
       case OrderStatus.delivered:
         return 'تم التسليم';
       case OrderStatus.confirmed:

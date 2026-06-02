@@ -1,17 +1,25 @@
-# viroomall_app
+# VirooMall - سوق متكامل بأنماط تسوق متعددة
 
-A new Flutter project.
+تطبيق **VirooMall** هو سوق إلكتروني متكامل يدعم 4 أنماط تسوق مختلفة:
+- 🛍️ **Farz** (تسوق فردي)
+- 🏪 **Gomla** (جملة)
+- ♻️ **Tasawok** (مستعمل)
+- 🔥 **Mosta3mal** (تخفيضات وتصفية)
 
-## Getting Started
+## 🚀 الميزات الرئيسية
+- تسجيل دخول برقم الهاتف + OTP
+- بصمة إصبع (Biometric)
+- عربة تسوق ومفضلة
+- طلبات وتتبع الطلبات
+- محفظة إلكترونية
+- نظام نقاط ومكافآت
+- إعلانات مدفوعة
+- بائع ومشتري (Multi-Vendor)
 
-This project is a starting point for a Flutter application.
+## 🛠️ التقنيات المستخدمة
+- Flutter 3.x
+- Firebase (Auth, Firestore, Storage, Messaging)
+- Riverpod (State Management)
+- GoRouter (Navigation)
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 📁 هيكل المشروع

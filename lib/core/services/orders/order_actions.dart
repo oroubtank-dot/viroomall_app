@@ -1,7 +1,7 @@
 // lib/core/services/orders/order_actions.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../../features/orders/domain/models/order_model.dart';
-import '../../../features/orders/domain/enums/order_status.dart'; // 👈 أضفنا الإستيراد
+import '../../models/order_model.dart';
+import '../../models/order_model.dart'; // 👈 أضفنا الإستيراد
 import '../notification_service.dart';
 
 class OrderActions {

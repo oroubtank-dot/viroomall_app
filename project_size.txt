@@ -1,0 +1,999 @@
+ Volume in drive D is jop
+ Volume Serial Number is CE64-B7E0
+
+ Directory of D:\Projects\viroomall_app\lib
+
+05/31/2026  05:36 AM    <DIR>          .
+05/31/2026  05:36 AM    <DIR>          ..
+05/31/2026  06:00 AM    <DIR>          core
+05/31/2026  01:52 AM    <DIR>          features
+04/20/2026  09:10 PM             3,092 firebase_options.dart
+05/30/2026  04:27 PM    <DIR>          l10n
+05/31/2026  05:38 AM            10,657 main.dart
+               2 File(s)         13,749 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\core
+
+05/31/2026  06:00 AM    <DIR>          .
+05/31/2026  06:00 AM    <DIR>          ..
+05/01/2026  06:41 PM    <DIR>          constants
+05/31/2026  05:44 AM    <DIR>          exceptions
+05/30/2026  04:33 PM    <DIR>          models
+05/31/2026  06:00 AM    <DIR>          providers
+05/30/2026  04:33 PM    <DIR>          services
+04/23/2026  10:00 PM    <DIR>          theme
+05/31/2026  05:43 AM    <DIR>          utils
+05/30/2026  04:53 PM    <DIR>          widgets
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\core\constants
+
+05/01/2026  06:41 PM    <DIR>          .
+05/01/2026  06:41 PM    <DIR>          ..
+05/01/2026  06:44 PM                91 market_type.dart
+05/01/2026  06:44 PM             2,188 pricing_config.dart
+               2 File(s)          2,279 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\core\exceptions
+
+05/31/2026  05:44 AM    <DIR>          .
+05/31/2026  05:44 AM    <DIR>          ..
+05/31/2026  05:44 AM             1,544 app_exceptions.dart
+               1 File(s)          1,544 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\core\models
+
+05/30/2026  04:33 PM    <DIR>          .
+05/30/2026  04:33 PM    <DIR>          ..
+05/30/2026  04:33 PM             2,425 order_model.dart
+05/30/2026  02:22 PM             7,248 product_model.dart
+               2 File(s)          9,673 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\core\providers
+
+05/31/2026  06:00 AM    <DIR>          .
+05/31/2026  06:00 AM    <DIR>          ..
+05/31/2026  06:00 AM               402 order_provider.dart
+               1 File(s)            402 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\core\services
+
+05/30/2026  04:33 PM    <DIR>          .
+05/30/2026  04:33 PM    <DIR>          ..
+05/30/2026  02:22 PM             1,604 auth_service.dart
+05/01/2026  06:17 PM             5,936 notification_service.dart
+05/01/2026  06:17 PM    <DIR>          orders
+05/30/2026  04:33 PM             3,285 product_service.dart
+05/30/2026  02:22 PM             5,737 storage_service.dart
+               4 File(s)         16,562 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\core\services\orders
+
+05/01/2026  06:17 PM    <DIR>          .
+05/01/2026  06:17 PM    <DIR>          ..
+05/01/2026  06:17 PM             1,483 order_actions.dart
+               1 File(s)          1,483 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\core\theme
+
+04/23/2026  10:00 PM    <DIR>          .
+04/23/2026  10:00 PM    <DIR>          ..
+04/24/2026  05:34 PM             7,026 app_colors.dart
+04/24/2026  05:34 PM            17,846 app_theme.dart
+04/25/2026  06:33 AM            14,842 app_widgets.dart
+               3 File(s)         39,714 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\core\utils
+
+05/31/2026  05:43 AM    <DIR>          .
+05/31/2026  05:43 AM    <DIR>          ..
+05/31/2026  05:43 AM             1,950 helpers.dart
+               1 File(s)          1,950 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\core\widgets
+
+05/30/2026  04:53 PM    <DIR>          .
+05/30/2026  04:53 PM    <DIR>          ..
+05/30/2026  04:53 PM            11,244 cart_notification.dart
+04/23/2026  10:00 PM    <DIR>          logo
+04/23/2026  10:51 PM    <DIR>          settings_portal
+04/21/2026  09:35 AM             5,224 viroo_background.dart
+04/22/2026  11:32 PM             4,561 viroo_logo.dart
+05/01/2026  06:17 PM             2,394 viroo_search_bar.dart
+               4 File(s)         23,423 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\core\widgets\logo
+
+04/23/2026  10:00 PM    <DIR>          .
+04/23/2026  10:00 PM    <DIR>          ..
+04/25/2026  06:33 AM               584 mall_brand_text.dart
+04/22/2026  11:43 PM               873 viroo_brand_text.dart
+04/25/2026  06:33 AM             3,692 viroo_mall_logo.dart
+04/22/2026  11:42 PM             2,443 vm_cart_icon.dart
+               4 File(s)          7,592 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\core\widgets\settings_portal
+
+04/23/2026  10:51 PM    <DIR>          .
+04/23/2026  10:51 PM    <DIR>          ..
+04/24/2026  12:20 AM            11,376 settings_portal_button.dart
+               1 File(s)         11,376 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features
+
+05/31/2026  01:52 AM    <DIR>          .
+05/31/2026  01:52 AM    <DIR>          ..
+04/23/2026  10:00 PM    <DIR>          admin
+05/30/2026  04:28 PM    <DIR>          ads
+05/30/2026  04:27 PM    <DIR>          auth
+04/23/2026  10:00 PM    <DIR>          cart
+05/31/2026  01:52 AM    <DIR>          farz
+04/24/2026  05:40 PM    <DIR>          favorites
+05/31/2026  01:52 AM    <DIR>          gomla
+04/23/2026  10:00 PM    <DIR>          home
+05/31/2026  01:52 AM    <DIR>          mosta3mal
+04/23/2026  10:00 PM    <DIR>          onboarding
+04/23/2026  10:00 PM    <DIR>          orders
+05/30/2026  04:27 PM    <DIR>          product
+05/30/2026  01:19 PM    <DIR>          profile
+04/24/2026  05:48 PM    <DIR>          reviews
+04/25/2026  02:20 AM    <DIR>          search
+04/24/2026  10:01 PM    <DIR>          settings
+05/31/2026  01:52 AM    <DIR>          tasawok
+05/30/2026  04:17 PM    <DIR>          wallet
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\admin
+
+04/23/2026  10:00 PM    <DIR>          .
+04/23/2026  10:00 PM    <DIR>          ..
+04/23/2026  10:00 PM    <DIR>          presentation
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\admin\presentation
+
+04/23/2026  10:00 PM    <DIR>          .
+04/23/2026  10:00 PM    <DIR>          ..
+04/23/2026  10:00 PM    <DIR>          providers
+04/23/2026  10:00 PM    <DIR>          screens
+04/24/2026  06:09 PM    <DIR>          widgets
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\admin\presentation\providers
+
+04/23/2026  10:00 PM    <DIR>          .
+04/23/2026  10:00 PM    <DIR>          ..
+04/25/2026  06:33 AM             3,939 add_product_provider.dart
+               1 File(s)          3,939 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\admin\presentation\screens
+
+04/23/2026  10:00 PM    <DIR>          .
+04/23/2026  10:00 PM    <DIR>          ..
+04/24/2026  06:15 PM            15,898 add_product_screen.dart
+               1 File(s)         15,898 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\admin\presentation\widgets
+
+04/24/2026  06:09 PM    <DIR>          .
+04/24/2026  06:09 PM    <DIR>          ..
+04/25/2026  06:33 AM             3,532 image_picker_bottom_sheet.dart
+04/24/2026  06:14 PM             9,474 product_form_base.dart
+04/24/2026  05:34 PM            20,435 product_form_fields.dart
+04/25/2026  06:32 AM             7,361 product_form_sections.dart
+               4 File(s)         40,802 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\ads
+
+05/30/2026  04:28 PM    <DIR>          .
+05/30/2026  04:28 PM    <DIR>          ..
+05/30/2026  04:13 PM    <DIR>          data
+05/30/2026  04:28 PM    <DIR>          domain
+04/24/2026  02:15 AM    <DIR>          presentation
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\ads\data
+
+05/30/2026  04:13 PM    <DIR>          .
+05/30/2026  04:13 PM    <DIR>          ..
+04/24/2026  01:50 AM                 0 ads_repository.dart
+04/24/2026  02:35 AM             6,926 ads_service.dart
+               2 File(s)          6,926 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\ads\domain
+
+05/30/2026  04:28 PM    <DIR>          .
+05/30/2026  04:28 PM    <DIR>          ..
+05/30/2026  04:28 PM    <DIR>          models
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\ads\domain\models
+
+05/30/2026  04:28 PM    <DIR>          .
+05/30/2026  04:28 PM    <DIR>          ..
+05/30/2026  04:28 PM                 0 ad_model.dart
+05/30/2026  04:28 PM             7,861 ad_subscription_model.dart
+               2 File(s)          7,861 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\ads\presentation
+
+04/24/2026  02:15 AM    <DIR>          .
+04/24/2026  02:15 AM    <DIR>          ..
+04/24/2026  01:50 AM    <DIR>          providers
+05/01/2026  06:17 PM    <DIR>          screens
+04/24/2026  01:50 AM    <DIR>          widgets
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\ads\presentation\providers
+
+04/24/2026  01:50 AM    <DIR>          .
+04/24/2026  01:50 AM    <DIR>          ..
+04/24/2026  02:36 AM             1,601 ads_provider.dart
+               1 File(s)          1,601 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\ads\presentation\screens
+
+05/01/2026  06:17 PM    <DIR>          .
+05/01/2026  06:17 PM    <DIR>          ..
+05/01/2026  06:17 PM            23,061 ad_marketplace_screen.dart
+               1 File(s)         23,061 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\ads\presentation\widgets
+
+04/24/2026  01:50 AM    <DIR>          .
+04/24/2026  01:50 AM    <DIR>          ..
+05/31/2026  02:57 AM            17,810 ads_slider.dart
+               1 File(s)         17,810 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\auth
+
+05/30/2026  04:27 PM    <DIR>          .
+05/30/2026  04:27 PM    <DIR>          ..
+04/24/2026  05:34 PM             8,868 login_screen.dart
+04/24/2026  05:34 PM             6,678 otp_screen.dart
+05/01/2026  05:56 PM    <DIR>          providers
+04/23/2026  10:00 PM    <DIR>          widgets
+               2 File(s)         15,546 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\auth\providers
+
+05/01/2026  05:56 PM    <DIR>          .
+05/01/2026  05:56 PM    <DIR>          ..
+05/30/2026  04:30 PM               255 auth_provider.dart
+               1 File(s)            255 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\auth\widgets
+
+04/23/2026  10:00 PM    <DIR>          .
+04/23/2026  10:00 PM    <DIR>          ..
+04/24/2026  05:34 PM             1,561 biometric_toggle.dart
+04/24/2026  05:34 PM             6,032 login_bottom_sheet.dart
+               2 File(s)          7,593 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\cart
+
+04/23/2026  10:00 PM    <DIR>          .
+04/23/2026  10:00 PM    <DIR>          ..
+04/23/2026  10:00 PM    <DIR>          presentation
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\cart\presentation
+
+04/23/2026  10:00 PM    <DIR>          .
+04/23/2026  10:00 PM    <DIR>          ..
+04/23/2026  10:00 PM    <DIR>          providers
+04/23/2026  10:00 PM    <DIR>          screens
+04/23/2026  10:00 PM    <DIR>          widgets
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\cart\presentation\providers
+
+04/23/2026  10:00 PM    <DIR>          .
+04/23/2026  10:00 PM    <DIR>          ..
+04/24/2026  03:47 AM             4,231 cart_provider.dart
+               1 File(s)          4,231 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\cart\presentation\screens
+
+04/23/2026  10:00 PM    <DIR>          .
+04/23/2026  10:00 PM    <DIR>          ..
+04/24/2026  05:34 PM            29,554 cart_screen.dart
+               1 File(s)         29,554 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\cart\presentation\widgets
+
+04/23/2026  10:00 PM    <DIR>          .
+04/23/2026  10:00 PM    <DIR>          ..
+04/24/2026  05:34 PM             8,472 product_preview_sheet.dart
+               1 File(s)          8,472 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\farz
+
+05/31/2026  01:52 AM    <DIR>          .
+05/31/2026  01:52 AM    <DIR>          ..
+05/31/2026  01:52 AM    <DIR>          data
+05/31/2026  01:52 AM    <DIR>          domain
+05/31/2026  01:52 AM    <DIR>          presentation
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\farz\data
+
+05/31/2026  01:52 AM    <DIR>          .
+05/31/2026  01:52 AM    <DIR>          ..
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\farz\domain
+
+05/31/2026  01:52 AM    <DIR>          .
+05/31/2026  01:52 AM    <DIR>          ..
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\farz\presentation
+
+05/31/2026  01:52 AM    <DIR>          .
+05/31/2026  01:52 AM    <DIR>          ..
+05/31/2026  02:00 AM    <DIR>          providers
+05/31/2026  01:52 AM    <DIR>          screens
+05/31/2026  02:00 AM    <DIR>          widgets
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\farz\presentation\providers
+
+05/31/2026  02:00 AM    <DIR>          .
+05/31/2026  02:00 AM    <DIR>          ..
+05/31/2026  05:39 AM               876 farz_provider.dart
+               1 File(s)            876 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\farz\presentation\screens
+
+05/31/2026  01:52 AM    <DIR>          .
+05/31/2026  01:52 AM    <DIR>          ..
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\farz\presentation\widgets
+
+05/31/2026  02:00 AM    <DIR>          .
+05/31/2026  02:00 AM    <DIR>          ..
+05/31/2026  02:06 AM               450 farz_mode_color.dart
+05/31/2026  02:07 AM             4,043 farz_product_card.dart
+               2 File(s)          4,493 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\favorites
+
+04/24/2026  05:40 PM    <DIR>          .
+04/24/2026  05:40 PM    <DIR>          ..
+04/24/2026  05:40 PM    <DIR>          domain
+04/24/2026  05:40 PM    <DIR>          presentation
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\favorites\domain
+
+04/24/2026  05:40 PM    <DIR>          .
+04/24/2026  05:40 PM    <DIR>          ..
+04/24/2026  05:42 PM    <DIR>          models
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\favorites\domain\models
+
+04/24/2026  05:42 PM    <DIR>          .
+04/24/2026  05:42 PM    <DIR>          ..
+04/24/2026  05:42 PM               428 favorite_model.dart
+               1 File(s)            428 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\favorites\presentation
+
+04/24/2026  05:40 PM    <DIR>          .
+04/24/2026  05:40 PM    <DIR>          ..
+04/24/2026  05:42 PM    <DIR>          providers
+05/01/2026  06:17 PM    <DIR>          screens
+05/30/2026  04:54 PM    <DIR>          widgets
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\favorites\presentation\providers
+
+04/24/2026  05:42 PM    <DIR>          .
+04/24/2026  05:42 PM    <DIR>          ..
+04/24/2026  05:42 PM             1,164 favorites_provider.dart
+               1 File(s)          1,164 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\favorites\presentation\screens
+
+05/01/2026  06:17 PM    <DIR>          .
+05/01/2026  06:17 PM    <DIR>          ..
+05/31/2026  02:24 AM             3,776 favorites_screen.dart
+               1 File(s)          3,776 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\favorites\presentation\widgets
+
+05/30/2026  04:54 PM    <DIR>          .
+05/30/2026  04:54 PM    <DIR>          ..
+04/24/2026  05:43 PM             2,433 favorite_button.dart
+               1 File(s)          2,433 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\gomla
+
+05/31/2026  01:52 AM    <DIR>          .
+05/31/2026  01:52 AM    <DIR>          ..
+05/31/2026  01:52 AM    <DIR>          data
+05/31/2026  01:52 AM    <DIR>          domain
+05/31/2026  01:52 AM    <DIR>          presentation
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\gomla\data
+
+05/31/2026  01:52 AM    <DIR>          .
+05/31/2026  01:52 AM    <DIR>          ..
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\gomla\domain
+
+05/31/2026  01:52 AM    <DIR>          .
+05/31/2026  01:52 AM    <DIR>          ..
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\gomla\presentation
+
+05/31/2026  01:52 AM    <DIR>          .
+05/31/2026  01:52 AM    <DIR>          ..
+05/31/2026  01:58 AM    <DIR>          providers
+05/31/2026  01:52 AM    <DIR>          screens
+05/31/2026  01:58 AM    <DIR>          widgets
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\gomla\presentation\providers
+
+05/31/2026  01:58 AM    <DIR>          .
+05/31/2026  01:58 AM    <DIR>          ..
+05/31/2026  01:59 AM               889 gomla_provider.dart
+               1 File(s)            889 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\gomla\presentation\screens
+
+05/31/2026  01:52 AM    <DIR>          .
+05/31/2026  01:52 AM    <DIR>          ..
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\gomla\presentation\widgets
+
+05/31/2026  01:58 AM    <DIR>          .
+05/31/2026  01:58 AM    <DIR>          ..
+05/31/2026  01:59 AM               434 gomla_mode_color.dart
+05/31/2026  01:59 AM             4,055 gomla_product_card.dart
+               2 File(s)          4,489 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\home
+
+04/23/2026  10:00 PM    <DIR>          .
+04/23/2026  10:00 PM    <DIR>          ..
+04/23/2026  10:00 PM    <DIR>          presentation
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\home\presentation
+
+04/23/2026  10:00 PM    <DIR>          .
+04/23/2026  10:00 PM    <DIR>          ..
+05/31/2026  02:43 AM    <DIR>          providers
+05/31/2026  04:41 AM    <DIR>          screens
+05/31/2026  05:50 AM    <DIR>          widgets
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\home\presentation\providers
+
+05/31/2026  02:43 AM    <DIR>          .
+05/31/2026  02:43 AM    <DIR>          ..
+05/31/2026  02:43 AM             1,702 home_provider.dart
+05/30/2026  04:33 PM             1,341 product_provider.dart
+               2 File(s)          3,043 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\home\presentation\screens
+
+05/31/2026  04:41 AM    <DIR>          .
+05/31/2026  04:41 AM    <DIR>          ..
+05/31/2026  05:40 AM            15,998 home_screen.dart
+               1 File(s)         15,998 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\home\presentation\widgets
+
+05/31/2026  05:50 AM    <DIR>          .
+05/31/2026  05:50 AM    <DIR>          ..
+04/21/2026  12:45 AM             4,826 banner_slider.dart
+04/24/2026  05:34 PM               950 empty_products.dart
+05/31/2026  05:54 AM             5,240 featured_products_section.dart
+04/24/2026  05:34 PM             7,821 floating_nav_bar.dart
+04/24/2026  05:34 PM             5,090 hot_sales_banner.dart
+04/21/2026  12:32 AM             1,694 loading_grid.dart
+05/31/2026  04:41 AM             2,840 mode_selector.dart
+05/31/2026  06:25 AM             8,363 product_card.dart
+               8 File(s)         36,824 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\mosta3mal
+
+05/31/2026  01:52 AM    <DIR>          .
+05/31/2026  01:52 AM    <DIR>          ..
+05/31/2026  01:52 AM    <DIR>          data
+05/31/2026  01:52 AM    <DIR>          domain
+05/31/2026  01:52 AM    <DIR>          presentation
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\mosta3mal\data
+
+05/31/2026  01:52 AM    <DIR>          .
+05/31/2026  01:52 AM    <DIR>          ..
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\mosta3mal\domain
+
+05/31/2026  01:52 AM    <DIR>          .
+05/31/2026  01:52 AM    <DIR>          ..
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\mosta3mal\presentation
+
+05/31/2026  01:52 AM    <DIR>          .
+05/31/2026  01:52 AM    <DIR>          ..
+05/31/2026  02:00 AM    <DIR>          providers
+05/31/2026  01:52 AM    <DIR>          screens
+05/31/2026  02:00 AM    <DIR>          widgets
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\mosta3mal\presentation\providers
+
+05/31/2026  02:00 AM    <DIR>          .
+05/31/2026  02:00 AM    <DIR>          ..
+05/31/2026  02:05 AM               912 mosta3mal_provider.dart
+               1 File(s)            912 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\mosta3mal\presentation\screens
+
+05/31/2026  01:52 AM    <DIR>          .
+05/31/2026  01:52 AM    <DIR>          ..
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\mosta3mal\presentation\widgets
+
+05/31/2026  02:00 AM    <DIR>          .
+05/31/2026  02:00 AM    <DIR>          ..
+05/31/2026  02:05 AM               451 mosta3mal_mode_color.dart
+05/31/2026  02:06 AM             4,103 mosta3mal_product_card.dart
+               2 File(s)          4,554 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\onboarding
+
+04/23/2026  10:00 PM    <DIR>          .
+04/23/2026  10:00 PM    <DIR>          ..
+04/20/2026  07:55 PM            16,116 onboarding_screen.dart
+               1 File(s)         16,116 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\orders
+
+04/23/2026  10:00 PM    <DIR>          .
+04/23/2026  10:00 PM    <DIR>          ..
+04/23/2026  10:00 PM    <DIR>          domain
+05/30/2026  04:33 PM    <DIR>          presentation
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\orders\domain
+
+04/23/2026  10:00 PM    <DIR>          .
+04/23/2026  10:00 PM    <DIR>          ..
+04/23/2026  10:00 PM    <DIR>          enums
+04/23/2026  10:00 PM    <DIR>          models
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\orders\domain\enums
+
+04/23/2026  10:00 PM    <DIR>          .
+04/23/2026  10:00 PM    <DIR>          ..
+04/23/2026  02:58 AM               171 order_status.dart
+               1 File(s)            171 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\orders\domain\models
+
+04/23/2026  10:00 PM    <DIR>          .
+04/23/2026  10:00 PM    <DIR>          ..
+04/23/2026  03:31 AM             2,943 order_model.dart
+               1 File(s)          2,943 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\orders\presentation
+
+05/30/2026  04:33 PM    <DIR>          .
+05/30/2026  04:33 PM    <DIR>          ..
+05/01/2026  06:17 PM    <DIR>          providers
+04/23/2026  10:00 PM    <DIR>          screens
+05/30/2026  04:33 PM    <DIR>          widgets
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\orders\presentation\providers
+
+05/01/2026  06:17 PM    <DIR>          .
+05/01/2026  06:17 PM    <DIR>          ..
+05/01/2026  06:17 PM               512 order_provider.dart
+               1 File(s)            512 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\orders\presentation\screens
+
+04/23/2026  10:00 PM    <DIR>          .
+04/23/2026  10:00 PM    <DIR>          ..
+04/24/2026  05:34 PM             7,355 orders_list_screen.dart
+04/24/2026  05:34 PM               820 order_tracking_screen.dart
+04/24/2026  05:34 PM             4,665 seller_orders_screen.dart
+               3 File(s)         12,840 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\orders\presentation\widgets
+
+05/30/2026  04:33 PM    <DIR>          .
+05/30/2026  04:33 PM    <DIR>          ..
+05/30/2026  04:33 PM             5,187 rating_dialog.dart
+               1 File(s)          5,187 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\product
+
+05/30/2026  04:27 PM    <DIR>          .
+05/30/2026  04:27 PM    <DIR>          ..
+05/30/2026  04:13 PM    <DIR>          presentation
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\product\presentation
+
+05/30/2026  04:13 PM    <DIR>          .
+05/30/2026  04:13 PM    <DIR>          ..
+05/01/2026  06:17 PM    <DIR>          screens
+05/30/2026  04:33 PM    <DIR>          widgets
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\product\presentation\screens
+
+05/01/2026  06:17 PM    <DIR>          .
+05/01/2026  06:17 PM    <DIR>          ..
+05/01/2026  06:17 PM            16,691 product_details_screen.dart
+               1 File(s)         16,691 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\product\presentation\widgets
+
+05/30/2026  04:33 PM    <DIR>          .
+05/30/2026  04:33 PM    <DIR>          ..
+05/30/2026  04:33 PM             2,146 product_description_section.dart
+05/30/2026  03:28 PM    <DIR>          product_details
+05/30/2026  04:33 PM             4,548 product_image_section.dart
+05/30/2026  04:33 PM                 2 product_info_section.dart
+05/30/2026  04:33 PM             2,562 seller_info_card.dart
+               4 File(s)          9,258 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\product\presentation\widgets\product_details
+
+05/30/2026  03:28 PM    <DIR>          .
+05/30/2026  03:28 PM    <DIR>          ..
+05/30/2026  03:28 PM             4,276 outlet_section.dart
+05/30/2026  03:28 PM             4,169 product_image_gallery.dart
+05/30/2026  03:28 PM             5,392 product_info_section.dart
+05/30/2026  03:28 PM             2,301 product_video_section.dart
+05/30/2026  03:28 PM             5,566 seller_contact_section.dart
+05/30/2026  03:28 PM             3,708 used_condition_section.dart
+05/30/2026  03:28 PM             2,613 wholesale_section.dart
+               7 File(s)         28,025 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\profile
+
+05/30/2026  01:19 PM    <DIR>          .
+05/30/2026  01:19 PM    <DIR>          ..
+05/30/2026  04:26 PM    <DIR>          data
+05/30/2026  04:19 PM    <DIR>          domain
+04/23/2026  10:00 PM    <DIR>          presentation
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\profile\data
+
+05/30/2026  04:26 PM    <DIR>          .
+05/30/2026  04:26 PM    <DIR>          ..
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\profile\domain
+
+05/30/2026  04:19 PM    <DIR>          .
+05/30/2026  04:19 PM    <DIR>          ..
+05/30/2026  02:22 PM    <DIR>          models
+05/30/2026  04:19 PM    <DIR>          services
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\profile\domain\models
+
+05/30/2026  02:22 PM    <DIR>          .
+05/30/2026  02:22 PM    <DIR>          ..
+05/30/2026  02:22 PM               639 buyer_stats.dart
+05/30/2026  02:22 PM             1,489 seller_stats.dart
+05/30/2026  02:22 PM             2,161 user_model.dart
+               3 File(s)          4,289 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\profile\domain\services
+
+05/30/2026  04:19 PM    <DIR>          .
+05/30/2026  04:19 PM    <DIR>          ..
+05/30/2026  04:19 PM             1,482 profile_service.dart
+               1 File(s)          1,482 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\profile\presentation
+
+04/23/2026  10:00 PM    <DIR>          .
+04/23/2026  10:00 PM    <DIR>          ..
+04/23/2026  10:00 PM    <DIR>          models
+04/23/2026  10:00 PM    <DIR>          providers
+05/30/2026  04:33 PM    <DIR>          screens
+05/30/2026  04:33 PM    <DIR>          widgets
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\profile\presentation\models
+
+04/23/2026  10:00 PM    <DIR>          .
+04/23/2026  10:00 PM    <DIR>          ..
+04/22/2026  08:45 PM             2,429 seller_product.dart
+               1 File(s)          2,429 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\profile\presentation\providers
+
+04/23/2026  10:00 PM    <DIR>          .
+04/23/2026  10:00 PM    <DIR>          ..
+04/22/2026  02:42 PM               956 profile_provider.dart
+               1 File(s)            956 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\profile\presentation\screens
+
+05/30/2026  04:33 PM    <DIR>          .
+05/30/2026  04:33 PM    <DIR>          ..
+05/30/2026  04:33 PM               989 favorites_screen.dart
+04/24/2026  09:32 PM             1,498 my_ads_screen.dart
+04/23/2026  03:25 AM               451 my_orders_screen.dart
+05/01/2026  06:17 PM             5,940 my_products_screen.dart
+04/24/2026  05:34 PM             1,009 points_screen.dart
+05/30/2026  04:19 PM             4,508 profile_screen.dart
+04/24/2026  05:34 PM             1,038 seller_dashboard_screen.dart
+05/30/2026  04:33 PM               975 wallet_screen.dart
+               8 File(s)         16,408 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\profile\presentation\widgets
+
+05/30/2026  04:33 PM    <DIR>          .
+05/30/2026  04:33 PM    <DIR>          ..
+04/24/2026  05:34 PM             1,626 buyer_stats_widget.dart
+04/24/2026  05:34 PM             2,438 expiring_alert_banner.dart
+04/22/2026  08:49 PM             3,417 filter_sort_bar.dart
+04/24/2026  05:34 PM             4,390 product_details_sheet.dart
+04/24/2026  05:34 PM             2,641 product_search_delegate.dart
+04/24/2026  05:34 PM             8,368 product_stats_card.dart
+04/24/2026  05:34 PM             2,270 profile_header.dart
+05/30/2026  04:33 PM            14,102 profile_menu_section.dart
+05/30/2026  04:19 PM             1,247 profile_share_button.dart
+04/24/2026  05:34 PM             2,606 seller_stats_widget.dart
+              10 File(s)         43,105 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\reviews
+
+04/24/2026  05:48 PM    <DIR>          .
+04/24/2026  05:48 PM    <DIR>          ..
+04/24/2026  05:49 PM    <DIR>          data
+04/24/2026  05:48 PM    <DIR>          domain
+04/24/2026  05:48 PM    <DIR>          presentation
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\reviews\data
+
+04/24/2026  05:49 PM    <DIR>          .
+04/24/2026  05:49 PM    <DIR>          ..
+04/24/2026  05:50 PM             2,006 reviews_service.dart
+               1 File(s)          2,006 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\reviews\domain
+
+04/24/2026  05:48 PM    <DIR>          .
+04/24/2026  05:48 PM    <DIR>          ..
+04/24/2026  05:49 PM    <DIR>          models
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\reviews\domain\models
+
+04/24/2026  05:49 PM    <DIR>          .
+04/24/2026  05:49 PM    <DIR>          ..
+04/24/2026  05:50 PM             1,912 review_model.dart
+               1 File(s)          1,912 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\reviews\presentation
+
+04/24/2026  05:48 PM    <DIR>          .
+04/24/2026  05:48 PM    <DIR>          ..
+04/24/2026  05:49 PM    <DIR>          providers
+04/24/2026  05:49 PM    <DIR>          screens
+04/24/2026  05:49 PM    <DIR>          widgets
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\reviews\presentation\providers
+
+04/24/2026  05:49 PM    <DIR>          .
+04/24/2026  05:49 PM    <DIR>          ..
+04/24/2026  05:51 PM               936 reviews_provider.dart
+               1 File(s)            936 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\reviews\presentation\screens
+
+04/24/2026  05:49 PM    <DIR>          .
+04/24/2026  05:49 PM    <DIR>          ..
+04/24/2026  05:52 PM             5,541 reviews_screen.dart
+               1 File(s)          5,541 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\reviews\presentation\widgets
+
+04/24/2026  05:49 PM    <DIR>          .
+04/24/2026  05:49 PM    <DIR>          ..
+04/24/2026  05:55 PM             4,766 rating_dialog.dart
+04/24/2026  05:51 PM             1,223 rating_stars.dart
+04/24/2026  05:52 PM             4,976 review_card.dart
+               3 File(s)         10,965 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\search
+
+04/25/2026  02:20 AM    <DIR>          .
+04/25/2026  02:20 AM    <DIR>          ..
+04/25/2026  02:20 AM    <DIR>          presentation
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\search\presentation
+
+04/25/2026  02:20 AM    <DIR>          .
+04/25/2026  02:20 AM    <DIR>          ..
+04/25/2026  02:20 AM    <DIR>          providers
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\search\presentation\providers
+
+04/25/2026  02:20 AM    <DIR>          .
+04/25/2026  02:20 AM    <DIR>          ..
+04/25/2026  02:22 AM             1,401 search_provider.dart
+               1 File(s)          1,401 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\settings
+
+04/24/2026  10:01 PM    <DIR>          .
+04/24/2026  10:01 PM    <DIR>          ..
+04/24/2026  10:01 PM    <DIR>          presentation
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\settings\presentation
+
+04/24/2026  10:01 PM    <DIR>          .
+04/24/2026  10:01 PM    <DIR>          ..
+04/24/2026  10:01 PM    <DIR>          screens
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\settings\presentation\screens
+
+04/24/2026  10:01 PM    <DIR>          .
+04/24/2026  10:01 PM    <DIR>          ..
+04/24/2026  10:02 PM             4,414 appearance_settings_screen.dart
+04/24/2026  10:02 PM             4,420 language_settings_screen.dart
+04/24/2026  10:02 PM             3,443 notifications_settings_screen.dart
+04/24/2026  10:02 PM             3,885 privacy_settings_screen.dart
+               4 File(s)         16,162 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\tasawok
+
+05/31/2026  01:52 AM    <DIR>          .
+05/31/2026  01:52 AM    <DIR>          ..
+05/31/2026  01:52 AM    <DIR>          data
+05/31/2026  01:52 AM    <DIR>          domain
+05/31/2026  01:52 AM    <DIR>          presentation
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\tasawok\data
+
+05/31/2026  01:52 AM    <DIR>          .
+05/31/2026  01:52 AM    <DIR>          ..
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\tasawok\domain
+
+05/31/2026  01:52 AM    <DIR>          .
+05/31/2026  01:52 AM    <DIR>          ..
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\tasawok\presentation
+
+05/31/2026  01:52 AM    <DIR>          .
+05/31/2026  01:52 AM    <DIR>          ..
+05/31/2026  01:55 AM    <DIR>          providers
+05/31/2026  01:52 AM    <DIR>          screens
+05/31/2026  01:56 AM    <DIR>          widgets
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\tasawok\presentation\providers
+
+05/31/2026  01:55 AM    <DIR>          .
+05/31/2026  01:55 AM    <DIR>          ..
+05/31/2026  01:55 AM               897 tasawok_provider.dart
+               1 File(s)            897 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\tasawok\presentation\screens
+
+05/31/2026  01:52 AM    <DIR>          .
+05/31/2026  01:52 AM    <DIR>          ..
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\tasawok\presentation\widgets
+
+05/31/2026  01:56 AM    <DIR>          .
+05/31/2026  01:56 AM    <DIR>          ..
+05/31/2026  01:54 AM               502 tasawok_mode_color.dart
+05/31/2026  01:57 AM             4,968 tasawok_product_card.dart
+               2 File(s)          5,470 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\wallet
+
+05/30/2026  04:17 PM    <DIR>          .
+05/30/2026  04:17 PM    <DIR>          ..
+05/30/2026  04:13 PM    <DIR>          data
+05/30/2026  04:32 PM    <DIR>          domain
+04/24/2026  06:54 PM    <DIR>          presentation
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\wallet\data
+
+05/30/2026  04:13 PM    <DIR>          .
+05/30/2026  04:13 PM    <DIR>          ..
+04/24/2026  07:00 PM             4,013 wallet_service.dart
+               1 File(s)          4,013 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\wallet\domain
+
+05/30/2026  04:32 PM    <DIR>          .
+05/30/2026  04:32 PM    <DIR>          ..
+05/30/2026  04:32 PM    <DIR>          models
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\wallet\domain\models
+
+05/30/2026  04:32 PM    <DIR>          .
+05/30/2026  04:32 PM    <DIR>          ..
+05/30/2026  04:46 PM             2,523 transaction_model.dart
+05/30/2026  04:47 PM             1,224 wallet_model.dart
+               2 File(s)          3,747 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\wallet\presentation
+
+04/24/2026  06:54 PM    <DIR>          .
+04/24/2026  06:54 PM    <DIR>          ..
+04/24/2026  06:54 PM    <DIR>          providers
+04/25/2026  12:26 AM    <DIR>          screens
+04/24/2026  06:54 PM    <DIR>          widgets
+               0 File(s)              0 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\wallet\presentation\providers
+
+04/24/2026  06:54 PM    <DIR>          .
+04/24/2026  06:54 PM    <DIR>          ..
+04/24/2026  09:28 PM             1,227 wallet_provider.dart
+               1 File(s)          1,227 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\wallet\presentation\screens
+
+04/25/2026  12:26 AM    <DIR>          .
+04/25/2026  12:26 AM    <DIR>          ..
+04/25/2026  12:33 AM            11,003 add_funds_screen.dart
+04/24/2026  06:59 PM             4,268 wallet_screen.dart
+               2 File(s)         15,271 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\features\wallet\presentation\widgets
+
+04/24/2026  06:54 PM    <DIR>          .
+04/24/2026  06:54 PM    <DIR>          ..
+04/24/2026  06:58 PM             4,563 balance_card.dart
+04/24/2026  06:58 PM             3,319 transaction_card.dart
+               2 File(s)          7,882 bytes
+
+ Directory of D:\Projects\viroomall_app\lib\l10n
+
+05/30/2026  04:27 PM    <DIR>          .
+05/30/2026  04:27 PM    <DIR>          ..
+05/30/2026  12:43 PM             3,553 app_ar.arb
+05/30/2026  12:43 PM             2,823 app_en.arb
+               2 File(s)          6,376 bytes
+
+     Total Files Listed:
+             140 File(s)        637,393 bytes
+             365 Dir(s)  19,026,915,328 bytes free

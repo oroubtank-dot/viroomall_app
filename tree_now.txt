@@ -1,5 +1,5 @@
 Folder PATH listing for volume jop
-Volume serial number is 0000008C CE64:B7E0
+Volume serial number is 000000B5 CE64:B7E0
 D:\PROJECTS\VIROOMALL_APP\LIB
 |   firebase_options.dart
 |   main.dart
@@ -99,6 +99,18 @@ D:\PROJECTS\VIROOMALL_APP\LIB
 |   |       \---widgets
 |   |               product_preview_sheet.dart
 |   |               
+|   +---farz
+|   |   +---data
+|   |   +---domain
+|   |   \---presentation
+|   |       +---providers
+|   |       |       farz_provider.dart
+|   |       |       
+|   |       +---screens
+|   |       \---widgets
+|   |               farz_mode_color.dart
+|   |               farz_product_card.dart
+|   |               
 |   +---favorites
 |   |   +---domain
 |   |   |   \---models
@@ -113,6 +125,18 @@ D:\PROJECTS\VIROOMALL_APP\LIB
 |   |       |       
 |   |       \---widgets
 |   |               favorite_button.dart
+|   |               
+|   +---gomla
+|   |   +---data
+|   |   +---domain
+|   |   \---presentation
+|   |       +---providers
+|   |       |       gomla_provider.dart
+|   |       |       
+|   |       +---screens
+|   |       \---widgets
+|   |               gomla_mode_color.dart
+|   |               gomla_product_card.dart
 |   |               
 |   +---home
 |   |   \---presentation
@@ -131,7 +155,18 @@ D:\PROJECTS\VIROOMALL_APP\LIB
 |   |               hot_sales_banner.dart
 |   |               loading_grid.dart
 |   |               mode_selector.dart
-|   |               product_card.dart
+|   |               
+|   +---mosta3mal
+|   |   +---data
+|   |   +---domain
+|   |   \---presentation
+|   |       +---providers
+|   |       |       mosta3mal_provider.dart
+|   |       |       
+|   |       +---screens
+|   |       \---widgets
+|   |               mosta3mal_mode_color.dart
+|   |               mosta3mal_product_card.dart
 |   |               
 |   +---onboarding
 |   |       onboarding_screen.dart
@@ -248,6 +283,18 @@ D:\PROJECTS\VIROOMALL_APP\LIB
 |   |               language_settings_screen.dart
 |   |               notifications_settings_screen.dart
 |   |               privacy_settings_screen.dart
+|   |               
+|   +---tasawok
+|   |   +---data
+|   |   +---domain
+|   |   \---presentation
+|   |       +---providers
+|   |       |       tasawok_provider.dart
+|   |       |       
+|   |       +---screens
+|   |       \---widgets
+|   |               tasawok_mode_color.dart
+|   |               tasawok_product_card.dart
 |   |               
 |   \---wallet
 |       +---data

@@ -1,4 +1,3 @@
-// Profile Header
 // lib/features/profile/presentation/widgets/profile_header.dart
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -17,69 +16,95 @@ class ProfileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: 20),
-        _buildProfileImage(),
-        const SizedBox(height: 16),
-        _buildUserInfo(),
-      ],
-    );
-  }
-
-  Widget _buildProfileImage() {
-    return Center(
-      child: GlassContainer(
-        padding: const EdgeInsets.all(20),
-        borderRadius: BorderRadius.circular(50),
-        child: Icon(
-          Icons.person_rounded,
-          size: 60,
-          color: themeColor,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildUserInfo() {
-    return Column(
-      children: [
-        Text(
-          user.name,
-          style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-            fontFamily: 'Cairo',
+    return GlassContainer(
+      padding: const EdgeInsets.all(16),
+      borderRadius: BorderRadius.circular(20),
+      child: Row(
+        children: [
+          // الصورة الشخصية
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: VirooColors.glassDark,
+              border: Border.all(color: themeColor, width: 2),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(40),
+              child: user.photoUrl.isNotEmpty
+                  ? Image.network(user.photoUrl, fit: BoxFit.cover)
+                  : Icon(
+                      user.isSeller
+                          ? Icons.store_rounded
+                          : Icons.person_rounded,
+                      size: 40,
+                      color: VirooColors.textSecondary,
+                    ),
+            ),
           ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          '@${user.phone.substring(1)}',
-          style: const TextStyle(
-            fontSize: 14,
-            color: VirooColors.textSecondary,
-            fontFamily: 'Cairo',
-          ),
-        ),
-        const SizedBox(height: 8),
-        if (user.rating > 0)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.star_rounded, color: Colors.amber, size: 18),
-              const SizedBox(width: 4),
-              Text(
-                '${user.rating.toStringAsFixed(1)} (${user.ratingCount} تقييم)',
-                style: const TextStyle(
-                  color: VirooColors.textSecondary,
-                  fontFamily: 'Cairo',
-                  fontSize: 13,
+          const SizedBox(width: 16),
+
+          // الاسم والإحصائيات
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  user.name,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    fontFamily: 'Cairo',
+                  ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    const Icon(Icons.star_rounded,
+                        size: 14, color: VirooColors.warning),
+                    const SizedBox(width: 4),
+                    Text(
+                      user.rating.toStringAsFixed(1),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.white70,
+                        fontFamily: 'Cairo',
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      '(${user.totalSales})',
+                      style: const TextStyle(
+                        fontSize: 10,
+                        color: VirooColors.textSecondary,
+                        fontFamily: 'Cairo',
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  user.isSeller ? '📦 بائع محترف' : '🛍️ مشتري',
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: VirooColors.textSecondary,
+                    fontFamily: 'Cairo',
+                  ),
+                ),
+              ],
+            ),
           ),
-      ],
+
+          // زر تعديل (للمستخدم فقط)
+          if (user.isSeller)
+            IconButton(
+              onPressed: () {},
+              icon: Icon(Icons.edit_rounded, color: themeColor, size: 20),
+            ),
+        ],
+      ),
     );
   }
 }

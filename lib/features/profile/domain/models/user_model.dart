@@ -4,81 +4,129 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class UserModel {
   final String id;
   final String name;
+  final String email;
   final String phone;
-  final String? email;
-  final String? photoUrl;
-  final String userType; // 'buyer', 'seller', 'store'
-  final double rating;
-  final int ratingCount;
+  final String photoUrl;
+  final bool isSeller;
+  final bool isBuyer;
   final DateTime createdAt;
+  final double rating;
+  final int totalSales;
+  final int totalProducts;
+  final int totalViews;
 
   UserModel({
     required this.id,
     required this.name,
+    required this.email,
     required this.phone,
-    this.email,
-    this.photoUrl,
-    required this.userType,
-    this.rating = 0.0,
-    this.ratingCount = 0,
+    required this.photoUrl,
+    required this.isSeller,
+    required this.isBuyer,
     required this.createdAt,
+    this.rating = 0.0,
+    this.totalSales = 0,
+    this.totalProducts = 0,
+    this.totalViews = 0,
   });
 
-  bool get isSeller => userType == 'seller' || userType == 'store';
-  bool get isBuyer => userType == 'buyer';
-
-  factory UserModel.fromFirestore(Map<String, dynamic> data, String id) {
+  /// تحويل من Firestore Document إلى UserModel
+  factory UserModel.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
     return UserModel(
-      id: id,
+      id: doc.id,
       name: data['name'] ?? '',
+      email: data['email'] ?? '',
       phone: data['phone'] ?? '',
-      email: data['email'],
-      photoUrl: data['photoUrl'],
-      userType: data['userType'] ?? 'buyer',
+      photoUrl: data['photoUrl'] ?? '',
+      isSeller: data['isSeller'] ?? false,
+      isBuyer: data['isBuyer'] ?? true,
+      createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       rating: (data['rating'] ?? 0).toDouble(),
-      ratingCount: data['ratingCount'] ?? 0,
-      createdAt: (data['createdAt'] as Timestamp).toDate(),
+      totalSales: data['totalSales'] ?? 0,
+      totalProducts: data['totalProducts'] ?? 0,
+      totalViews: data['totalViews'] ?? 0,
     );
   }
 
-  Map<String, dynamic> toFirestore() {
+  /// تحويل UserModel إلى Map للحفظ في Firestore
+  Map<String, dynamic> toMap() {
     return {
       'name': name,
-      'phone': phone,
       'email': email,
+      'phone': phone,
       'photoUrl': photoUrl,
-      'userType': userType,
-      'rating': rating,
-      'ratingCount': ratingCount,
+      'isSeller': isSeller,
+      'isBuyer': isBuyer,
       'createdAt': Timestamp.fromDate(createdAt),
+      'rating': rating,
+      'totalSales': totalSales,
+      'totalProducts': totalProducts,
+      'totalViews': totalViews,
     };
+  }
+
+  /// نسخة من المستخدم مع تعديل بعض الحقول
+  UserModel copyWith({
+    String? name,
+    String? email,
+    String? phone,
+    String? photoUrl,
+    bool? isSeller,
+    bool? isBuyer,
+    double? rating,
+    int? totalSales,
+    int? totalProducts,
+    int? totalViews,
+  }) {
+    return UserModel(
+      id: id,
+      name: name ?? this.name,
+      email: email ?? this.email,
+      phone: phone ?? this.phone,
+      photoUrl: photoUrl ?? this.photoUrl,
+      isSeller: isSeller ?? this.isSeller,
+      isBuyer: isBuyer ?? this.isBuyer,
+      createdAt: createdAt,
+      rating: rating ?? this.rating,
+      totalSales: totalSales ?? this.totalSales,
+      totalProducts: totalProducts ?? this.totalProducts,
+      totalViews: totalViews ?? this.totalViews,
+    );
+  }
+
+  /// مستخدم وهمي للتجربة
+  static UserModel mockSeller() {
+    return UserModel(
+      id: 'seller_001',
+      name: 'أحمد محمد',
+      email: 'ahmed@example.com',
+      phone: '01000000000',
+      photoUrl: '',
+      isSeller: true,
+      isBuyer: true,
+      createdAt: DateTime.now(),
+      rating: 4.5,
+      totalSales: 128,
+      totalProducts: 45,
+      totalViews: 12500,
+    );
   }
 
   static UserModel mockBuyer() {
     return UserModel(
       id: 'buyer_001',
-      name: 'سارة أحمد',
-      phone: '+201001234567',
-      email: 'sara@example.com',
-      photoUrl: null,
-      userType: 'buyer',
-      rating: 0.0,
-      ratingCount: 0,
+      name: 'محمد علي',
+      email: 'mohamed@example.com',
+      phone: '01100000000',
+      photoUrl: '',
+      isSeller: false,
+      isBuyer: true,
       createdAt: DateTime.now(),
-    );
-  }
-
-  static UserModel mockSeller() {
-    return UserModel(
-      id: 'seller_001',
-      name: 'أحمد محمد',
-      phone: '+201001234567',
-      email: 'ahmed@example.com',
-      photoUrl: null,
-      userType: 'seller',
-      rating: 4.8,
-      ratingCount: 156,
-      createdAt: DateTime.now(),
+      rating: 0,
+      totalSales: 0,
+      totalProducts: 0,
+      totalViews: 0,
     );
   }
 }

@@ -18,13 +18,19 @@ class FavoriteButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isFav = ref.watch(isFavoriteProvider(product.id));
+    final favorites = ref.watch(favoritesProvider);
+    final isFav = favorites.any((p) => p.id == product.id);
     final notifier = ref.read(favoritesProvider.notifier);
 
     return GestureDetector(
       onTap: () {
         HapticFeedback.lightImpact();
-        notifier.toggleFavorite(product);
+        if (isFav) {
+          notifier.removeFromFavorites(product.id);
+        } else {
+          notifier.addToFavorites(product);
+        }
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(

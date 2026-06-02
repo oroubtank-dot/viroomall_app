@@ -11,33 +11,61 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # UI & Icons
   cupertino_icons: ^1.0.6
   google_fonts: ^6.1.0
   flutter_svg: ^2.0.9
+  
+  # Navigation & State Management
   go_router: ^13.0.1
   flutter_riverpod: ^2.4.9
+  
+  # UI Components
   shimmer: ^3.0.0
   carousel_slider: ^4.2.1
   smooth_page_indicator: ^1.1.0
+  
+  # Storage & Utilities
   shared_preferences: ^2.2.2
   cached_network_image: ^3.3.1
   share_plus: ^7.2.2
   local_auth: ^2.1.8
+  url_launcher: ^6.3.2
+  image_picker: ^1.2.1
   
   # Firebase
   firebase_core: 3.15.2
   firebase_auth: 5.7.0
   cloud_firestore: 5.6.12
-  url_launcher: ^6.3.2
-  image_picker: ^1.2.1
   firebase_storage: ^12.4.10
   firebase_messaging: ^15.2.9
+  
+  # Local Notifications
   flutter_local_notifications: ^18.0.0
+  
+  # Helper Functions
+  intl: ^0.19.0
+  equatable: ^2.0.5
+  
+  # Image Processing (كاميرا وقص وضغط)
+  image_cropper: ^8.0.2
+  flutter_image_compress: ^2.3.0
+  path_provider: ^2.1.5
+  path: ^1.9.0
+  
+  # Code Generation (freezed)
+  freezed_annotation: ^2.4.1
+  json_annotation: ^4.9.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
+  
+  # Code Generation tools
+  build_runner: ^2.4.0
+  freezed: ^2.5.2
+  json_serializable: ^6.8.0
 
 flutter:
   uses-material-design: true

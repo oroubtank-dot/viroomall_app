@@ -1,16 +1,21 @@
 // lib/features/admin/presentation/screens/add_product_screen.dart
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:share_plus/share_plus.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_widgets.dart';
 import '../../../../core/widgets/viroo_background.dart';
-import '../widgets/product_form_base.dart';
-import '../widgets/product_form_sections.dart';
-import '../providers/add_product_provider.dart';
+import '../../../../core/services/image_picker_service.dart';
+import '../widgets/product_type_selector.dart';
+import '../widgets/product_basic_info.dart';
+import '../widgets/category_dropdown.dart';
+import '../widgets/location_field.dart';
+import '../widgets/farz_fields.dart';
+import '../widgets/gomla_fields.dart';
+import '../widgets/tasawok_fields.dart';
+import '../widgets/mosta3mal_fields.dart';
+import '../widgets/seller_contact_info.dart';
 
 class AddProductScreen extends ConsumerStatefulWidget {
   const AddProductScreen({super.key});
@@ -20,368 +25,384 @@ class AddProductScreen extends ConsumerStatefulWidget {
 }
 
 class _AddProductScreenState extends ConsumerState<AddProductScreen> {
-  String _selectedType = 'new';
-  String _selectedCategory = 'electronics_mobiles';
-  String _usedCondition = 'good';
-  bool _isNegotiable = true;
-  File? _imageFile;
-  File? _videoFile;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final ImagePickerService _imagePickerService = ImagePickerService();
   bool _isLoading = false;
 
-  @override
-  void dispose() {
-    ProductFormBase.disposeAll();
-    super.dispose();
-  }
+  // ========== الحقول الأساسية ==========
+  String _productType = 'farz';
+  String _title = '';
+  String _description = '';
+  String _categoryId = '';
+  String _location = '';
+  List<File> _images = [];
+
+  // ========== Farz ==========
+  String _price = '';
+  String _originalPrice = '';
+  bool _hasWarranty = false;
+  String _warrantyMonths = '12';
+  bool _priceIncludesTax = true;
+
+  // ========== Gomla ==========
+  String _wholesalePrice = '';
+  String _minQuantity = '10';
+  String _maxQuantity = '100';
+
+  // ========== Tasawok ==========
+  String _condition = 'good';
+  String _defects = '';
+  String _reasonForSelling = '';
+  String _usageDuration = '';
+  bool _hasOriginalBox = false;
+  String _originalReceipt = 'no';
+
+  // ========== Mosta3mal ==========
+  String _discountPercentage = '';
+  String _limitedQuantity = '';
+  DateTime? _expiryDate;
+  String _flashSaleType = 'normal';
+  String _couponCode = '';
+
+  // ========== بيانات البائع ==========
+  String _sellerPhone = '';
+  String _sellerWhatsapp = '';
 
   @override
   Widget build(BuildContext context) {
-    final themeColor = _getModeColor();
-
     return Scaffold(
       backgroundColor: VirooColors.background,
       appBar: AppBar(
+        title: const Text('إضافة منتج جديد',
+            style: TextStyle(color: Colors.white, fontFamily: 'Cairo', fontWeight: FontWeight.bold)),
+        centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
-        centerTitle: true,
-        title: const Text('إضافة منتج جديد',
-            style: TextStyle(
-                fontFamily: 'Cairo',
-                fontWeight: FontWeight.bold,
-                color: Colors.white)),
         leading: IconButton(
-            icon: const Icon(Icons.close_rounded, color: Colors.white),
-            onPressed: () => Navigator.pop(context)),
+          icon: const Icon(Icons.close_rounded, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+        actions: [
+          TextButton(
+            onPressed: _isLoading ? null : _submitProduct,
+            child: const Text('نشر',
+                style: TextStyle(color: VirooColors.amberPrimary, fontSize: 16, fontWeight: FontWeight.bold)),
+          ),
+        ],
       ),
       body: VirooBackground(
         showOrbs: true,
-        themeColor: themeColor,
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // 🎯 اختيار نوع المنتج
-              const Text('📂 اختر نوع المنتج أولاً:',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Cairo')),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  _typeChip('new', '🛍️ تسوق', VirooColors.shopping),
-                  _typeChip('wholesale', '🏪 جملة', VirooColors.wholesale),
-                  _typeChip('used', '♻️ مستعمل', VirooColors.used),
-                  _typeChip('outlet', '🔥 فرز', VirooColors.outlet),
-                ],
-              ),
-              const SizedBox(height: 24),
-
-              // 📸 الصورة
-              const Text('📸 صورة المنتج *',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Cairo')),
-              const SizedBox(height: 12),
-              GestureDetector(
-                onTap: _pickImage,
-                child: GlassContainer(
-                  height: 180,
-                  width: double.infinity,
-                  borderRadius: BorderRadius.circular(20),
-                  child: _imageFile == null
-                      ? Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                              Icon(Icons.add_a_photo_rounded,
-                                  size: 50, color: themeColor),
-                              const SizedBox(height: 8),
-                              Text('اضغط لإضافة صورة',
-                                  style: TextStyle(
-                                      color: VirooColors.textSecondary,
-                                      fontFamily: 'Cairo')),
-                            ])
-                      : Stack(children: [
-                          ClipRRect(
-                              borderRadius: BorderRadius.circular(20),
-                              child: Image.file(_imageFile!,
-                                  fit: BoxFit.cover,
-                                  width: double.infinity,
-                                  height: double.infinity)),
-                          Positioned(
-                              bottom: 10,
-                              right: 10,
-                              child: GestureDetector(
-                                  onTap: _pickImage,
-                                  child: Container(
-                                      padding: const EdgeInsets.all(8),
-                                      decoration: BoxDecoration(
-                                          color: VirooColors.amberPrimary
-                                              .withAlpha(230),
-                                          borderRadius:
-                                              BorderRadius.circular(10)),
-                                      child: const Icon(Icons.edit_rounded,
-                                          color: Colors.white, size: 20)))),
-                        ]),
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator(color: VirooColors.amberPrimary))
+            : Form(
+                key: _formKey,
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    children: [
+                      _buildImagesSection(),
+                      const SizedBox(height: 20),
+                      ProductTypeSelector(
+                        selectedType: _productType,
+                        onTypeChanged: (type) => setState(() => _productType = type),
+                      ),
+                      const SizedBox(height: 20),
+                      ProductBasicInfo(
+                        title: _title,
+                        description: _description,
+                        onTitleChanged: (v) => _title = v,
+                        onDescriptionChanged: (v) => _description = v,
+                      ),
+                      const SizedBox(height: 20),
+                      CategoryDropdown(
+                        selectedCategoryId: _categoryId,
+                        onCategoryChanged: (v) => _categoryId = v,
+                      ),
+                      const SizedBox(height: 20),
+                      LocationField(
+                        location: _location,
+                        onLocationChanged: (v) => _location = v,
+                      ),
+                      const SizedBox(height: 20),
+                      _buildModeSpecificFields(),
+                      const SizedBox(height: 20),
+                      SellerContactInfo(
+                        phone: _sellerPhone,
+                        whatsapp: _sellerWhatsapp,
+                        onPhoneChanged: (v) => _sellerPhone = v,
+                        onWhatsappChanged: (v) => _sellerWhatsapp = v,
+                      ),
+                      const SizedBox(height: 40),
+                    ],
+                  ),
                 ),
               ),
-              const SizedBox(height: 24),
+      ),
+    );
+  }
 
-              // 📝 اسم المنتج
-              ProductFormBase.buildTextField(
-                  controller: ProductFormBase.nameController,
-                  hint: 'اسم المنتج',
-                  icon: Icons.shopping_bag_rounded,
-                  required: true),
-              const SizedBox(height: 16),
-
-              // 💰 السعر
-              ProductFormBase.buildTextField(
-                  controller: ProductFormBase.priceController,
-                  hint: 'السعر',
-                  icon: Icons.money_rounded,
-                  keyboardType: TextInputType.number,
-                  required: true),
-              const SizedBox(height: 16),
-
-              // 📂 القسم (41+)
-              const Text('القسم *',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      fontFamily: 'Cairo')),
-              const SizedBox(height: 8),
-              ProductFormBase.buildCategoryDropdown(_selectedCategory, (val) {
-                setState(() => _selectedCategory = val);
-              }),
-              const SizedBox(height: 16),
-
-              // 📋 الوصف
-              ProductFormBase.buildTextField(
-                  controller: ProductFormBase.descController,
-                  hint: 'وصف المنتج',
-                  icon: Icons.description_rounded,
-                  maxLines: 3),
-              const SizedBox(height: 16),
-
-              // 📍 الموقع
-              ProductFormBase.buildTextField(
-                  controller: ProductFormBase.locationController,
-                  hint: 'الموقع (المدينة/المنطقة)',
-                  icon: Icons.location_on_rounded),
-              const SizedBox(height: 16),
-
-              // 👤 اسم البائع
-              ProductFormBase.buildTextField(
-                  controller: ProductFormBase.sellerNameController,
-                  hint: 'اسم البائع/المتجر',
-                  icon: Icons.store_rounded),
-              const SizedBox(height: 16),
-
-              // 📞 رقم البائع
-              ProductFormBase.buildTextField(
-                  controller: ProductFormBase.sellerPhoneController,
-                  hint: 'رقم الهاتف للواتساب',
-                  icon: Icons.phone_rounded,
-                  keyboardType: TextInputType.phone),
-              const SizedBox(height: 16),
-
-              // 🎬 فيديو
-              GestureDetector(
-                onTap: _pickVideo,
-                child: GlassContainer(
-                  padding: const EdgeInsets.all(14),
-                  borderRadius: BorderRadius.circular(16),
-                  child: Row(children: [
-                    Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                            color: VirooColors.info.withAlpha(51),
-                            borderRadius: BorderRadius.circular(10)),
-                        child: const Icon(Icons.videocam_rounded,
-                            color: VirooColors.info, size: 22)),
-                    const SizedBox(width: 12),
-                    Text(
-                        _videoFile != null
-                            ? '🎬 تم اختيار فيديو'
-                            : '🎬 فيديو (اختياري - 30 ثانية)',
-                        style: TextStyle(
-                            color: _videoFile != null
-                                ? VirooColors.success
-                                : VirooColors.textSecondary,
-                            fontFamily: 'Cairo',
-                            fontSize: 13)),
-                  ]),
-                ),
-              ),
-
-              // 🏪 قسم الجملة
-              if (_selectedType == 'wholesale')
-                ProductFormSections.wholesaleSection(),
-
-              // ♻️ قسم المستعمل
-              if (_selectedType == 'used')
-                ProductFormSections.usedSection(
-                    _usedCondition,
-                    (v) => setState(() => _usedCondition = v),
-                    _isNegotiable,
-                    (v) => setState(() => _isNegotiable = v)),
-
-              // 🔥 قسم الفرز
-              if (_selectedType == 'outlet')
-                ProductFormSections.outletSection(),
-
-              const SizedBox(height: 30),
-              GlowingButton(
-                onPressed: _isLoading ? () {} : _saveProduct,
-                text: _isLoading ? '⏳ جاري النشر...' : '🚀 نشر المنتج الآن',
-                isLoading: _isLoading,
-                backgroundColor: themeColor,
-              ),
-              const SizedBox(height: 40),
-            ],
+  // ============================================================
+  // قسم الصور (يدعم اختيار متعدد الصور)
+  // ============================================================
+  Widget _buildImagesSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('صور المنتج',
+            style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
+        const Text('يمكنك إضافة حتى 5 صور',
+            style: TextStyle(color: VirooColors.textSecondary, fontSize: 12)),
+        const SizedBox(height: 12),
+        SizedBox(
+          height: 100,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: _images.length < 5 ? _images.length + 1 : _images.length,
+            itemBuilder: (context, index) {
+              if (index == _images.length && _images.length < 5) {
+                return _buildAddImageButton();
+              }
+              return _buildImageItem(index);
+            },
           ),
+        ),
+        if (_images.isEmpty)
+          const Padding(
+              padding: EdgeInsets.only(top: 8),
+              child: Text('يجب إضافة صورة واحدة على الأقل',
+                  style: TextStyle(color: VirooColors.warning, fontSize: 12))),
+      ],
+    );
+  }
+
+  Widget _buildAddImageButton() {
+    return GestureDetector(
+      onTap: _pickMultipleImages,
+      child: Container(
+        width: 80, height: 80, margin: const EdgeInsets.only(right: 12),
+        decoration: BoxDecoration(
+          color: VirooColors.glassDark,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: VirooColors.glassBorder),
+        ),
+        child: const Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.add_photo_alternate, color: VirooColors.textSecondary, size: 28),
+            SizedBox(height: 4),
+            Text('إضافة صور',
+                style: TextStyle(color: VirooColors.textSecondary, fontSize: 10)),
+          ],
         ),
       ),
     );
   }
 
-  Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final pickedFile =
-        await picker.pickImage(source: ImageSource.gallery, imageQuality: 70);
-    if (pickedFile != null) setState(() => _imageFile = File(pickedFile.path));
+  Widget _buildImageItem(int index) {
+    return Stack(children: [
+      Container(width: 80, height: 80, margin: const EdgeInsets.only(right: 12),
+          child: ClipRRect(borderRadius: BorderRadius.circular(12),
+              child: Image.file(_images[index], fit: BoxFit.cover))),
+      Positioned(
+        top: -4, right: 4,
+        child: GestureDetector(
+          onTap: () => setState(() => _images.removeAt(index)),
+          child: const CircleAvatar(radius: 12, backgroundColor: VirooColors.error,
+              child: Icon(Icons.close, size: 12, color: Colors.white)),
+        ),
+      ),
+    ]);
   }
 
-  Future<void> _pickVideo() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickVideo(
-        source: ImageSource.gallery, maxDuration: const Duration(seconds: 30));
-    if (pickedFile != null) setState(() => _videoFile = File(pickedFile.path));
+  // اختيار صور متعددة
+  Future<void> _pickMultipleImages() async {
+    final images = await _imagePickerService.pickMultipleImages(context);
+    
+    if (images.isNotEmpty) {
+      // معاينة أول صورة قبل إضافة الكل (اختياري)
+      if (images.length == 1) {
+        await _imagePickerService.previewImage(
+          context: context,
+          imageFile: images.first,
+          onConfirm: () {
+            setState(() {
+              _images.addAll(images);
+            });
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('تم اختيار ${images.length} صورة')),
+            );
+          },
+        );
+      } else {
+        // لو أكتر من صورة، نضيفهم مباشرة
+        setState(() {
+          _images.addAll(images);
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('تم اختيار ${images.length} صورة')),
+        );
+      }
+    }
   }
 
-  Future<void> _saveProduct() async {
-    if (ProductFormBase.nameController.text.isEmpty ||
-        ProductFormBase.priceController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('⚠️ الاسم والسعر إجباريين',
-              style: TextStyle(fontFamily: 'Cairo')),
-          backgroundColor: VirooColors.warning));
-      return;
+  Widget _buildModeSpecificFields() {
+    switch (_productType) {
+      case 'farz':
+        return FarzFields(
+          price: _price,
+          originalPrice: _originalPrice,
+          hasWarranty: _hasWarranty,
+          warrantyMonths: _warrantyMonths,
+          priceIncludesTax: _priceIncludesTax,
+          onPriceChanged: (v) => _price = v,
+          onOriginalPriceChanged: (v) => _originalPrice = v,
+          onHasWarrantyChanged: (v) => _hasWarranty = v,
+          onWarrantyMonthsChanged: (v) => _warrantyMonths = v,
+          onPriceIncludesTaxChanged: (v) => _priceIncludesTax = v,
+        );
+      case 'gomla':
+        return GomlaFields(
+          wholesalePrice: _wholesalePrice,
+          minQuantity: _minQuantity,
+          maxQuantity: _maxQuantity,
+          onWholesalePriceChanged: (v) => _wholesalePrice = v,
+          onMinQuantityChanged: (v) => _minQuantity = v,
+          onMaxQuantityChanged: (v) => _maxQuantity = v,
+        );
+      case 'tasawok':
+        return TasawokFields(
+          price: _price,
+          condition: _condition,
+          defects: _defects,
+          reasonForSelling: _reasonForSelling,
+          usageDuration: _usageDuration,
+          hasOriginalBox: _hasOriginalBox,
+          originalReceipt: _originalReceipt,
+          onPriceChanged: (v) => _price = v,
+          onConditionChanged: (v) => _condition = v,
+          onDefectsChanged: (v) => _defects = v,
+          onReasonForSellingChanged: (v) => _reasonForSelling = v,
+          onUsageDurationChanged: (v) => _usageDuration = v,
+          onHasOriginalBoxChanged: (v) => _hasOriginalBox = v,
+          onOriginalReceiptChanged: (v) => _originalReceipt = v,
+        );
+      case 'mosta3mal':
+        return Mosta3malFields(
+          originalPrice: _originalPrice,
+          price: _price,
+          discountPercentage: _discountPercentage,
+          limitedQuantity: _limitedQuantity,
+          expiryDate: _expiryDate,
+          flashSaleType: _flashSaleType,
+          couponCode: _couponCode,
+          onOriginalPriceChanged: (v) => _originalPrice = v,
+          onPriceChanged: (v) => _price = v,
+          onDiscountPercentageChanged: (v) => _discountPercentage = v,
+          onLimitedQuantityChanged: (v) => _limitedQuantity = v,
+          onExpiryDateChanged: (v) => _expiryDate = v,
+          onFlashSaleTypeChanged: (v) => _flashSaleType = v,
+          onCouponCodeChanged: (v) => _couponCode = v,
+        );
+      default:
+        return const SizedBox();
     }
-    if (_imageFile == null) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content:
-              Text('⚠️ الصورة إجبارية', style: TextStyle(fontFamily: 'Cairo')),
-          backgroundColor: VirooColors.warning));
-      return;
-    }
-    if (_selectedType == 'wholesale' &&
-        ProductFormBase.minQuantityController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('⚠️ الحد الأدنى للطلب إجباري للجملة',
-              style: TextStyle(fontFamily: 'Cairo')),
-          backgroundColor: VirooColors.warning));
-      return;
-    }
-    if (_selectedType == 'outlet' &&
-        ProductFormBase.outletReasonController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('⚠️ سبب التصفية إجباري للفرز',
-              style: TextStyle(fontFamily: 'Cairo')),
-          backgroundColor: VirooColors.warning));
+  }
+
+  Future<void> _submitProduct() async {
+    if (!_formKey.currentState!.validate()) return;
+    if (_images.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('الرجاء إضافة صورة على الأقل')),
+      );
       return;
     }
 
     setState(() => _isLoading = true);
 
-    final formData = {
-      'name': ProductFormBase.nameController.text.trim(),
-      'price': ProductFormBase.priceController.text.trim(),
-      'description': ProductFormBase.descController.text.trim(),
-      'productType': _selectedType,
-      'category': _selectedCategory,
-      'condition': _usedCondition,
-      'location': ProductFormBase.locationController.text.trim(),
-      'sellerName': ProductFormBase.sellerNameController.text.trim(),
-      'sellerPhone': ProductFormBase.sellerPhoneController.text.trim(),
-      'imageFile': _imageFile,
-      'videoFile': _videoFile,
-      'originalPrice': ProductFormBase.originalPriceController.text.trim(),
-      'defects': ProductFormBase.defectsController.text.trim(),
-      'minQuantity': ProductFormBase.minQuantityController.text.trim(),
-      'negotiable': _isNegotiable,
-      'outletReason': ProductFormBase.outletReasonController.text.trim(),
-      'outletQuantity': ProductFormBase.outletQuantityController.text.trim(),
-    };
+    try {
+      // رفع الصور
+      List<String> imageUrls = [];
+      for (int i = 0; i < _images.length; i++) {
+        final ref = FirebaseStorage.instance
+            .ref()
+            .child('products/${DateTime.now().millisecondsSinceEpoch}_$i.jpg');
+        await ref.putFile(_images[i]);
+        final url = await ref.getDownloadURL();
+        imageUrls.add(url);
+      }
 
-    final success = await ref
-        .read(addProductNotifierProvider.notifier)
-        .saveProduct(formData);
+      // تحديد نوع المنتج في Firestore
+      String firestoreProductType;
+      switch (_productType) {
+        case 'farz': firestoreProductType = 'new'; break;
+        case 'gomla': firestoreProductType = 'wholesale'; break;
+        case 'tasawok': firestoreProductType = 'used'; break;
+        case 'mosta3mal': firestoreProductType = 'outlet'; break;
+        default: firestoreProductType = 'new';
+      }
 
-    setState(() => _isLoading = false);
+      // إضافة تفاصيل إضافية حسب النوع
+      Map<String, dynamic> additionalData = {};
+      if (_productType == 'gomla') {
+        additionalData['minQuantity'] = int.tryParse(_minQuantity) ?? 10;
+        additionalData['maxQuantity'] = int.tryParse(_maxQuantity);
+        additionalData['wholesalePrice'] = double.tryParse(_wholesalePrice) ?? double.tryParse(_price) ?? 0;
+      } else if (_productType == 'tasawok') {
+        additionalData['condition'] = _condition;
+        additionalData['defects'] = _defects;
+        additionalData['reasonForSelling'] = _reasonForSelling;
+        additionalData['usageDuration'] = _usageDuration;
+        additionalData['hasOriginalBox'] = _hasOriginalBox;
+        additionalData['originalReceipt'] = _originalReceipt;
+      } else if (_productType == 'mosta3mal') {
+        additionalData['discountPercentage'] = int.tryParse(_discountPercentage);
+        additionalData['limitedQuantity'] = int.tryParse(_limitedQuantity);
+        additionalData['expiryDate'] = _expiryDate;
+        additionalData['flashSaleType'] = _flashSaleType;
+        additionalData['couponCode'] = _couponCode;
+      } else {
+        additionalData['hasWarranty'] = _hasWarranty;
+        additionalData['warrantyMonths'] = int.tryParse(_warrantyMonths);
+        additionalData['priceIncludesTax'] = _priceIncludesTax;
+      }
 
-    if (success && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('✅ تم نشر المنتج بنجاح!',
-              style: TextStyle(fontFamily: 'Cairo', color: Colors.white)),
-          backgroundColor: VirooColors.success));
-      Navigator.pop(context);
-    }
-  }
+      final productData = {
+        'title': _title,
+        'description': _description,
+        'price': double.tryParse(_price) ?? 0,
+        'originalPrice': double.tryParse(_originalPrice),
+        'productType': firestoreProductType,
+        'categoryId': _categoryId,
+        'images': imageUrls,
+        'condition': _condition,
+        'location': _location,
+        'sellerId': 'current_user_id',
+        'sellerPhone': _sellerPhone,
+        'sellerWhatsapp': _sellerWhatsapp,
+        'status': 'approved',
+        'views': 0,
+        'favorites': 0,
+        'createdAt': FieldValue.serverTimestamp(),
+        ...additionalData,
+      };
 
-  Widget _typeChip(String value, String label, Color color) {
-    final isSelected = _selectedType == value;
-    return Expanded(
-      child: GestureDetector(
-        onTap: () => setState(() => _selectedType = value),
-        child: Container(
-          margin: const EdgeInsets.only(right: 6),
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          decoration: BoxDecoration(
-            color: isSelected ? color.withAlpha(51) : VirooColors.glassDark,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-                color: isSelected ? color : VirooColors.glassBorder,
-                width: isSelected ? 2 : 1),
-            boxShadow: isSelected
-                ? [
-                    BoxShadow(
-                        color: color.withAlpha(38),
-                        blurRadius: 10,
-                        spreadRadius: 1)
-                  ]
-                : null,
-          ),
-          child: Text(label,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Cairo',
-                  color: isSelected ? color : VirooColors.textSecondary)),
-        ),
-      ),
-    );
-  }
+      await FirebaseFirestore.instance.collection('products').add(productData);
 
-  Color _getModeColor() {
-    switch (_selectedType) {
-      case 'wholesale':
-        return VirooColors.wholesale;
-      case 'used':
-        return VirooColors.used;
-      case 'outlet':
-        return VirooColors.outlet;
-      default:
-        return VirooColors.shopping;
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('✅ تم نشر المنتج بنجاح!')),
+        );
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('❌ خطأ: ${e.toString()}')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 }

@@ -1,17 +1,16 @@
 // lib/features/profile/domain/services/profile_service.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/user_model.dart';
-import '../models/seller_stats.dart';
-import '../models/buyer_stats.dart';
 
 class ProfileService {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<UserModel?> getUser(String userId) async {
+  /// جلب بيانات المستخدم من Firestore
+  Future<UserModel?> getUserProfile(String userId) async {
     try {
-      final doc = await _db.collection('users').doc(userId).get();
+      final doc = await _firestore.collection('users').doc(userId).get();
       if (doc.exists) {
-        return UserModel.fromFirestore(doc.data()!, doc.id);
+        return UserModel.fromFirestore(doc);
       }
       return null;
     } catch (e) {
@@ -19,35 +18,54 @@ class ProfileService {
     }
   }
 
-  Future<SellerStats?> getSellerStats(String userId) async {
+  /// تحديث بيانات المستخدم
+  Future<void> updateUserProfile(
+      String userId, Map<String, dynamic> data) async {
     try {
-      final doc = await _db.collection('seller_stats').doc(userId).get();
-      if (doc.exists) {
-        return SellerStats.fromFirestore(doc.data()!);
-      }
-      return SellerStats();
+      await _firestore.collection('users').doc(userId).update(data);
     } catch (e) {
-      return SellerStats();
+      // معالجة الخطأ
     }
   }
 
-  Future<BuyerStats?> getBuyerStats(String userId) async {
-    try {
-      final doc = await _db.collection('buyer_stats').doc(userId).get();
-      if (doc.exists) {
-        return BuyerStats.fromFirestore(doc.data()!);
-      }
-      return BuyerStats();
-    } catch (e) {
-      return BuyerStats();
+  /// تحديث صورة المستخدم
+  Future<void> updateUserPhoto(String userId, String photoUrl) async {
+    await _firestore.collection('users').doc(userId).update({
+      'photoUrl': photoUrl,
+    });
+  }
+
+  /// تحديث تقييم البائع (عندما يقيّم مشتري)
+  Future<void> updateSellerRating(String sellerId, double newRating) async {
+    final doc = await _firestore.collection('users').doc(sellerId).get();
+    if (doc.exists) {
+      final currentRating = doc.data()?['rating'] ?? 0.0;
+      final totalSales = doc.data()?['totalSales'] ?? 0;
+      final newAvgRating =
+          ((currentRating * totalSales) + newRating) / (totalSales + 1);
+
+      await _firestore.collection('users').doc(sellerId).update({
+        'rating': newAvgRating,
+      });
     }
   }
 
-  Future<void> updateUser(String userId, Map<String, dynamic> data) async {
-    try {
-      await _db.collection('users').doc(userId).update(data);
-    } catch (e) {
-      // Handle error
-    }
+  /// زيادة عدد المبيعات للبائع
+  Future<void> incrementTotalSales(String sellerId) async {
+    await _firestore.collection('users').doc(sellerId).update({
+      'totalSales': FieldValue.increment(1),
+    });
+  }
+
+  /// زيادة عدد المشاهدات الإجمالية للبائع
+  Future<void> incrementTotalViews(String sellerId, int views) async {
+    await _firestore.collection('users').doc(sellerId).update({
+      'totalViews': FieldValue.increment(views),
+    });
+  }
+
+  /// إنشاء مستخدم جديد
+  Future<void> createUser(UserModel user) async {
+    await _firestore.collection('users').doc(user.id).set(user.toMap());
   }
 }

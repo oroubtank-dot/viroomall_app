@@ -1,51 +1,42 @@
 // lib/features/search/presentation/providers/search_provider.dart
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../core/models/product_model.dart';
+import '../../../admin/data/product_repository.dart';
 
-class SearchNotifier extends StateNotifier<List<ProductModel>> {
-  SearchNotifier() : super([]);
+final productRepositoryProvider = Provider((ref) => ProductRepository());
 
-  bool _isSearching = false;
-  bool get isSearching => _isSearching;
+class SearchNotifier extends StateNotifier<AsyncValue<List<ProductModel>>> {
+  final Ref _ref;
+  String _currentQuery = '';
 
-  Future<void> search(String query) async {
-    if (query.trim().isEmpty) {
-      state = [];
-      return;
-    }
+  SearchNotifier(this._ref) : super(const AsyncValue.loading());
 
-    _isSearching = true;
+  ProductRepository get _repository => _ref.read(productRepositoryProvider);
 
-    try {
-      final snapshot = await FirebaseFirestore.instance
-          .collection('products')
-          .where('status', isEqualTo: 'approved')
-          .get();
+  void search(String query) {
+    _currentQuery = query;
+    state = const AsyncValue.loading();
 
-      final results = snapshot.docs
-          .map((doc) => ProductModel.fromFirestore(doc))
-          .where((product) {
-        final title = product.title.toLowerCase();
-        final desc = product.description.toLowerCase();
-        final searchQuery = query.toLowerCase();
-        return title.contains(searchQuery) || desc.contains(searchQuery);
-      }).toList();
-
-      state = results;
-    } catch (e) {
-      state = [];
-    }
-
-    _isSearching = false;
+    _repository.searchProducts(query).listen(
+      (products) {
+        if (_currentQuery == query) {
+          state = AsyncValue.data(products);
+        }
+      },
+      onError: (error) {
+        state = AsyncValue.error(error, StackTrace.current);
+      },
+    );
   }
 
   void clearSearch() {
-    state = [];
+    _currentQuery = '';
+    search('');
   }
 }
 
 final searchProvider =
-    StateNotifierProvider<SearchNotifier, List<ProductModel>>((ref) {
-  return SearchNotifier();
+    StateNotifierProvider<SearchNotifier, AsyncValue<List<ProductModel>>>(
+        (ref) {
+  return SearchNotifier(ref);
 });

@@ -11,13 +11,14 @@ import 'core/widgets/viroo_background.dart';
 import 'core/services/storage_service.dart';
 import 'core/services/auth_service.dart';
 import 'core/services/notification_service.dart';
-import 'presentation/screens/onboarding/onboarding_screen.dart';
-import 'presentation/screens/auth/login_screen.dart';
+import 'features/onboarding/onboarding_screen.dart';
+import 'features/auth/login_screen.dart';
 import 'features/home/presentation/screens/home_screen.dart';
 import 'features/cart/presentation/screens/cart_screen.dart';
 import 'features/ads/presentation/screens/ad_marketplace_screen.dart';
 import 'features/favorites/presentation/screens/favorites_screen.dart';
 import 'features/reviews/presentation/screens/reviews_screen.dart';
+import 'features/product/presentation/screens/product_details_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -72,6 +73,20 @@ class MyApp extends StatelessWidget {
         '/cart': (context) => const CartScreen(),
         '/ad-marketplace': (context) => const AdMarketplaceScreen(),
         '/favorites': (context) => const FavoritesScreen(),
+        '/product': (context) {
+          final args = ModalRoute.of(context)?.settings.arguments;
+          if (args is String) {
+            return ProductDetailsScreen(productId: args);
+          }
+          return const Scaffold(
+            body: Center(
+              child: Text(
+                'خطأ في تحميل المنتج',
+                style: TextStyle(color: Colors.white, fontFamily: 'Cairo'),
+              ),
+            ),
+          );
+        },
       },
       home: const SplashScreen(),
     );
