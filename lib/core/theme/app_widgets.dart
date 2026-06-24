@@ -65,7 +65,7 @@ class GlassContainer extends StatelessWidget {
 /// 2. Glowing Button - زر متوهج
 /// =============================================
 class GlowingButton extends StatelessWidget {
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final String text;
   final IconData? icon;
   final double? width;

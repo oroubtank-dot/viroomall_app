@@ -2,6 +2,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:local_auth/local_auth.dart';
 import 'firebase_options.dart';
 import 'core/theme/app_colors.dart';
@@ -19,17 +20,23 @@ import 'features/ads/presentation/screens/ad_marketplace_screen.dart';
 import 'features/favorites/presentation/screens/favorites_screen.dart';
 import 'features/reviews/presentation/screens/reviews_screen.dart';
 import 'features/product/presentation/screens/product_details_screen.dart';
+import 'features/profile/presentation/screens/edit_store_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // تحميل المفاتيح من ملف .env
+  await dotenv.load(fileName: ".env");
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  // ignore: avoid_print
   print('✅ Firebase initialized successfully');
 
   await VirooNotificationService.init();
+  // ignore: avoid_print
   print('🔔 Notification service initialized');
 
   runApp(const ProviderScope(child: MyApp()));
@@ -73,6 +80,7 @@ class MyApp extends StatelessWidget {
         '/cart': (context) => const CartScreen(),
         '/ad-marketplace': (context) => const AdMarketplaceScreen(),
         '/favorites': (context) => const FavoritesScreen(),
+        '/edit-store': (context) => const EditStoreScreen(),
         '/product': (context) {
           final args = ModalRoute.of(context)?.settings.arguments;
           if (args is String) {
@@ -164,11 +172,12 @@ class _SplashScreenState extends State<SplashScreen>
         if (authenticated) {
           final userData = await StorageService.getUserData();
           if (userData['phone'] != null && userData['phone']!.isNotEmpty) {
+            // ignore: use_build_context_synchronously
             Navigator.pushReplacementNamed(context, '/home');
             return;
           }
         }
-      } catch (e) {}
+      } catch (_) {}
     }
 
     final currentUser = AuthService.currentUser;
@@ -179,6 +188,7 @@ class _SplashScreenState extends State<SplashScreen>
         phone: currentUser.phoneNumber ?? '',
         name: currentUser.displayName,
       );
+      // ignore: use_build_context_synchronously
       Navigator.pushReplacementNamed(context, '/home');
       return;
     }
@@ -186,12 +196,14 @@ class _SplashScreenState extends State<SplashScreen>
     final isLoggedIn = await StorageService.isLoggedIn();
 
     if (isLoggedIn) {
+      // ignore: use_build_context_synchronously
       Navigator.pushReplacementNamed(context, '/home');
       return;
     }
 
     final hasSeenOnboarding = await StorageService.isOnboardingSeen();
 
+    // ignore: use_build_context_synchronously
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(

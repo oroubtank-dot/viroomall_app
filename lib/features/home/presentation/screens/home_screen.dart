@@ -1,6 +1,7 @@
 // lib/features/home/presentation/screens/home_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_widgets.dart';
 import '../../../../core/widgets/viroo_background.dart';
@@ -14,6 +15,7 @@ import '../../../auth/widgets/login_bottom_sheet.dart';
 import '../../../settings/presentation/screens/appearance_settings_screen.dart';
 import '../../../settings/presentation/screens/notifications_settings_screen.dart';
 import '../../../settings/presentation/screens/privacy_settings_screen.dart';
+import '../../../seller_convert/presentation/screens/convert_to_seller_screen.dart';
 import '../providers/home_provider.dart';
 import '../widgets/mode_selector.dart';
 import '../widgets/featured_products_section.dart';
@@ -191,7 +193,6 @@ class HomeContent extends ConsumerWidget {
               return VirooProductCard(
                 product: product,
                 onTap: () {
-                  // تسجيل نسبة المشاهدة
                   _incrementViewCount(ref, product);
                   Navigator.pushNamed(context, '/product',
                       arguments: product.id);
@@ -227,7 +228,6 @@ class HomeContent extends ConsumerWidget {
   }
 
   void _incrementViewCount(WidgetRef ref, ProductModel product) {
-    // تحديث عدد المشاهدات في Firestore
     ref
         .read(productModeProvider(product.productType).notifier)
         .incrementViewCount(product.id);
@@ -321,17 +321,105 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  void _checkAuthAndNavigate(BuildContext context, VoidCallback action) {
-    if (AuthService.currentUser != null) {
-      action();
-    } else {
+  // =============================================
+  // 🔒 التحقق من البائع قبل إضافة منتج
+  // =============================================
+  void _checkAuthAndNavigate(BuildContext context, VoidCallback action,
+      {bool requireSeller = false}) {
+    final user = AuthService.currentUser;
+
+    // 1. لو مش مسجل دخول → يطلب تسجيل دخول
+    if (user == null) {
       showModalBottomSheet(
         context: context,
         backgroundColor: Colors.transparent,
         isScrollControlled: true,
         builder: (context) => LoginBottomSheet(onLoginSuccess: action),
       );
+      return;
     }
+
+    // 2. لو التسجيل مطلوب بس المستخدم مش بائع
+    if (requireSeller) {
+      _checkIsSeller(context, action);
+      return;
+    }
+
+    // 3. لو كل حاجة تمام
+    action();
+  }
+
+  void _checkIsSeller(BuildContext context, VoidCallback action) async {
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(AuthService.currentUser?.uid)
+          .get();
+
+      final isSeller = doc.data()?['isSeller'] ?? false;
+
+      if (!isSeller) {
+        _showConvertToSellerDialog(context);
+        return;
+      }
+
+      action();
+    } catch (e) {
+      _showConvertToSellerDialog(context);
+    }
+  }
+
+  void _showConvertToSellerDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: VirooColors.surface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Text(
+          '🔒 تحتاج تكون بائع',
+          style: TextStyle(
+              color: Colors.white,
+              fontFamily: 'Cairo',
+              fontWeight: FontWeight.bold),
+        ),
+        content: const Text(
+          'إضافة المنتجات متاحة فقط للبائعين. حول حسابك لبائع الآن!',
+          style: TextStyle(color: Colors.white70, fontFamily: 'Cairo'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text(
+              'إلغاء',
+              style: TextStyle(
+                  color: VirooColors.textSecondary, fontFamily: 'Cairo'),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ConvertToSellerScreen(),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: VirooColors.amberPrimary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: const Text(
+              '🔄 تحويل لبائع',
+              style: TextStyle(color: Colors.white, fontFamily: 'Cairo'),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   void _navigateToSettings(Widget screen) {
@@ -413,7 +501,9 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
           selectedIndex: _currentIndex,
           onTap: (index) {
             if (index == -1) {
-              _checkAuthAndNavigate(context, _navigateToAddProduct);
+              // ✅ الزرار الأوسط (إضافة منتج) → يحتاج بائع
+              _checkAuthAndNavigate(context, _navigateToAddProduct,
+                  requireSeller: true);
               return;
             }
             if (index == 0) {
@@ -447,7 +537,6 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
         ],
       ),
       child: SingleChildScrollView(
-        // ✅ لفيناها في SingleChildScrollView
         child: Column(
           children: [
             const SizedBox(height: 60),

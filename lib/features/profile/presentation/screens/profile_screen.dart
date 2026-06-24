@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/viroo_background.dart';
-import '../../../../core/repositories/product_repository.dart';
+import '../../../../core/services/auth_service.dart';
 import '../providers/profile_provider.dart';
 import '../../domain/models/user_model.dart';
 import '../../domain/models/seller_stats.dart';
@@ -15,9 +15,10 @@ import '../widgets/buyer_stats_widget.dart';
 import '../widgets/profile_menu_section.dart';
 import '../../../home/presentation/widgets/product_card.dart';
 import '../../../../core/models/product_model.dart';
+import 'seller_dashboard_screen.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
-  final String? userId; // لو null يبقى البروفايل بتاع المستخدم الحالي
+  final String? userId;
 
   const ProfileScreen({super.key, this.userId});
 
@@ -37,9 +38,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   Future<void> _loadCurrentUser() async {
-    // هتجيبي الـ user id من AuthService بعدين
-    // مؤقتاً: استخدم mock
-    _currentUserId = 'seller_001';
+    final user = AuthService.currentUser;
+
+    if (user == null) {
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, '/login');
+      }
+      return;
+    }
+
+    _currentUserId = user.uid;
     if (_userId != null) {
       await ref.read(profileNotifierProvider.notifier).loadUser(_userId!);
     }
@@ -52,7 +60,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final sellerStats = ref.watch(sellerStatsProvider);
     final buyerStats = ref.watch(buyerStatsProvider);
 
-    // منتجات البائع
     final sellerProducts = _userId != null && (user?.isSeller ?? false)
         ? ref.watch(sellerProductsProvider(_userId!))
         : null;
@@ -73,7 +80,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       backgroundColor: VirooColors.background,
       appBar: AppBar(
         title: Text(
-          user.isSeller ? 'متجر ${user.name}' : user.name,
+          user.isSeller && user.storeName.isNotEmpty
+              ? user.storeName
+              : user.name,
           style:
               const TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold),
         ),
@@ -112,9 +121,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               if (user.isSeller) ...[
                 ProfileShareButton(
                   themeColor: themeColor,
-                  onTap: () {
-                    // مشاركة المتجر
-                  },
+                  onTap: () {},
                 ),
                 const SizedBox(height: 24),
               ],
@@ -126,12 +133,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 BuyerStatsWidget(stats: buyerStats, themeColor: themeColor),
               const SizedBox(height: 24),
 
+              // ✅ لوحة تحكم البائع (كارت مميز)
+              if (user.isSeller) ...[
+                _buildDashboardCard(themeColor),
+                const SizedBox(height: 16),
+              ],
+
               // قائمة المنتجات (للبائع فقط)
               if (user.isSeller) ...[
                 _buildProductsToggle(themeColor),
                 const SizedBox(height: 16),
                 if (_showProducts)
                   _buildProductsSection(sellerProducts, themeColor),
+                const SizedBox(height: 16),
               ],
 
               // قائمة الإعدادات
@@ -144,6 +158,90 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  // =============================================
+  // 🆕 كارت لوحة تحكم البائع
+  // =============================================
+  Widget _buildDashboardCard(Color themeColor) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const SellerDashboardScreen(),
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              VirooColors.amberPrimary.withAlpha(200),
+              VirooColors.amberDark.withAlpha(200),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: VirooColors.amberPrimary.withAlpha(76),
+              blurRadius: 20,
+              spreadRadius: 2,
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white.withAlpha(51),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(
+                Icons.dashboard_rounded,
+                color: Colors.white,
+                size: 28,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    '📊 لوحة تحكم البائع',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontFamily: 'Cairo',
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'شوف إحصائيات منتجاتك ومبيعاتك',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.white.withAlpha(204),
+                      fontFamily: 'Cairo',
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(
+              Icons.arrow_forward_ios_rounded,
+              color: Colors.white,
+              size: 20,
+            ),
+          ],
         ),
       ),
     );
@@ -166,7 +264,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               children: [
                 Icon(Icons.inventory_2_rounded, color: themeColor, size: 20),
                 const SizedBox(width: 8),
-                Text(
+                const Text(
                   'منتجاتي',
                   style: TextStyle(
                     color: Colors.white,

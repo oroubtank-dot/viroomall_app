@@ -1,5 +1,7 @@
 // lib/features/profile/presentation/widgets/profile_menu_section.dart
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_widgets.dart';
 import '../../../../core/services/auth_service.dart';
@@ -12,8 +14,10 @@ import '../screens/wallet_screen.dart';
 import '../screens/points_screen.dart';
 import '../screens/favorites_screen.dart';
 import '../screens/my_orders_screen.dart';
+import '../providers/profile_provider.dart';
+import '../../../seller_convert/presentation/screens/convert_to_seller_screen.dart';
 
-class ProfileMenuSection extends StatelessWidget {
+class ProfileMenuSection extends ConsumerWidget {
   final UserModel user;
   final Color themeColor;
   final SellerStats? sellerStats;
@@ -30,13 +34,15 @@ class ProfileMenuSection extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return GlassContainer(
       padding: EdgeInsets.zero,
       borderRadius: BorderRadius.circular(20),
       child: Column(
         children: [
-          // تحذيرات المنتجات المنتهية
+          // =============================================
+          // تحذيرات المنتجات المنتهية (للبائع فقط)
+          // =============================================
           if (user.isSeller && sellerStats != null) ...[
             if (sellerStats!.expiringProducts > 0) ...[
               _buildWarningBanner(
@@ -71,7 +77,7 @@ class ProfileMenuSection extends StatelessWidget {
           ],
 
           // =============================================
-          // طلباتي
+          // طلباتي (للمشتري والبائع)
           // =============================================
           _buildMenuItem(
             icon: Icons.shopping_bag_rounded,
@@ -88,28 +94,29 @@ class ProfileMenuSection extends StatelessWidget {
           _buildDivider(),
 
           // =============================================
-          // المفضلة
+          // المفضلة (للمشتري فقط)
           // =============================================
-          _buildMenuItem(
-            icon: Icons.favorite_rounded,
-            title: user.isBuyer && buyerStats != null
-                ? 'المفضلة (${buyerStats!.favoritesCount})'
-                : 'المفضلة',
-            onTap: () {
-              Navigator.push(
-                parentContext,
-                MaterialPageRoute(
-                    builder: (context) => const FavoritesScreen()),
-              );
-            },
-          ),
+          if (!user.isSeller) ...[
+            _buildMenuItem(
+              icon: Icons.favorite_rounded,
+              title: user.isBuyer && buyerStats != null
+                  ? 'المفضلة (${buyerStats!.favoritesCount})'
+                  : 'المفضلة',
+              onTap: () {
+                Navigator.push(
+                  parentContext,
+                  MaterialPageRoute(
+                      builder: (context) => const FavoritesScreen()),
+                );
+              },
+            ),
+            _buildDivider(),
+          ],
 
           // =============================================
-          // قائمة البائع
+          // قائمة البائع (إذا كان بائع)
           // =============================================
           if (user.isSeller && sellerStats != null) ...[
-            _buildDivider(),
-
             // منتجاتي
             _buildMenuItem(
               icon: Icons.inventory_2_rounded,
@@ -152,8 +159,41 @@ class ProfileMenuSection extends StatelessWidget {
                 );
               },
             ),
+            _buildDivider(),
           ],
 
+          // =============================================
+          // 🆕 التحويل بين بائع ومشتري
+          // =============================================
+          if (!user.isSeller) ...[
+            // مشتري → بائع
+            _buildMenuItem(
+              icon: Icons.store_rounded,
+              title: '🔄 التحويل إلى بائع',
+              subtitle: 'افتح متجرك وبيع منتجاتك',
+              isHighlighted: true,
+              onTap: () {
+                Navigator.push(
+                  parentContext,
+                  MaterialPageRoute(
+                    builder: (context) => const ConvertToSellerScreen(),
+                  ),
+                );
+              },
+            ),
+          ] else ...[
+            // بائع → مشتري
+            _buildMenuItem(
+              icon: Icons.person_rounded,
+              title: '🔄 التحويل إلى مشتري',
+              subtitle: 'عدل لحساب مشتري عادي',
+              isHighlighted: true,
+              isWarning: true,
+              onTap: () {
+                _showConvertToBuyerDialog(parentContext, ref);
+              },
+            ),
+          ],
           _buildDivider(),
 
           // =============================================
@@ -283,6 +323,117 @@ class ProfileMenuSection extends StatelessWidget {
     );
   }
 
+  // =============================================
+  // 🆕 التحويل من بائع إلى مشتري
+  // =============================================
+  void _showConvertToBuyerDialog(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: VirooColors.surface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Text(
+          '🔄 التحويل إلى مشتري',
+          style: TextStyle(
+            color: Colors.white,
+            fontFamily: 'Cairo',
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: const Text(
+          'هل أنت متأكد من التحويل إلى مشتري؟\n\n'
+          '📌 ملاحظات مهمة:\n'
+          '• لن تتمكن من إضافة منتجات جديدة\n'
+          '• منتجاتك الحالية ستظل متاحة للبيع\n'
+          '• يمكنك العودة للبائع في أي وقت',
+          style: TextStyle(
+            color: Colors.white70,
+            fontFamily: 'Cairo',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text(
+              'إلغاء',
+              style: TextStyle(
+                color: VirooColors.textSecondary,
+                fontFamily: 'Cairo',
+              ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              _convertToBuyer(context, ref);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: VirooColors.warning,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: const Text(
+              '🔄 تحويل',
+              style: TextStyle(
+                color: Colors.white,
+                fontFamily: 'Cairo',
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _convertToBuyer(BuildContext context, WidgetRef ref) async {
+    try {
+      final user = AuthService.currentUser;
+      if (user == null) return;
+
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .update({
+        'isSeller': false,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+
+      // تحديث الـ Provider
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+
+      if (doc.exists) {
+        final updatedUser = UserModel.fromFirestore(doc);
+        ref.read(profileNotifierProvider.notifier).setUser(updatedUser);
+      }
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('✅ تم التحويل إلى مشتري بنجاح!'),
+            backgroundColor: VirooColors.success,
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('❌ خطأ: ${e.toString()}'),
+            backgroundColor: VirooColors.error,
+          ),
+        );
+      }
+    }
+  }
+
+  // =============================================
+  // دوال مساعدة
+  // =============================================
   String _getPointsTitle() {
     if (user.isSeller && sellerStats != null) {
       return 'النقاط والمكافآت (${sellerStats!.totalPoints})';
@@ -345,12 +496,20 @@ class ProfileMenuSection extends StatelessWidget {
     String? subtitle,
     bool hasWarning = false,
     bool isLogout = false,
+    bool isHighlighted = false,
+    bool isWarning = false,
     required VoidCallback onTap,
   }) {
+    final color = isLogout
+        ? VirooColors.error
+        : (isWarning
+            ? VirooColors.warning
+            : (isHighlighted ? VirooColors.amberPrimary : themeColor));
+
     return ListTile(
       leading: Icon(
         icon,
-        color: isLogout ? VirooColors.error : themeColor,
+        color: color,
         size: 22,
       ),
       title: Row(
@@ -358,9 +517,17 @@ class ProfileMenuSection extends StatelessWidget {
           Text(
             title,
             style: TextStyle(
-              color: isLogout ? VirooColors.error : Colors.white,
+              color: isLogout
+                  ? VirooColors.error
+                  : (isWarning
+                      ? VirooColors.warning
+                      : (isHighlighted
+                          ? VirooColors.amberPrimary
+                          : Colors.white)),
               fontFamily: 'Cairo',
-              fontWeight: FontWeight.w500,
+              fontWeight: isHighlighted || isWarning
+                  ? FontWeight.bold
+                  : FontWeight.w500,
             ),
           ),
           if (hasWarning) ...[

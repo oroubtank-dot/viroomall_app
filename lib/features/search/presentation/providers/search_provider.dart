@@ -1,7 +1,7 @@
 // lib/features/search/presentation/providers/search_provider.dart
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/models/product_model.dart';
-import '../../../admin/data/product_repository.dart';
+import '../../../../core/repositories/product_repository.dart';
 
 final productRepositoryProvider = Provider((ref) => ProductRepository());
 

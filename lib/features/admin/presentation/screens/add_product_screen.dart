@@ -7,6 +7,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/viroo_background.dart';
 import '../../../../core/services/image_picker_service.dart';
+import '../../../../core/services/auth_service.dart';
 import '../widgets/product_type_selector.dart';
 import '../widgets/product_basic_info.dart';
 import '../widgets/category_dropdown.dart';
@@ -74,7 +75,10 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
       backgroundColor: VirooColors.background,
       appBar: AppBar(
         title: const Text('إضافة منتج جديد',
-            style: TextStyle(color: Colors.white, fontFamily: 'Cairo', fontWeight: FontWeight.bold)),
+            style: TextStyle(
+                color: Colors.white,
+                fontFamily: 'Cairo',
+                fontWeight: FontWeight.bold)),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -86,14 +90,19 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
           TextButton(
             onPressed: _isLoading ? null : _submitProduct,
             child: const Text('نشر',
-                style: TextStyle(color: VirooColors.amberPrimary, fontSize: 16, fontWeight: FontWeight.bold)),
+                style: TextStyle(
+                    color: VirooColors.amberPrimary,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold)),
           ),
         ],
       ),
       body: VirooBackground(
         showOrbs: true,
         child: _isLoading
-            ? const Center(child: CircularProgressIndicator(color: VirooColors.amberPrimary))
+            ? const Center(
+                child:
+                    CircularProgressIndicator(color: VirooColors.amberPrimary))
             : Form(
                 key: _formKey,
                 child: SingleChildScrollView(
@@ -104,7 +113,8 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
                       const SizedBox(height: 20),
                       ProductTypeSelector(
                         selectedType: _productType,
-                        onTypeChanged: (type) => setState(() => _productType = type),
+                        onTypeChanged: (type) =>
+                            setState(() => _productType = type),
                       ),
                       const SizedBox(height: 20),
                       ProductBasicInfo(
@@ -149,7 +159,10 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text('صور المنتج',
-            style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         const Text('يمكنك إضافة حتى 5 صور',
             style: TextStyle(color: VirooColors.textSecondary, fontSize: 12)),
@@ -180,7 +193,9 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
     return GestureDetector(
       onTap: _pickMultipleImages,
       child: Container(
-        width: 80, height: 80, margin: const EdgeInsets.only(right: 12),
+        width: 80,
+        height: 80,
+        margin: const EdgeInsets.only(right: 12),
         decoration: BoxDecoration(
           color: VirooColors.glassDark,
           borderRadius: BorderRadius.circular(12),
@@ -189,10 +204,12 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
         child: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.add_photo_alternate, color: VirooColors.textSecondary, size: 28),
+            Icon(Icons.add_photo_alternate,
+                color: VirooColors.textSecondary, size: 28),
             SizedBox(height: 4),
             Text('إضافة صور',
-                style: TextStyle(color: VirooColors.textSecondary, fontSize: 10)),
+                style:
+                    TextStyle(color: VirooColors.textSecondary, fontSize: 10)),
           ],
         ),
       ),
@@ -201,14 +218,21 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
 
   Widget _buildImageItem(int index) {
     return Stack(children: [
-      Container(width: 80, height: 80, margin: const EdgeInsets.only(right: 12),
-          child: ClipRRect(borderRadius: BorderRadius.circular(12),
+      Container(
+          width: 80,
+          height: 80,
+          margin: const EdgeInsets.only(right: 12),
+          child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
               child: Image.file(_images[index], fit: BoxFit.cover))),
       Positioned(
-        top: -4, right: 4,
+        top: -4,
+        right: 4,
         child: GestureDetector(
           onTap: () => setState(() => _images.removeAt(index)),
-          child: const CircleAvatar(radius: 12, backgroundColor: VirooColors.error,
+          child: const CircleAvatar(
+              radius: 12,
+              backgroundColor: VirooColors.error,
               child: Icon(Icons.close, size: 12, color: Colors.white)),
         ),
       ),
@@ -218,9 +242,8 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
   // اختيار صور متعددة
   Future<void> _pickMultipleImages() async {
     final images = await _imagePickerService.pickMultipleImages(context);
-    
+
     if (images.isNotEmpty) {
-      // معاينة أول صورة قبل إضافة الكل (اختياري)
       if (images.length == 1) {
         await _imagePickerService.previewImage(
           context: context,
@@ -235,7 +258,6 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
           },
         );
       } else {
-        // لو أكتر من صورة، نضيفهم مباشرة
         setState(() {
           _images.addAll(images);
         });
@@ -335,11 +357,20 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
       // تحديد نوع المنتج في Firestore
       String firestoreProductType;
       switch (_productType) {
-        case 'farz': firestoreProductType = 'new'; break;
-        case 'gomla': firestoreProductType = 'wholesale'; break;
-        case 'tasawok': firestoreProductType = 'used'; break;
-        case 'mosta3mal': firestoreProductType = 'outlet'; break;
-        default: firestoreProductType = 'new';
+        case 'farz':
+          firestoreProductType = 'new';
+          break;
+        case 'gomla':
+          firestoreProductType = 'wholesale';
+          break;
+        case 'tasawok':
+          firestoreProductType = 'used';
+          break;
+        case 'mosta3mal':
+          firestoreProductType = 'outlet';
+          break;
+        default:
+          firestoreProductType = 'new';
       }
 
       // إضافة تفاصيل إضافية حسب النوع
@@ -347,7 +378,8 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
       if (_productType == 'gomla') {
         additionalData['minQuantity'] = int.tryParse(_minQuantity) ?? 10;
         additionalData['maxQuantity'] = int.tryParse(_maxQuantity);
-        additionalData['wholesalePrice'] = double.tryParse(_wholesalePrice) ?? double.tryParse(_price) ?? 0;
+        additionalData['wholesalePrice'] =
+            double.tryParse(_wholesalePrice) ?? double.tryParse(_price) ?? 0;
       } else if (_productType == 'tasawok') {
         additionalData['condition'] = _condition;
         additionalData['defects'] = _defects;
@@ -356,7 +388,8 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
         additionalData['hasOriginalBox'] = _hasOriginalBox;
         additionalData['originalReceipt'] = _originalReceipt;
       } else if (_productType == 'mosta3mal') {
-        additionalData['discountPercentage'] = int.tryParse(_discountPercentage);
+        additionalData['discountPercentage'] =
+            int.tryParse(_discountPercentage);
         additionalData['limitedQuantity'] = int.tryParse(_limitedQuantity);
         additionalData['expiryDate'] = _expiryDate;
         additionalData['flashSaleType'] = _flashSaleType;
@@ -366,6 +399,9 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
         additionalData['warrantyMonths'] = int.tryParse(_warrantyMonths);
         additionalData['priceIncludesTax'] = _priceIncludesTax;
       }
+
+      // ✅ التعديل المهم: جلب ID المستخدم الحقيقي
+      final currentUser = AuthService.currentUser;
 
       final productData = {
         'title': _title,
@@ -377,7 +413,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
         'images': imageUrls,
         'condition': _condition,
         'location': _location,
-        'sellerId': 'current_user_id',
+        'sellerId': currentUser?.uid ?? '', // ✅ المستخدم الحقيقي
         'sellerPhone': _sellerPhone,
         'sellerWhatsapp': _sellerWhatsapp,
         'status': 'approved',

@@ -2,14 +2,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 enum OrderStatus {
-  pending, // قيد الانتظار
-  accepted, // تم القبول
-  preparing, // جاري التجهيز
-  shipped, // تم الشحن
-  outForDelivery, // خارج للتوصيل
-  delivered, // تم التسليم
-  confirmed, // تم التأكيد
-  cancelled, // ملغي
+  pending,
+  accepted,
+  preparing,
+  shipped,
+  outForDelivery,
+  delivered,
+  confirmed,
+  cancelled,
 }
 
 class OrderModel {
@@ -66,28 +66,6 @@ class OrderModel {
       'createdAt': Timestamp.fromDate(createdAt),
       'updatedAt': updatedAt != null ? Timestamp.fromDate(updatedAt!) : null,
     };
-  }
-
-  factory OrderModel.fromMap(Map<String, dynamic> map, String id) {
-    return OrderModel(
-      id: id,
-      buyerId: map['buyerId'] ?? '',
-      buyerName: map['buyerName'] ?? '',
-      sellerId: map['sellerId'] ?? '',
-      sellerName: map['sellerName'] ?? '',
-      productId: map['productId'] ?? '',
-      productName: map['productName'] ?? '',
-      productImage: map['productImage'] ?? '',
-      price: (map['price'] ?? 0).toDouble(),
-      quantity: map['quantity'] ?? 1,
-      status: _parseStatus(map['status']),
-      sellerConfirmed: map['sellerConfirmed'] ?? false,
-      buyerConfirmed: map['buyerConfirmed'] ?? false,
-      createdAt: (map['createdAt'] as Timestamp).toDate(),
-      updatedAt: map['updatedAt'] != null
-          ? (map['updatedAt'] as Timestamp).toDate()
-          : null,
-    );
   }
 
   factory OrderModel.fromFirestore(DocumentSnapshot doc) {

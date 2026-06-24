@@ -34,6 +34,7 @@ class _OTPScreenState extends State<OTPScreen> {
     super.dispose();
   }
 
+  // lib/features/auth/otp_screen.dart (الجزء المهم)
   Future<void> _verifyOTP() async {
     final otp = _otpController.text.trim();
     if (otp.length != 6) {
@@ -46,15 +47,21 @@ class _OTPScreenState extends State<OTPScreen> {
       _errorMessage = null;
     });
 
+    // ✅ AuthService.verifyOTP بتسجل المستخدم تلقائياً في Firestore
     final user = await AuthService.verifyOTP(
-        verificationId: widget.verificationId, smsCode: otp);
+      verificationId: widget.verificationId,
+      smsCode: otp,
+    );
+
     setState(() => _isLoading = false);
 
     if (user != null) {
       await StorageService.setLoggedIn(
-          userId: user.uid,
-          phone: user.phoneNumber ?? widget.phone,
-          name: user.displayName ?? 'مستخدم VirooMall');
+        userId: user.uid,
+        phone: user.phoneNumber ?? widget.phone,
+        name: user.displayName ?? 'مستخدم VirooMall',
+      );
+
       if (mounted) {
         if (widget.onLoginSuccess != null) {
           Navigator.popUntil(context, (route) => route.isFirst);

@@ -46,6 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return phone;
   }
 
+  // lib/features/auth/login_screen.dart (الجزء المهم)
   Future<void> _sendOTP() async {
     final phone = _phoneController.text.trim();
     if (phone.isEmpty || phone.length < 10) {
@@ -69,11 +70,18 @@ class _LoginScreenState extends State<LoginScreen> {
           _errorMessage = null;
         });
         Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => OTPScreen(
-                  verificationId: verificationId, phone: formattedPhone),
-            ));
+          context,
+          MaterialPageRoute(
+            builder: (context) => OTPScreen(
+              verificationId: verificationId,
+              phone: formattedPhone,
+              onLoginSuccess: () {
+                // ✅ بعد نجاح الدخول، نروح للصفحة الرئيسية
+                Navigator.pushReplacementNamed(context, '/home');
+              },
+            ),
+          ),
+        );
       },
       onError: (error) {
         if (!mounted) return;
@@ -206,7 +214,8 @@ class _LoginScreenState extends State<LoginScreen> {
           hintStyle: TextStyle(
               color: VirooColors.textSecondary.withOpacity(0.5),
               fontFamily: 'Cairo'),
-          prefixIcon: const Icon(Icons.phone_android, color: VirooColors.primary),
+          prefixIcon:
+              const Icon(Icons.phone_android, color: VirooColors.primary),
           prefixText: '+20 ',
           prefixStyle:
               const TextStyle(color: Colors.white, fontFamily: 'Cairo'),

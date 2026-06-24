@@ -15,6 +15,13 @@ class UserModel {
   final int totalProducts;
   final int totalViews;
 
+  // 🆕 حقول المتجر (للبائع)
+  final String storeName;
+  final String storeDescription;
+  final String storePhone;
+  final String storeAddress;
+  final String coverPhoto;
+
   UserModel({
     required this.id,
     required this.name,
@@ -28,6 +35,11 @@ class UserModel {
     this.totalSales = 0,
     this.totalProducts = 0,
     this.totalViews = 0,
+    this.storeName = '',
+    this.storeDescription = '',
+    this.storePhone = '',
+    this.storeAddress = '',
+    this.coverPhoto = '',
   });
 
   /// تحويل من Firestore Document إلى UserModel
@@ -46,6 +58,11 @@ class UserModel {
       totalSales: data['totalSales'] ?? 0,
       totalProducts: data['totalProducts'] ?? 0,
       totalViews: data['totalViews'] ?? 0,
+      storeName: data['storeName'] ?? data['name'] ?? '',
+      storeDescription: data['storeDescription'] ?? '',
+      storePhone: data['storePhone'] ?? data['phone'] ?? '',
+      storeAddress: data['storeAddress'] ?? '',
+      coverPhoto: data['coverPhoto'] ?? '',
     );
   }
 
@@ -63,6 +80,11 @@ class UserModel {
       'totalSales': totalSales,
       'totalProducts': totalProducts,
       'totalViews': totalViews,
+      'storeName': storeName,
+      'storeDescription': storeDescription,
+      'storePhone': storePhone,
+      'storeAddress': storeAddress,
+      'coverPhoto': coverPhoto,
     };
   }
 
@@ -78,6 +100,11 @@ class UserModel {
     int? totalSales,
     int? totalProducts,
     int? totalViews,
+    String? storeName,
+    String? storeDescription,
+    String? storePhone,
+    String? storeAddress,
+    String? coverPhoto,
   }) {
     return UserModel(
       id: id,
@@ -92,6 +119,11 @@ class UserModel {
       totalSales: totalSales ?? this.totalSales,
       totalProducts: totalProducts ?? this.totalProducts,
       totalViews: totalViews ?? this.totalViews,
+      storeName: storeName ?? this.storeName,
+      storeDescription: storeDescription ?? this.storeDescription,
+      storePhone: storePhone ?? this.storePhone,
+      storeAddress: storeAddress ?? this.storeAddress,
+      coverPhoto: coverPhoto ?? this.coverPhoto,
     );
   }
 
@@ -110,6 +142,11 @@ class UserModel {
       totalSales: 128,
       totalProducts: 45,
       totalViews: 12500,
+      storeName: 'متجر الإلكترونيات',
+      storeDescription: 'متجر متخصص في الإلكترونيات والأجهزة الحديثة',
+      storePhone: '01000000000',
+      storeAddress: 'القاهرة - مصر',
+      coverPhoto: '',
     );
   }
 
@@ -127,6 +164,11 @@ class UserModel {
       totalSales: 0,
       totalProducts: 0,
       totalViews: 0,
+      storeName: '',
+      storeDescription: '',
+      storePhone: '',
+      storeAddress: '',
+      coverPhoto: '',
     );
   }
 }

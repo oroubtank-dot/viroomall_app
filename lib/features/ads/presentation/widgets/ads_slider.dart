@@ -22,7 +22,6 @@ class _VirooAdsSliderState extends ConsumerState<VirooAdsSlider> {
   int _currentPage = 0;
   Timer? _timer;
   List<Map<String, dynamic>> _adsData = [];
-  bool _isLoading = true;
 
   // استخدام لون ثابت بدل TasawokModeColor
   Color get _themeColor => VirooColors.amberPrimary;
@@ -63,7 +62,6 @@ class _VirooAdsSliderState extends ConsumerState<VirooAdsSlider> {
     }
 
     if (mounted) {
-      setState(() => _isLoading = false);
       if (_adsData.isNotEmpty) {
         _startAutoScroll();
       }
