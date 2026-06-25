@@ -1,6 +1,7 @@
 // lib/core/services/product_service.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/product_model.dart';
+import '../constants/product_type.dart';
 
 class ProductService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -8,29 +9,10 @@ class ProductService {
   // =============================================
   // الحصول على المنتجات حسب الوضع
   // =============================================
-  Stream<List<ProductModel>> getProductsByMode(String modeName) {
-    // تحويل اسم الوضع من enum لـ string مناسب لـ Firestore
-    String productType;
-    switch (modeName) {
-      case 'shopping':
-        productType = 'new';
-        break;
-      case 'wholesale':
-        productType = 'wholesale';
-        break;
-      case 'used':
-        productType = 'used';
-        break;
-      case 'outlet':
-        productType = 'outlet';
-        break;
-      default:
-        productType = 'new';
-    }
-
+  Stream<List<ProductModel>> getProductsByMode(ProductType type) {
     return _db
         .collection('products')
-        .where('productType', isEqualTo: productType)
+        .where('productType', isEqualTo: type.firestoreValue)
         .where('status', isEqualTo: 'approved')
         .orderBy('createdAt', descending: true)
         .snapshots()
@@ -40,7 +22,7 @@ class ProductService {
   }
 
   // =============================================
-  // الحصول على كل المنتجات (للوضع shopping)
+  // الحصول على كل المنتجات
   // =============================================
   Stream<List<ProductModel>> getAllProducts() {
     return _db
@@ -54,7 +36,7 @@ class ProductService {
   }
 
   // =============================================
-  // الحصول على المنتجات المميزة (للعروض)
+  // الحصول على المنتجات المميزة
   // =============================================
   Stream<List<ProductModel>> getFeaturedProducts() {
     return _db
