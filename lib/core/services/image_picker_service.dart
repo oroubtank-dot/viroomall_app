@@ -100,18 +100,10 @@ class ImagePickerService {
 
   Future<File?> _compressVideo(File videoFile) async {
     try {
-      final tempDir = await getTemporaryDirectory();
-      final outputPath = path.join(
-        tempDir.path,
-        'compressed_video_${DateTime.now().millisecondsSinceEpoch}.mp4',
-      );
-
-      // ✅ تم التصحيح: استخدام الأسماء الصحيحة حسب إصدارك
       final info = await VideoCompress.compressVideo(
         videoFile.path,
-        quality: VideoQuality.MediumQuality, // ✅ الاسم القديم
+        quality: VideoQuality.MediumQuality,
         includeAudio: true,
-        targetPath: outputPath, // ✅ targetPath parameter
       );
 
       if (info == null || info.path == null) return null;
@@ -124,7 +116,6 @@ class ImagePickerService {
 
   Future<File?> _cropImage(File imageFile, BuildContext context) async {
     try {
-      // ✅ فحص context.mounted (حتى لو مش StatefulWidget)
       if (!context.mounted) return imageFile;
 
       final croppedFile = await ImageCropper().cropImage(
@@ -163,7 +154,6 @@ class ImagePickerService {
         'compressed_${DateTime.now().millisecondsSinceEpoch}.jpg',
       );
 
-      // ✅ استخدام target بدل targetPath (حسب إصدار flutter_image_compress)
       final result = await FlutterImageCompress.compressAndGetFile(
         imageFile.absolute.path,
         targetPath,
@@ -185,7 +175,6 @@ class ImagePickerService {
     required File imageFile,
     required VoidCallback onConfirm,
   }) async {
-    // ✅ لا حاجة لفحص mounted هنا لأن showDialog يستخدم context فوراً
     await showDialog(
       context: context,
       barrierDismissible: true,
@@ -257,7 +246,6 @@ class ImagePickerService {
     required File videoFile,
     required VoidCallback onConfirm,
   }) async {
-    // ✅ أضف فحص مبكر لو حابب ترضي الـ linter
     if (!context.mounted) return;
 
     await showDialog(
