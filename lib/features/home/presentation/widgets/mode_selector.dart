@@ -2,11 +2,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_widgets.dart';
+import '../../../../core/constants/product_type.dart';
 import '../providers/home_provider.dart';
 
 class ModeSelector extends ConsumerWidget {
-  final List<Map<String, dynamic>> modes;
-  final ShopMode selectedMode;
+  final List<ProductType> modes;
+  final ProductType selectedMode;
 
   const ModeSelector({
     super.key,
@@ -20,14 +21,13 @@ class ModeSelector extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
         children: modes.map((mode) {
-          final isSelected = selectedMode == mode['mode'];
+          final isSelected = selectedMode == mode;
           return Expanded(
             child: _ModeCard(
               mode: mode,
               isSelected: isSelected,
               onTap: () {
-                // 👈 السحر: تغيير الوضع المختار
-                ref.read(shopModeProvider.notifier).state = mode['mode'];
+                ref.read(shopModeProvider.notifier).state = mode;
               },
             ),
           );
@@ -38,7 +38,7 @@ class ModeSelector extends ConsumerWidget {
 }
 
 class _ModeCard extends StatelessWidget {
-  final Map<String, dynamic> mode;
+  final ProductType mode;
   final bool isSelected;
   final VoidCallback onTap;
 
@@ -58,18 +58,18 @@ class _ModeCard extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 12),
           borderRadius: BorderRadius.circular(16),
           backgroundColor: isSelected
-              ? mode['color'].withOpacity(0.15)
+              ? mode.color.withOpacity(0.15)
               : Colors.white.withOpacity(0.03),
           child: Column(
             children: [
               Text(
-                mode['icon'],
+                mode.icon,
                 style: TextStyle(
                   fontSize: 24,
                   shadows: isSelected
                       ? [
                           Shadow(
-                            color: mode['color'].withOpacity(0.5),
+                            color: mode.color.withOpacity(0.5),
                             blurRadius: 10,
                           ),
                         ]
@@ -78,11 +78,11 @@ class _ModeCard extends StatelessWidget {
               ),
               const SizedBox(height: 6),
               Text(
-                mode['title'],
+                mode.arabicName,
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                  color: isSelected ? mode['color'] : Colors.white70,
+                  color: isSelected ? mode.color : Colors.white70,
                   fontFamily: 'Cairo',
                 ),
               ),

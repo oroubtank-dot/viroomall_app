@@ -15,7 +15,7 @@ class FeaturedProductsSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedMode = ref.watch(shopModeProvider);
-    final modeFilter = selectedMode.toString().split('.').last;
+    final modeFilter = selectedMode.firestoreValue;
     final themeColor = ref.watch(modeColorProvider);
 
     return Padding(
@@ -43,7 +43,7 @@ class FeaturedProductsSection extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
-                  _modeLabel(modeFilter),
+                  selectedMode.arabicName,
                   style: TextStyle(
                     color: themeColor,
                     fontSize: 11,
@@ -125,20 +125,5 @@ class FeaturedProductsSection extends ConsumerWidget {
         ],
       ),
     );
-  }
-
-  String _modeLabel(String mode) {
-    switch (mode) {
-      case 'new':
-        return '🛍️ تسوق';
-      case 'wholesale':
-        return '🏪 جملة';
-      case 'used':
-        return '♻️ مستعمل';
-      case 'outlet':
-        return '🔥 فرز إنتاج وتصفية';
-      default:
-        return '🛍️ تسوق';
-    }
   }
 }

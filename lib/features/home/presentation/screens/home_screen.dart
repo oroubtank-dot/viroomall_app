@@ -35,30 +35,15 @@ import '../../../favorites/presentation/providers/favorites_provider.dart';
 class HomeContent extends ConsumerWidget {
   const HomeContent({super.key});
 
-  // دالة مساعدة للتحويل المؤقت من ShopMode لـ String للـ productModeProvider
-  String _modeToString(ShopMode mode) {
-    switch (mode) {
-      case ShopMode.shopping:
-        return 'farz';
-      case ShopMode.wholesale:
-        return 'gomla';
-      case ShopMode.used:
-        return 'mosta3mal';
-      case ShopMode.outlet:
-        return 'tasawok';
-    }
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedMode = ref.watch(shopModeProvider);
     final themeColor = ref.watch(modeColorProvider);
-    final productsAsync =
-        ref.watch(productModeProvider(_modeToString(selectedMode)));
+    final productsAsync = ref.watch(productModeProvider(selectedMode.name));
     final isLoggedIn = AuthService.currentUser != null;
 
     ref.listen(shopModeProvider, (previous, next) {
-      ref.read(productModeProvider(_modeToString(next)).notifier).refresh();
+      ref.read(productModeProvider(next.name).notifier).refresh();
     });
 
     return VirooBackground(
@@ -182,8 +167,8 @@ class HomeContent extends ConsumerWidget {
               const SizedBox(height: 8),
               TextButton(
                 onPressed: () {
-                  ref.refresh(productModeProvider(
-                      _modeToString(ref.read(shopModeProvider))));
+                  ref.refresh(
+                      productModeProvider(ref.read(shopModeProvider).name));
                 },
                 child: const Text('إعادة المحاولة',
                     style: TextStyle(color: VirooColors.amberPrimary)),
@@ -251,8 +236,7 @@ class HomeContent extends ConsumerWidget {
 
   void _incrementViewCount(WidgetRef ref, ProductModel product) {
     ref
-        .read(productModeProvider(_modeToString(ref.read(shopModeProvider)))
-            .notifier)
+        .read(productModeProvider(ref.read(shopModeProvider).name).notifier)
         .incrementViewCount(product.id);
   }
 
