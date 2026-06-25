@@ -1,5 +1,5 @@
 // lib/core/constants/pricing_config.dart
-import 'market_type.dart';
+import 'product_type.dart';
 
 class MarketPricing {
   final double publishFee;
@@ -28,37 +28,65 @@ class MarketPricing {
 class PricingConfig {
   static const bool isFreePublishingPeriod = true;
 
-  static const MarketPricing gomla = MarketPricing(
-    publishFee: 50, verifyBadgeMonthly: 1000, pinProductDaily: 300,
-    fixedBanner10Days: 2500, auctionSlot1Start: 5000,
-    auctionSlot2Start: 3500, auctionSlot3Start: 2500, auctionIncrement: 500,
+  // 🏪 جملة
+  static const MarketPricing wholesale = MarketPricing(
+    publishFee: 50,
+    verifyBadgeMonthly: 1000,
+    pinProductDaily: 300,
+    fixedBanner10Days: 2500,
+    auctionSlot1Start: 5000,
+    auctionSlot2Start: 3500,
+    auctionSlot3Start: 2500,
+    auctionIncrement: 500,
   );
 
-  static const MarketPricing farz = MarketPricing(
-    publishFee: 40, verifyBadgeMonthly: 800, pinProductDaily: 250,
-    fixedBanner10Days: 2000, auctionSlot1Start: 4000,
-    auctionSlot2Start: 3000, auctionSlot3Start: 2000, auctionIncrement: 400,
+  // 🛍️ تسوق
+  static const MarketPricing shopping = MarketPricing(
+    publishFee: 40,
+    verifyBadgeMonthly: 800,
+    pinProductDaily: 250,
+    fixedBanner10Days: 2000,
+    auctionSlot1Start: 4000,
+    auctionSlot2Start: 3000,
+    auctionSlot3Start: 2000,
+    auctionIncrement: 400,
   );
 
-  static const MarketPricing tasawok = MarketPricing(
-    publishFee: 15, verifyBadgeMonthly: 300, pinProductDaily: 100,
-    fixedBanner10Days: 1000, auctionSlot1Start: 1500,
-    auctionSlot2Start: 1000, auctionSlot3Start: 700, auctionIncrement: 100,
+  // ♻️ مستعمل
+  static const MarketPricing used = MarketPricing(
+    publishFee: 15,
+    verifyBadgeMonthly: 300,
+    pinProductDaily: 100,
+    fixedBanner10Days: 1000,
+    auctionSlot1Start: 1500,
+    auctionSlot2Start: 1000,
+    auctionSlot3Start: 700,
+    auctionIncrement: 100,
   );
 
-  static const MarketPricing mosta3mal = MarketPricing(
-    publishFee: 5, verifyBadgeMonthly: 100, pinProductDaily: 30,
-    fixedBanner10Days: 300, auctionSlot1Start: 400,
-    auctionSlot2Start: 250, auctionSlot3Start: 150, auctionIncrement: 50,
+  // 🔥 تخفيضات وتصفية
+  static const MarketPricing outlet = MarketPricing(
+    publishFee: 5,
+    verifyBadgeMonthly: 100,
+    pinProductDaily: 30,
+    fixedBanner10Days: 300,
+    auctionSlot1Start: 400,
+    auctionSlot2Start: 250,
+    auctionSlot3Start: 150,
+    auctionIncrement: 50,
     freeAdsPerMonth: 1,
   );
 
-  static MarketPricing getPricing(MarketType market) {
-    switch (market) {
-      case MarketType.gomla: return gomla;
-      case MarketType.farz: return farz;
-      case MarketType.tasawok: return tasawok;
-      case MarketType.mosta3mal: return mosta3mal;
+  static MarketPricing getPricing(ProductType type) {
+    switch (type) {
+      case ProductType.wholesale:
+        return wholesale;
+      case ProductType.shopping:
+        return shopping;
+      case ProductType.used:
+        return used;
+      case ProductType.outlet:
+        return outlet;
     }
   }
 }
