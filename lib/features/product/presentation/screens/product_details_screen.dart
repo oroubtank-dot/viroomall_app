@@ -3,11 +3,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_widgets.dart';
 import '../../../../core/widgets/viroo_background.dart';
 import '../../../../core/models/product_model.dart';
 import '../../../cart/presentation/providers/cart_provider.dart';
+import '../../../favorites/presentation/providers/favorites_provider.dart';
 import '../../../home/presentation/providers/home_provider.dart';
 import '../widgets/product_details/product_image_gallery.dart';
 import '../widgets/product_details/product_video_section.dart';
@@ -56,13 +58,50 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
         });
       }
     } catch (e) {
-      if (mounted) setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  void _shareProduct(ProductModel product) async {
+    final link = 'https://viroomall.com/product/${product.id}';
+    final message = '🛍️ ${product.title}\n'
+        '💰 ${product.price.toStringAsFixed(0)} ج.م\n'
+        '📦 ${product.modeLabel}\n'
+        '⭐ التقييم: ${product.averageRating} (${product.ratingCount} تقييم)\n'
+        '📍 ${product.location}\n'
+        '\n'
+        '🔗 للمزيد: $link\n'
+        '\n'
+        '📱 حمّل تطبيق VirooMall الآن!';
+
+    try {
+      await Share.share(
+        message,
+        subject: 'VirooMall - ${product.title}',
+      );
+    } catch (e) {
+      await Clipboard.setData(ClipboardData(text: link));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('📋 تم نسخ رابط المنتج!'),
+            backgroundColor: VirooColors.success,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final themeColor = ref.watch(modeColorProvider);
+    final isInCart = ref.watch(isInCartProvider(widget.productId));
+    final favorites = ref.watch(favoritesProvider);
+    final isFavorite =
+        _product != null && favorites.any((p) => p.id == _product!.id);
 
     if (_isLoading) {
       return const Scaffold(
@@ -97,8 +136,8 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
     }
 
     final product = _product!;
-    final isInCart = ref.watch(isInCartProvider(product.id));
     final cartNotifier = ref.read(cartProvider.notifier);
+    final favoritesNotifier = ref.read(favoritesProvider.notifier);
 
     return Scaffold(
       backgroundColor: VirooColors.background,
@@ -121,20 +160,60 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
         ),
         actions: [
           IconButton(
+            icon: const Icon(Icons.share_rounded, color: Colors.white),
+            onPressed: () => _shareProduct(product),
+            tooltip: 'مشاركة المنتج',
+          ),
+          IconButton(
+            icon: Icon(
+              isFavorite
+                  ? Icons.favorite_rounded
+                  : Icons.favorite_border_rounded,
+              color: isFavorite ? Colors.red : Colors.white,
+              size: 24,
+            ),
+            onPressed: () {
+              HapticFeedback.mediumImpact();
+              if (isFavorite) {
+                favoritesNotifier.removeFromFavorites(product.id);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('🗑️ تم إزالة المنتج من المفضلة'),
+                    backgroundColor: VirooColors.error,
+                  ),
+                );
+              } else {
+                favoritesNotifier.addToFavorites(product);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('❤️ تم إضافة المنتج إلى المفضلة'),
+                    backgroundColor: VirooColors.success,
+                  ),
+                );
+              }
+            },
+          ),
+          IconButton(
             icon: Icon(
               isInCart
                   ? Icons.shopping_cart_rounded
                   : Icons.shopping_cart_outlined,
               color: isInCart ? VirooColors.amberPrimary : Colors.white,
+              size: 24,
             ),
             onPressed: () {
               HapticFeedback.lightImpact();
               if (isInCart) {
                 cartNotifier.removeFromCart(product.id);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('🗑️ تم إزالة المنتج من السلة'),
+                    backgroundColor: VirooColors.error,
+                  ),
+                );
               } else {
                 cartNotifier.addToCart(product);
                 CartNotification.show(context, product);
-                return;
               }
             },
           ),
@@ -148,31 +227,23 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 📱 معرض الصور
               ProductImageGallery(images: product.images),
               const SizedBox(height: 16),
-
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // 📝 معلومات المنتج
                     ProductInfoSection(product: product),
                     const SizedBox(height: 16),
-
-                    // 🎬 فيديو المنتج
-                    ProductVideoSection(videoBase64: product.videoUrl),
+                    ProductVideoSection(videoUrl: product.videoUrl),
                     const SizedBox(height: 16),
-
-                    // 🏪 قسم الجملة
                     if (product.productType == 'wholesale') ...[
                       WholesaleSection(
                         price: product.price,
                         minQuantity: 10,
                       ),
                       const SizedBox(height: 10),
-                      // عداد كمية الجملة
                       GlassContainer(
                         padding: const EdgeInsets.all(16),
                         borderRadius: BorderRadius.circular(16),
@@ -190,8 +261,9 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 _qtyButton(Icons.remove, () {
-                                  if (_wholesaleQuantity > 10)
+                                  if (_wholesaleQuantity > 10) {
                                     setState(() => _wholesaleQuantity -= 5);
+                                  }
                                 }),
                                 Container(
                                   margin: const EdgeInsets.symmetric(
@@ -235,8 +307,6 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                       ),
                       const SizedBox(height: 16),
                     ],
-
-                    // ♻️ قسم المستعمل
                     if (product.productType == 'used') ...[
                       UsedConditionSection(
                         condition: product.condition,
@@ -244,7 +314,6 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                         negotiable: true,
                       ),
                       const SizedBox(height: 10),
-                      // قسم التفاوض
                       if (_isNegotiating)
                         GlassContainer(
                           padding: const EdgeInsets.all(16),
@@ -263,8 +332,10 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   _qtyButton(Icons.remove, () {
-                                    if (_negotiatedPrice > product.price * 0.5)
+                                    if (_negotiatedPrice >
+                                        product.price * 0.5) {
                                       setState(() => _negotiatedPrice -= 50);
+                                    }
                                   }),
                                   const SizedBox(width: 16),
                                   Text(
@@ -277,8 +348,9 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                                   ),
                                   const SizedBox(width: 16),
                                   _qtyButton(Icons.add, () {
-                                    if (_negotiatedPrice < product.price)
+                                    if (_negotiatedPrice < product.price) {
                                       setState(() => _negotiatedPrice += 50);
+                                    }
                                   }),
                                 ],
                               ),
@@ -298,8 +370,9 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                         SizedBox(
                           width: double.infinity,
                           child: OutlinedButton.icon(
-                            onPressed: () =>
-                                setState(() => _isNegotiating = true),
+                            onPressed: () {
+                              setState(() => _isNegotiating = true);
+                            },
                             icon: const Icon(Icons.handshake_rounded,
                                 color: VirooColors.warning),
                             label: const Text('💰 تفاوض على السعر',
@@ -318,8 +391,6 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                         ),
                       const SizedBox(height: 16),
                     ],
-
-                    // 🔥 قسم الفرز
                     if (product.productType == 'outlet') ...[
                       OutletSection(
                         originalPrice:
@@ -330,8 +401,6 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                       ),
                       const SizedBox(height: 16),
                     ],
-
-                    // 👤 معلومات البائع والتواصل
                     SellerContactSection(
                       sellerName: 'بائع VirooMall',
                       sellerPhone: '+201001234567',
@@ -339,15 +408,20 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                       location: product.location,
                     ),
                     const SizedBox(height: 20),
-
-                    // 🛒 زرار إضافة للسلة
                     GlowingButton(
                       onPressed: () {
                         HapticFeedback.mediumImpact();
                         if (isInCart) {
                           cartNotifier.removeFromCart(product.id);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('🗑️ تم إزالة المنتج من السلة'),
+                              backgroundColor: VirooColors.error,
+                            ),
+                          );
                         } else {
                           cartNotifier.addToCart(product);
+                          CartNotification.show(context, product);
                         }
                       },
                       text: isInCart ? '🗑️ حذف من السلة' : '🛒 أضف للسلة',

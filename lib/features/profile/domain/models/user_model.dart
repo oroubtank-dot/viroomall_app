@@ -15,7 +15,7 @@ class UserModel {
   final int totalProducts;
   final int totalViews;
 
-  // 🆕 حقول المتجر (للبائع)
+  // حقول المتجر (للبائع)
   final String storeName;
   final String storeDescription;
   final String storePhone;
@@ -42,7 +42,6 @@ class UserModel {
     this.coverPhoto = '',
   });
 
-  /// تحويل من Firestore Document إلى UserModel
   factory UserModel.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     return UserModel(
@@ -66,7 +65,6 @@ class UserModel {
     );
   }
 
-  /// تحويل UserModel إلى Map للحفظ في Firestore
   Map<String, dynamic> toMap() {
     return {
       'name': name,
@@ -88,7 +86,6 @@ class UserModel {
     };
   }
 
-  /// نسخة من المستخدم مع تعديل بعض الحقول
   UserModel copyWith({
     String? name,
     String? email,
@@ -127,7 +124,6 @@ class UserModel {
     );
   }
 
-  /// مستخدم وهمي للتجربة
   static UserModel mockSeller() {
     return UserModel(
       id: 'seller_001',
@@ -143,9 +139,9 @@ class UserModel {
       totalProducts: 45,
       totalViews: 12500,
       storeName: 'متجر الإلكترونيات',
-      storeDescription: 'متجر متخصص في الإلكترونيات والأجهزة الحديثة',
+      storeDescription: 'متجر متخصص في الإلكترونيات',
       storePhone: '01000000000',
-      storeAddress: 'القاهرة - مصر',
+      storeAddress: 'القاهرة',
       coverPhoto: '',
     );
   }

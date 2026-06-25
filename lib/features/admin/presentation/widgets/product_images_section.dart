@@ -53,8 +53,11 @@ class ProductImagesSection extends StatelessWidget {
     final picker = ImagePickerService();
     return GestureDetector(
       onTap: () async {
-        final image = await picker.pickAndProcessImage(context: context);
-        if (image != null) {
+        // ✅ استخدام الدالة الجديدة
+        final images = await picker.pickMultipleImages(context);
+        if (images.isNotEmpty) {
+          // نأخذ أول صورة فقط (لأن هذه الويدجت كانت تستقبل واحدة)
+          final image = images.first;
           await picker.previewImage(
             context: context,
             imageFile: image,

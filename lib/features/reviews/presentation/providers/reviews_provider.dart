@@ -2,6 +2,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/models/review_model.dart';
 import '../../data/reviews_service.dart';
+import '../../../../core/services/auth_service.dart';
 
 final reviewsServiceProvider = Provider<ReviewsService>((ref) {
   return ReviewsService();
@@ -23,4 +24,10 @@ final productReviewCountProvider =
     FutureProvider.family<int, String>((ref, productId) {
   final service = ref.watch(reviewsServiceProvider);
   return service.getReviewCount(productId);
+});
+
+// 🆕 إضافة تقييم
+final addReviewProvider = FutureProvider.family<void, ReviewModel>((ref, review) async {
+  final service = ref.watch(reviewsServiceProvider);
+  await service.addReview(review);
 });

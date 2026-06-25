@@ -32,7 +32,7 @@ class ReviewModel {
       id: doc.id,
       productId: data['productId'] ?? '',
       userId: data['userId'] ?? '',
-      userName: data['userName'] ?? 'مستخدم VirooMall',
+      userName: data['userName'] ?? 'مستخدم',
       rating: (data['rating'] ?? 5).toDouble(),
       comment: data['comment'] ?? '',
       createdAt: (data['createdAt'] as Timestamp).toDate(),

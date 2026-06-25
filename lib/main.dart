@@ -18,9 +18,19 @@ import 'features/home/presentation/screens/home_screen.dart';
 import 'features/cart/presentation/screens/cart_screen.dart';
 import 'features/ads/presentation/screens/ad_marketplace_screen.dart';
 import 'features/favorites/presentation/screens/favorites_screen.dart';
-import 'features/reviews/presentation/screens/reviews_screen.dart';
+import 'features/profile/presentation/screens/edit_profile_screen.dart';
 import 'features/product/presentation/screens/product_details_screen.dart';
 import 'features/profile/presentation/screens/edit_store_screen.dart';
+import 'features/admin/presentation/screens/add_product_screen.dart';
+import 'features/admin/presentation/screens/edit_product_screen.dart';
+import 'features/profile/presentation/screens/seller_dashboard_screen.dart';
+import 'features/orders/presentation/screens/seller_orders_screen.dart';
+import 'features/favorites/presentation/providers/favorites_provider.dart';
+import 'features/cart/presentation/providers/cart_provider.dart';
+import 'features/notifications/presentation/screens/notifications_screen.dart';
+import 'features/settings/presentation/screens/language_settings_screen.dart';
+import 'features/settings/presentation/screens/privacy_settings_screen.dart';
+import 'features/settings/presentation/screens/appearance_settings_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -80,35 +90,69 @@ class MyApp extends StatelessWidget {
         '/cart': (context) => const CartScreen(),
         '/ad-marketplace': (context) => const AdMarketplaceScreen(),
         '/favorites': (context) => const FavoritesScreen(),
+        '/edit-profile': (context) => const EditProfileScreen(),
         '/edit-store': (context) => const EditStoreScreen(),
-        '/product': (context) {
-          final args = ModalRoute.of(context)?.settings.arguments;
-          if (args is String) {
-            return ProductDetailsScreen(productId: args);
+        '/add-product': (context) => const AddProductScreen(),
+        '/seller-dashboard': (context) => const SellerDashboardScreen(),
+        '/seller-orders': (context) => const SellerOrdersScreen(),
+        '/notifications': (context) => const NotificationsScreen(),
+        '/language': (context) => const LanguageSettingsScreen(),
+        '/privacy': (context) => const PrivacySettingsScreen(),
+        '/appearance': (context) => const AppearanceSettingsScreen(),
+      },
+      onGenerateRoute: (settings) {
+        // ✅ معالجة الـ route الديناميكي /product و /edit-product
+        if (settings.name == '/product') {
+          final args = settings.arguments as String?;
+          if (args != null) {
+            return MaterialPageRoute(
+              builder: (context) => ProductDetailsScreen(productId: args),
+            );
           }
-          return const Scaffold(
-            body: Center(
-              child: Text(
-                'خطأ في تحميل المنتج',
-                style: TextStyle(color: Colors.white, fontFamily: 'Cairo'),
+          return MaterialPageRoute(
+            builder: (context) => const Scaffold(
+              body: Center(
+                child: Text(
+                  'خطأ في تحميل المنتج',
+                  style: TextStyle(color: Colors.white, fontFamily: 'Cairo'),
+                ),
               ),
             ),
           );
-        },
+        }
+        if (settings.name == '/edit-product') {
+          final args = settings.arguments as String?;
+          if (args != null) {
+            return MaterialPageRoute(
+              builder: (context) => EditProductScreen(productId: args),
+            );
+          }
+          return MaterialPageRoute(
+            builder: (context) => const Scaffold(
+              body: Center(
+                child: Text(
+                  'خطأ في تحميل المنتج',
+                  style: TextStyle(color: Colors.white, fontFamily: 'Cairo'),
+                ),
+              ),
+            ),
+          );
+        }
+        return null;
       },
       home: const SplashScreen(),
     );
   }
 }
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
+class _SplashScreenState extends ConsumerState<SplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
@@ -172,8 +216,9 @@ class _SplashScreenState extends State<SplashScreen>
         if (authenticated) {
           final userData = await StorageService.getUserData();
           if (userData['phone'] != null && userData['phone']!.isNotEmpty) {
-            // ignore: use_build_context_synchronously
-            Navigator.pushReplacementNamed(context, '/home');
+            if (mounted) {
+              Navigator.pushReplacementNamed(context, '/home');
+            }
             return;
           }
         }
@@ -188,29 +233,38 @@ class _SplashScreenState extends State<SplashScreen>
         phone: currentUser.phoneNumber ?? '',
         name: currentUser.displayName,
       );
-      // ignore: use_build_context_synchronously
-      Navigator.pushReplacementNamed(context, '/home');
+
+      // ✅ جلب المفضلة والسلة من Firebase
+      ref.read(favoritesProvider.notifier).loadFavorites();
+      ref.read(cartProvider.notifier).loadCart();
+
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, '/home');
+      }
       return;
     }
 
     final isLoggedIn = await StorageService.isLoggedIn();
 
     if (isLoggedIn) {
-      // ignore: use_build_context_synchronously
-      Navigator.pushReplacementNamed(context, '/home');
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, '/home');
+      }
       return;
     }
 
     final hasSeenOnboarding = await StorageService.isOnboardingSeen();
 
-    // ignore: use_build_context_synchronously
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) =>
-            hasSeenOnboarding ? const LoginScreen() : const OnboardingScreen(),
-      ),
-    );
+    if (mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => hasSeenOnboarding
+              ? const LoginScreen()
+              : const OnboardingScreen(),
+        ),
+      );
+    }
   }
 
   @override

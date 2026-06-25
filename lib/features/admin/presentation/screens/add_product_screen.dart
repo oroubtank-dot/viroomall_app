@@ -37,6 +37,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
   String _categoryId = '';
   String _location = '';
   List<File> _images = [];
+  File? _videoFile;
 
   // ========== Farz ==========
   String _price = '';
@@ -110,6 +111,8 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
                   child: Column(
                     children: [
                       _buildImagesSection(),
+                      const SizedBox(height: 16),
+                      _buildVideoSection(),
                       const SizedBox(height: 20),
                       ProductTypeSelector(
                         selectedType: _productType,
@@ -152,7 +155,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
   }
 
   // ============================================================
-  // قسم الصور (يدعم اختيار متعدد الصور)
+  // 📸 قسم الصور
   // ============================================================
   Widget _buildImagesSection() {
     return Column(
@@ -164,7 +167,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
                 fontSize: 16,
                 fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
-        const Text('يمكنك إضافة حتى 5 صور',
+        const Text('يمكنك إضافة حتى 5 صور (JPG, PNG)',
             style: TextStyle(color: VirooColors.textSecondary, fontSize: 12)),
         const SizedBox(height: 12),
         SizedBox(
@@ -239,7 +242,110 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
     ]);
   }
 
-  // اختيار صور متعددة
+  // ============================================================
+  // 🎬 قسم الفيديو
+  // ============================================================
+  Widget _buildVideoSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('فيديو المنتج (اختياري)',
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
+        const Text('أضف فيديو للمنتج (MP4, max 30 ثانية)',
+            style: TextStyle(color: VirooColors.textSecondary, fontSize: 12)),
+        const SizedBox(height: 12),
+        GestureDetector(
+          onTap: _pickVideo,
+          child: Container(
+            height: 100,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: VirooColors.glassDark,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: VirooColors.glassBorder),
+            ),
+            child: _videoFile == null
+                ? const Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.play_circle_outline_rounded,
+                          color: VirooColors.textSecondary, size: 40),
+                      SizedBox(height: 8),
+                      Text(
+                        'اضغط لإضافة فيديو (اختياري)',
+                        style: TextStyle(
+                          color: VirooColors.textSecondary,
+                          fontSize: 12,
+                          fontFamily: 'Cairo',
+                        ),
+                      ),
+                    ],
+                  )
+                : Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Container(
+                          width: double.infinity,
+                          height: 100,
+                          color: Colors.black,
+                          child: const Center(
+                            child: Icon(Icons.play_circle_fill_rounded,
+                                color: VirooColors.amberPrimary, size: 50),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        top: 8,
+                        right: 8,
+                        child: GestureDetector(
+                          onTap: () => setState(() => _videoFile = null),
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: const BoxDecoration(
+                              color: VirooColors.error,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(Icons.close_rounded,
+                                color: Colors.white, size: 16),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 8,
+                        left: 8,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.7),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Text(
+                            '🎬 فيديو',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontFamily: 'Cairo',
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ============================================================
+  // 📸 اختيار صور متعددة
+  // ============================================================
   Future<void> _pickMultipleImages() async {
     final images = await _imagePickerService.pickMultipleImages(context);
 
@@ -268,6 +374,30 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
     }
   }
 
+  // ============================================================
+  // 🎬 اختيار فيديو
+  // ============================================================
+  Future<void> _pickVideo() async {
+    final videoFile = await _imagePickerService.pickVideo(context);
+    if (videoFile != null) {
+      await _imagePickerService.previewVideo(
+        context: context,
+        videoFile: videoFile,
+        onConfirm: () {
+          setState(() {
+            _videoFile = videoFile;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('✅ تم اختيار الفيديو بنجاح')),
+          );
+        },
+      );
+    }
+  }
+
+  // ============================================================
+  // 🔧 الحقول الخاصة بكل وضع
+  // ============================================================
   Widget _buildModeSpecificFields() {
     switch (_productType) {
       case 'farz':
@@ -331,6 +461,9 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
     }
   }
 
+  // ============================================================
+  // 🚀 نشر المنتج
+  // ============================================================
   Future<void> _submitProduct() async {
     if (!_formKey.currentState!.validate()) return;
     if (_images.isEmpty) {
@@ -343,18 +476,26 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
     setState(() => _isLoading = true);
 
     try {
-      // رفع الصور
+      // 1. رفع الصور
       List<String> imageUrls = [];
       for (int i = 0; i < _images.length; i++) {
-        final ref = FirebaseStorage.instance
-            .ref()
-            .child('products/${DateTime.now().millisecondsSinceEpoch}_$i.jpg');
+        final ref = FirebaseStorage.instance.ref().child(
+            'product_images/${DateTime.now().millisecondsSinceEpoch}_$i.jpg');
         await ref.putFile(_images[i]);
         final url = await ref.getDownloadURL();
         imageUrls.add(url);
       }
 
-      // تحديد نوع المنتج في Firestore
+      // 2. رفع الفيديو (إن وجد)
+      String? videoUrl;
+      if (_videoFile != null) {
+        final ref = FirebaseStorage.instance.ref().child(
+            'product_videos/${DateTime.now().millisecondsSinceEpoch}.mp4');
+        await ref.putFile(_videoFile!);
+        videoUrl = await ref.getDownloadURL();
+      }
+
+      // 3. تحديد نوع المنتج
       String firestoreProductType;
       switch (_productType) {
         case 'farz':
@@ -373,7 +514,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
           firestoreProductType = 'new';
       }
 
-      // إضافة تفاصيل إضافية حسب النوع
+      // 4. إضافة تفاصيل إضافية
       Map<String, dynamic> additionalData = {};
       if (_productType == 'gomla') {
         additionalData['minQuantity'] = int.tryParse(_minQuantity) ?? 10;
@@ -400,7 +541,6 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
         additionalData['priceIncludesTax'] = _priceIncludesTax;
       }
 
-      // ✅ التعديل المهم: جلب ID المستخدم الحقيقي
       final currentUser = AuthService.currentUser;
 
       final productData = {
@@ -411,9 +551,10 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
         'productType': firestoreProductType,
         'categoryId': _categoryId,
         'images': imageUrls,
+        'videoUrl': videoUrl,
         'condition': _condition,
         'location': _location,
-        'sellerId': currentUser?.uid ?? '', // ✅ المستخدم الحقيقي
+        'sellerId': currentUser?.uid ?? '',
         'sellerPhone': _sellerPhone,
         'sellerWhatsapp': _sellerWhatsapp,
         'status': 'approved',

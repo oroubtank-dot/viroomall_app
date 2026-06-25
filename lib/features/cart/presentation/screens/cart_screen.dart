@@ -2,12 +2,16 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_widgets.dart';
 import '../../../../core/widgets/viroo_background.dart';
-import '../../../../core/services/notification_service.dart';
+import '../../../../core/services/order_service.dart';
+import '../../../../core/models/order_model.dart';
 import '../providers/cart_provider.dart';
 import '../widgets/product_preview_sheet.dart';
+import '../../../orders/presentation/screens/orders_list_screen.dart';
+import '../../../orders/presentation/providers/order_provider.dart';
 
 class CartScreen extends ConsumerWidget {
   const CartScreen({super.key});
@@ -16,17 +20,27 @@ class CartScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final cartItems = ref.watch(cartProvider);
     final totalPrice = ref.watch(cartTotalPriceProvider);
-    const themeColor = VirooColors.primary;
+    final orderService = ref.watch(orderServiceProvider);
+    const themeColor = VirooColors.amberPrimary;
 
     return Scaffold(
+      backgroundColor: VirooColors.background,
       appBar: AppBar(
         title: const Text(
-          "سلة المشتريات",
-          style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold),
+          "🛒 سلة المشتريات",
+          style: TextStyle(
+            color: Colors.white,
+            fontFamily: 'Cairo',
+            fontWeight: FontWeight.bold,
+          ),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
         actions: cartItems.isNotEmpty
             ? [
                 IconButton(
@@ -94,12 +108,29 @@ class CartScreen extends ConsumerWidget {
                     ),
                     const SizedBox(height: 24),
                     const Text(
-                      "السلة فاضية يا برنس، روح اتسوق!",
+                      "السلة فاضية يا برنس، روح اتسوق! 🛍️",
                       style: TextStyle(
                           color: Colors.white70,
                           fontFamily: 'Cairo',
                           fontSize: 18),
                       textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: VirooColors.amberPrimary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text(
+                        'استمر في التسوق',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'Cairo',
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -114,8 +145,9 @@ class CartScreen extends ConsumerWidget {
                       itemBuilder: (context, index) {
                         final cartItem = cartItems[index];
                         final product = cartItem.product;
-                        final imageUrl =
-                            product.images.isNotEmpty ? product.images[0] : '';
+                        final imageUrl = product.images.isNotEmpty
+                            ? product.images[0]
+                            : '';
                         final modeColor = product.modeColor;
 
                         return Padding(
@@ -140,7 +172,8 @@ class CartScreen extends ConsumerWidget {
                                         CrossAxisAlignment.start,
                                     children: [
                                       ClipRRect(
-                                        borderRadius: BorderRadius.circular(12),
+                                        borderRadius:
+                                            BorderRadius.circular(12),
                                         child: imageUrl.isNotEmpty
                                             ? (imageUrl.startsWith('http')
                                                 ? Image.network(imageUrl,
@@ -238,7 +271,8 @@ class CartScreen extends ConsumerWidget {
                                                       style: TextStyle(
                                                           color: VirooColors
                                                               .textSecondary,
-                                                          fontFamily: 'Cairo')),
+                                                          fontFamily:
+                                                              'Cairo')),
                                                 ),
                                                 ElevatedButton(
                                                   onPressed: () =>
@@ -440,6 +474,7 @@ class CartScreen extends ConsumerWidget {
                       },
                     ),
                   ),
+                  // ✅ قسم الدفع والطلب
                   Container(
                     padding: const EdgeInsets.all(25),
                     decoration: BoxDecoration(
@@ -454,7 +489,7 @@ class CartScreen extends ConsumerWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text("الإجمالي:",
+                            const Text("💰 الإجمالي:",
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 18,
@@ -467,26 +502,85 @@ class CartScreen extends ConsumerWidget {
                                     fontWeight: FontWeight.bold)),
                           ],
                         ),
+                        const SizedBox(height: 8),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text("📦 عدد المنتجات:",
+                                style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 14,
+                                    fontFamily: 'Cairo')),
+                            Text("${cartItems.length} منتج",
+                                style: const TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 14,
+                                    fontFamily: 'Cairo')),
+                          ],
+                        ),
                         const SizedBox(height: 20),
+                        // 🚀 زر إنشاء الطلب
                         GlowingButton(
-                          onPressed: () {
-                            if (cartItems.isNotEmpty) {
-                              final firstProduct = cartItems.first.product;
-                              VirooNotificationService.notifySellerNewOrder(
-                                firstProduct.title,
-                                'أحمد محمد',
+                          onPressed: () async {
+                            if (cartItems.isEmpty) return;
+
+                            // ✅ ناخد أول منتج في السلة (للبائع)
+                            final firstItem = cartItems.first;
+
+                            try {
+                              // إنشاء الطلب
+                              await orderService.createOrder(
+                                items: cartItems,
+                                totalPrice: totalPrice,
+                                sellerId: firstItem.product.sellerId,
+                                sellerName: 'بائع VirooMall',
+                                productId: firstItem.product.id,
+                                productName: firstItem.product.title,
+                                productImage: firstItem.product.images
+                                        .isNotEmpty
+                                    ? firstItem.product.images[0]
+                                    : '',
                               );
+
+                              // تفريغ السلة
+                              ref.read(cartProvider.notifier).clearCart();
+
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      '✅ تم إنشاء الطلب بنجاح! 🎉',
+                                      style: TextStyle(fontFamily: 'Cairo'),
+                                    ),
+                                    backgroundColor: VirooColors.success,
+                                  ),
+                                );
+
+                                // الانتقال لشاشة الطلبات
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const OrdersListScreen(
+                                      isSeller: false,
+                                    ),
+                                  ),
+                                );
+                              }
+                            } catch (e) {
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      '❌ خطأ: ${e.toString()}',
+                                      style: TextStyle(fontFamily: 'Cairo'),
+                                    ),
+                                    backgroundColor: VirooColors.error,
+                                  ),
+                                );
+                              }
                             }
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                    'تم تأكيد الطلب! 🚀 سيتم توجيهك لصفحة الدفع قريباً',
-                                    style: TextStyle(fontFamily: 'Cairo')),
-                                backgroundColor: VirooColors.success,
-                              ),
-                            );
                           },
-                          text: "تأكيد الطلب",
+                          text: "🛍️ تأكيد الطلب",
                           icon: Icons.check_circle_rounded,
                           backgroundColor: themeColor,
                         ),

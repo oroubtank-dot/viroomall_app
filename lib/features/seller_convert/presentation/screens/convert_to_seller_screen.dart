@@ -24,6 +24,13 @@ class _ConvertToSellerScreenState extends ConsumerState<ConvertToSellerScreen> {
   final _storePhoneController = TextEditingController();
   final _storeAddressController = TextEditingController();
   bool _isLoading = false;
+  bool _isAlreadySeller = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadExistingStoreData();
+  }
 
   @override
   void dispose() {
@@ -32,6 +39,40 @@ class _ConvertToSellerScreenState extends ConsumerState<ConvertToSellerScreen> {
     _storePhoneController.dispose();
     _storeAddressController.dispose();
     super.dispose();
+  }
+
+  // =============================================
+  // 🆕 جلب بيانات المتجر الموجودة (لو كان بائع قبل كده)
+  // =============================================
+  Future<void> _loadExistingStoreData() async {
+    try {
+      final user = AuthService.currentUser;
+      if (user == null) return;
+
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+
+      if (doc.exists) {
+        final data = doc.data()!;
+        final isSeller = data['isSeller'] ?? false;
+        
+        setState(() {
+          _isAlreadySeller = isSeller;
+        });
+
+        // لو كان بائع قبل كده، نملأ الحقول بالبيانات القديمة
+        if (isSeller) {
+          _storeNameController.text = data['storeName'] ?? data['name'] ?? '';
+          _storeDescriptionController.text = data['storeDescription'] ?? '';
+          _storePhoneController.text = data['storePhone'] ?? data['phone'] ?? '';
+          _storeAddressController.text = data['storeAddress'] ?? '';
+        }
+      }
+    } catch (e) {
+      print('❌ خطأ في جلب بيانات المتجر: $e');
+    }
   }
 
   Future<void> _convertToSeller() async {
@@ -67,18 +108,15 @@ class _ConvertToSellerScreenState extends ConsumerState<ConvertToSellerScreen> {
           .update(userData);
 
       // تحديث الـ UserModel في الـ Provider
-      final updatedUser = UserModel(
-        id: user.uid,
-        name: _storeNameController.text.trim(),
-        email: user.email ?? '',
-        phone: user.phoneNumber ?? '',
-        photoUrl: user.photoURL ?? '',
-        isSeller: true,
-        isBuyer: true,
-        createdAt: DateTime.now(),
-      );
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
 
-      ref.read(profileNotifierProvider.notifier).setUser(updatedUser);
+      if (doc.exists) {
+        final updatedUser = UserModel.fromFirestore(doc);
+        ref.read(profileNotifierProvider.notifier).setUser(updatedUser);
+      }
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -108,9 +146,9 @@ class _ConvertToSellerScreenState extends ConsumerState<ConvertToSellerScreen> {
     return Scaffold(
       backgroundColor: VirooColors.background,
       appBar: AppBar(
-        title: const Text(
-          '📢 التحويل إلى بائع',
-          style: TextStyle(
+        title: Text(
+          _isAlreadySeller ? '📝 تعديل بيانات المتجر' : '📢 التحويل إلى بائع',
+          style: const TextStyle(
             color: Colors.white,
             fontFamily: 'Cairo',
             fontWeight: FontWeight.bold,
@@ -136,9 +174,9 @@ class _ConvertToSellerScreenState extends ConsumerState<ConvertToSellerScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // العنوان
-                const Text(
-                  '✨ افتح متجرك الآن',
-                  style: TextStyle(
+                Text(
+                  _isAlreadySeller ? '✏️ تحديث بيانات متجرك' : '✨ افتح متجرك الآن',
+                  style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -146,9 +184,11 @@ class _ConvertToSellerScreenState extends ConsumerState<ConvertToSellerScreen> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                const Text(
-                  'حول حسابك إلى بائع وابدأ في بيع منتجاتك',
-                  style: TextStyle(
+                Text(
+                  _isAlreadySeller
+                      ? 'عدل بيانات متجرك عشان يظهر بشكل احترافي'
+                      : 'حول حسابك إلى بائع وابدأ في بيع منتجاتك',
+                  style: const TextStyle(
                     fontSize: 14,
                     color: VirooColors.textSecondary,
                     fontFamily: 'Cairo',
@@ -193,9 +233,8 @@ class _ConvertToSellerScreenState extends ConsumerState<ConvertToSellerScreen> {
                     hintText: 'مثال: 01012345678',
                     prefixIcon: Icon(Icons.phone_android_rounded),
                   ),
-                  validator: (v) => v == null || v.isEmpty
-                      ? 'الرجاء إدخال رقم التواصل'
-                      : null,
+                  validator: (v) =>
+                      v == null || v.isEmpty ? 'الرجاء إدخال رقم التواصل' : null,
                 ),
                 const SizedBox(height: 16),
 
@@ -211,10 +250,14 @@ class _ConvertToSellerScreenState extends ConsumerState<ConvertToSellerScreen> {
                 ),
                 const SizedBox(height: 30),
 
-                // زر التحويل
+                // زر التحويل/التحديث
                 GlowingButton(
-                  onPressed: _isLoading ? null : () => _convertToSeller(),
-                  text: _isLoading ? 'جاري التحويل...' : '🚀 تحويل إلى بائع',
+                  onPressed: _isLoading ? null : _convertToSeller,
+                  text: _isLoading
+                      ? 'جاري...'
+                      : (_isAlreadySeller
+                          ? '💾 تحديث بيانات المتجر'
+                          : '🚀 تحويل إلى بائع'),
                   backgroundColor: VirooColors.amberPrimary,
                   isLoading: _isLoading,
                 ),

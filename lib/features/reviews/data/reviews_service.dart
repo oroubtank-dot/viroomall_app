@@ -5,7 +5,9 @@ import '../domain/models/review_model.dart';
 class ReviewsService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // الحصول على تقييمات منتج
+  // =============================================
+  // ⭐ جلب تقييمات منتج
+  // =============================================
   Stream<List<ReviewModel>> getProductReviews(String productId) {
     return _firestore
         .collection('reviews')
@@ -17,7 +19,9 @@ class ReviewsService {
             .toList());
   }
 
-  // الحصول على متوسط التقييم
+  // =============================================
+  // 📊 حساب متوسط التقييم
+  // =============================================
   Future<double> getAverageRating(String productId) async {
     final snapshot = await _firestore
         .collection('reviews')
@@ -33,7 +37,9 @@ class ReviewsService {
     return double.parse((total / snapshot.docs.length).toStringAsFixed(1));
   }
 
-  // الحصول على عدد التقييمات
+  // =============================================
+  // 🔢 عدد التقييمات
+  // =============================================
   Future<int> getReviewCount(String productId) async {
     final snapshot = await _firestore
         .collection('reviews')
@@ -42,20 +48,47 @@ class ReviewsService {
     return snapshot.docs.length;
   }
 
-  // إضافة تقييم
+  // =============================================
+  // ✍️ إضافة تقييم
+  // =============================================
   Future<void> addReview(ReviewModel review) async {
     await _firestore.collection('reviews').add(review.toFirestore());
+
+    // تحديث متوسط التقييم في المنتج
+    await _updateProductRating(review.productId);
   }
 
-  // تحديث رد البائع
+  // =============================================
+  // 🔄 تحديث تقييم المنتج
+  // =============================================
+  Future<void> _updateProductRating(String productId) async {
+    final avg = await getAverageRating(productId);
+    final count = await getReviewCount(productId);
+
+    await _firestore.collection('products').doc(productId).update({
+      'averageRating': avg,
+      'ratingCount': count,
+    });
+  }
+
+  // =============================================
+  // 💬 رد البائع على تقييم
+  // =============================================
   Future<void> updateSellerReply(String reviewId, String reply) async {
     await _firestore.collection('reviews').doc(reviewId).update({
       'sellerReply': reply,
     });
   }
 
-  // حذف تقييم
+  // =============================================
+  // 🗑️ حذف تقييم
+  // =============================================
   Future<void> deleteReview(String reviewId) async {
-    await _firestore.collection('reviews').doc(reviewId).delete();
+    final doc = await _firestore.collection('reviews').doc(reviewId).get();
+    final productId = doc.data()?['productId'];
+    await doc.reference.delete();
+    if (productId != null) {
+      await _updateProductRating(productId);
+    }
   }
 }

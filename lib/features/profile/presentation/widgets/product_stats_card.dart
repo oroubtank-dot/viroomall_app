@@ -1,9 +1,11 @@
-// Product Stats Card
 // lib/features/profile/presentation/widgets/product_stats_card.dart
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_widgets.dart';
 import '../models/seller_product.dart';
+import '../../../admin/presentation/screens/edit_product_screen.dart';
 
 class ProductStatsCard extends StatelessWidget {
   final SellerProduct product;
@@ -72,7 +74,7 @@ class ProductStatsCard extends StatelessWidget {
             const SizedBox(height: 12),
             _buildMetrics(performanceColor),
             const SizedBox(height: 8),
-            _buildActions(),
+            _buildActions(context),
           ],
         ),
       ),
@@ -214,22 +216,32 @@ class ProductStatsCard extends StatelessWidget {
     );
   }
 
-  Widget _buildActions() {
+  Widget _buildActions(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
+        // 📤 مشاركة
         _buildActionButton(
           icon: Icons.share_rounded,
           label: 'مشاركة',
           color: VirooColors.info,
           onTap: onShare,
         ),
+        // ✏️ تعديل
         _buildActionButton(
           icon: Icons.edit_rounded,
           label: 'تعديل',
           color: VirooColors.warning,
-          onTap: onEdit,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => EditProductScreen(productId: product.id),
+              ),
+            );
+          },
         ),
+        // 🗑️ حذف / تجديد
         _buildActionButton(
           icon: product.status == 'expired'
               ? Icons.refresh_rounded

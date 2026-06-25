@@ -28,6 +28,10 @@ class ProductModel {
   final double averageRating;
   final int ratingCount;
 
+  // 🆕 رقم هاتف البائع (للتواصل)
+  final String sellerPhone;
+  final String sellerWhatsapp;
+
   ProductModel({
     required this.id,
     required this.sellerId,
@@ -50,6 +54,8 @@ class ProductModel {
     this.expiresAt,
     this.averageRating = 0.0,
     this.ratingCount = 0,
+    this.sellerPhone = '',
+    this.sellerWhatsapp = '',
   });
 
   /// تحويل من Firestore Document لـ ProductModel
@@ -77,6 +83,8 @@ class ProductModel {
       expiresAt: (data['expiresAt'] as Timestamp?)?.toDate(),
       averageRating: (data['averageRating'] ?? 0).toDouble(),
       ratingCount: data['ratingCount'] ?? 0,
+      sellerPhone: data['sellerPhone'] ?? '',
+      sellerWhatsapp: data['sellerWhatsapp'] ?? '',
     );
   }
 
@@ -103,6 +111,8 @@ class ProductModel {
       'expiresAt': expiresAt != null ? Timestamp.fromDate(expiresAt!) : null,
       'averageRating': averageRating,
       'ratingCount': ratingCount,
+      'sellerPhone': sellerPhone,
+      'sellerWhatsapp': sellerWhatsapp,
     };
   }
 
@@ -129,6 +139,8 @@ class ProductModel {
     DateTime? expiresAt,
     double? averageRating,
     int? ratingCount,
+    String? sellerPhone,
+    String? sellerWhatsapp,
   }) {
     return ProductModel(
       id: id ?? this.id,
@@ -152,6 +164,8 @@ class ProductModel {
       expiresAt: expiresAt ?? this.expiresAt,
       averageRating: averageRating ?? this.averageRating,
       ratingCount: ratingCount ?? this.ratingCount,
+      sellerPhone: sellerPhone ?? this.sellerPhone,
+      sellerWhatsapp: sellerWhatsapp ?? this.sellerWhatsapp,
     );
   }
 
@@ -197,7 +211,7 @@ class ProductModel {
       case 'used':
         return '♻️ مستعمل';
       case 'outlet':
-        return '🔥 فرز إنتاج وتصفية';
+        return '🔥 تخفيضات وتصفية';
       default:
         return '🛍️ تسوق';
     }
@@ -227,6 +241,8 @@ class ProductModel {
       location: 'القاهرة',
       createdAt: DateTime.now(),
       expiresAt: DateTime.now().add(const Duration(days: 30)),
+      sellerPhone: '01000000000',
+      sellerWhatsapp: '01000000000',
     );
   }
 }

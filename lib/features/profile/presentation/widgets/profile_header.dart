@@ -37,7 +37,19 @@ class ProfileHeader extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(40),
                   child: user.photoUrl.isNotEmpty
-                      ? Image.network(user.photoUrl, fit: BoxFit.cover)
+                      ? Image.network(
+                          user.photoUrl,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Icon(
+                              isSeller
+                                  ? Icons.store_rounded
+                                  : Icons.person_rounded,
+                              size: 40,
+                              color: VirooColors.textSecondary,
+                            );
+                          },
+                        )
                       : Icon(
                           isSeller ? Icons.store_rounded : Icons.person_rounded,
                           size: 40,
@@ -121,12 +133,12 @@ class ProfileHeader extends StatelessWidget {
                 ),
               ),
 
-              // زر تعديل (للمستخدم فقط)
+              // ✅ زر تعديل البروفايل (للمستخدم نفسه)
               IconButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/edit-store');
-                },
                 icon: Icon(Icons.edit_rounded, color: themeColor, size: 20),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/edit-profile');
+                },
               ),
             ],
           ),

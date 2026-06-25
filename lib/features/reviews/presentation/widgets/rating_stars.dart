@@ -33,7 +33,7 @@ class RatingStars extends StatelessWidget {
                 : isHalf
                     ? Icons.star_half_rounded
                     : Icons.star_border_rounded,
-            color: const Color(0xFFFFB800),
+            color: VirooColors.warning,
             size: size,
           ),
         );

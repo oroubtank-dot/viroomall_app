@@ -1,7 +1,9 @@
 // lib/features/home/presentation/widgets/product_card.dart
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/models/product_model.dart';
 
@@ -11,6 +13,8 @@ class VirooProductCard extends StatelessWidget {
   final VoidCallback? onFavoriteTap;
   final VoidCallback? onCartTap;
   final bool isFavorite;
+  final String? sellerName;
+  final String? sellerImage;
 
   const VirooProductCard({
     super.key,
@@ -19,135 +23,221 @@ class VirooProductCard extends StatelessWidget {
     this.onFavoriteTap,
     this.onCartTap,
     this.isFavorite = false,
+    this.sellerName,
+    this.sellerImage,
   });
 
   @override
   Widget build(BuildContext context) {
-    print('🔥🔥🔥 الكارت الجديد شغال 🔥🔥🔥');
     return GestureDetector(
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
           color: VirooColors.surface,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(color: VirooColors.glassBorder, width: 0.5),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.2),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
             _buildImageSection(),
-            _buildDetailsSection(),
+            _buildDetailsSection(context),
           ],
         ),
       ),
     );
   }
 
+  // =============================================
+  // 📸 قسم الصورة
+  // =============================================
   Widget _buildImageSection() {
+    final hasImage =
+        product.images.isNotEmpty && product.images.first.isNotEmpty;
+    final imageUrl = hasImage ? product.images.first : '';
+
     return Stack(
       children: [
+        // الصورة
         ClipRRect(
           borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(12),
-            topRight: Radius.circular(12),
+            topLeft: Radius.circular(16),
+            topRight: Radius.circular(16),
           ),
-          child: CachedNetworkImage(
-            imageUrl: product.images.isNotEmpty ? product.images.first : '',
-            height: 100,
-            width: double.infinity,
-            fit: BoxFit.cover,
-            placeholder: (context, url) => Shimmer.fromColors(
-              baseColor: VirooColors.glassDark,
-              highlightColor: VirooColors.glassMedium,
-              child: Container(height: 100, color: VirooColors.surface),
-            ),
-            errorWidget: (context, url, error) => Container(
-              height: 100,
-              color: VirooColors.glassDark,
-              child: const Icon(Icons.image_not_supported,
-                  color: VirooColors.textSecondary, size: 28),
-            ),
-            memCacheWidth: 150,
-            memCacheHeight: 150,
-          ),
+          child: hasImage
+              ? CachedNetworkImage(
+                  imageUrl: imageUrl,
+                  height: 150,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => Shimmer.fromColors(
+                    baseColor: VirooColors.glassDark,
+                    highlightColor: VirooColors.glassMedium,
+                    child: Container(height: 150, color: VirooColors.surface),
+                  ),
+                  errorWidget: (context, url, error) => Container(
+                    height: 150,
+                    width: double.infinity,
+                    color: VirooColors.glassDark,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.image_not_supported,
+                          color: VirooColors.textSecondary,
+                          size: 40,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'الصورة غير متوفرة',
+                          style: TextStyle(
+                            color: VirooColors.textSecondary,
+                            fontSize: 10,
+                            fontFamily: 'Cairo',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              : Container(
+                  height: 150,
+                  width: double.infinity,
+                  color: VirooColors.glassDark,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.image_outlined,
+                        color: VirooColors.textSecondary,
+                        size: 40,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'لا توجد صورة',
+                        style: TextStyle(
+                          color: VirooColors.textSecondary,
+                          fontSize: 10,
+                          fontFamily: 'Cairo',
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
         ),
+
+        // شارة الخصم
         if (product.discountPercentage != null)
           Positioned(
-            top: 4,
-            left: 4,
+            top: 8,
+            left: 8,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
               decoration: BoxDecoration(
                 color: VirooColors.error,
-                borderRadius: BorderRadius.circular(4),
+                borderRadius: BorderRadius.circular(6),
+                boxShadow: [
+                  BoxShadow(
+                    color: VirooColors.error.withValues(alpha: 0.4),
+                    blurRadius: 4,
+                  ),
+                ],
               ),
               child: Text(
                 '-${product.discountPercentage}%',
                 style: const TextStyle(
                   color: Colors.white,
-                  fontSize: 7,
+                  fontSize: 9,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
           ),
+
+        // شارة الوضع
         Positioned(
-          bottom: 4,
-          left: 4,
+          bottom: 8,
+          left: 8,
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 1),
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
             decoration: BoxDecoration(
-              color: product.modeColor.withOpacity(0.85),
-              borderRadius: BorderRadius.circular(4),
+              color: product.modeColor.withValues(alpha: 0.9),
+              borderRadius: BorderRadius.circular(6),
             ),
-            child: Text(
-              product.modeLabel.split(' ').first,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 7,
-                fontWeight: FontWeight.w500,
-              ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(product.modeIcon, style: const TextStyle(fontSize: 9)),
+                const SizedBox(width: 3),
+                Text(
+                  product.modeLabel.split(' ').first,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 8,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
             ),
           ),
         ),
+
+        // ❤️ زر المفضلة
         if (onFavoriteTap != null)
           Positioned(
-            top: 4,
-            right: 4,
+            top: 8,
+            right: 8,
             child: GestureDetector(
               onTap: onFavoriteTap,
               child: Container(
-                padding: const EdgeInsets.all(3),
+                padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.4),
+                  color: Colors.black.withValues(alpha: 0.5),
                   shape: BoxShape.circle,
+                  border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.3), width: 1),
                 ),
                 child: Icon(
                   isFavorite
                       ? Icons.favorite_rounded
                       : Icons.favorite_border_rounded,
-                  size: 10,
+                  size: 14,
                   color: isFavorite ? VirooColors.error : Colors.white,
                 ),
               ),
             ),
           ),
+
+        // 🛒 زر السلة
         if (onCartTap != null)
           Positioned(
-            bottom: 4,
-            right: 4,
+            bottom: 8,
+            right: 8,
             child: GestureDetector(
               onTap: onCartTap,
               child: Container(
-                padding: const EdgeInsets.all(4),
+                padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
                   color: VirooColors.amberPrimary,
-                  borderRadius: BorderRadius.circular(4),
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: VirooColors.amberPrimary.withValues(alpha: 0.4),
+                      blurRadius: 4,
+                    ),
+                  ],
                 ),
                 child: const Icon(
                   Icons.add_shopping_cart_rounded,
-                  size: 10,
+                  size: 14,
                   color: Colors.white,
                 ),
               ),
@@ -157,84 +247,171 @@ class VirooProductCard extends StatelessWidget {
     );
   }
 
-  Widget _buildDetailsSection() {
+  // =============================================
+  // 📝 قسم التفاصيل
+  // =============================================
+  Widget _buildDetailsSection(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(6),
+      padding: const EdgeInsets.all(10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // اسم المنتج
           Text(
             product.title,
-            maxLines: 1,
+            maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
-              fontSize: 10,
+              fontSize: 13,
               fontWeight: FontWeight.w600,
               color: Colors.white,
+              fontFamily: 'Cairo',
+              height: 1.2,
             ),
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 6),
+
+          // اسم البائع + صورته
           Row(
             children: [
-              Icon(Icons.store_rounded,
-                  size: 7, color: VirooColors.textSecondary),
-              const SizedBox(width: 2),
+              Container(
+                width: 18,
+                height: 18,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: VirooColors.glassDark,
+                  border: Border.all(
+                      color: VirooColors.amberPrimary.withValues(alpha: 0.5),
+                      width: 1),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(9),
+                  child: sellerImage != null && sellerImage!.isNotEmpty
+                      ? Image.network(sellerImage!, fit: BoxFit.cover)
+                      : const Icon(Icons.store_rounded,
+                          size: 10, color: VirooColors.textSecondary),
+                ),
+              ),
+              const SizedBox(width: 6),
               Expanded(
                 child: Text(
-                  _getSellerName(product.sellerId),
+                  sellerName ?? 'متجر موثوق',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                    fontSize: 7,
+                    fontSize: 10,
                     color: VirooColors.textSecondary,
+                    fontFamily: 'Cairo',
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 6),
+
+          // السعر + المشاهدات
           Row(
             children: [
               Text(
                 '${product.price.toStringAsFixed(0)} ج.م',
                 style: const TextStyle(
-                  fontSize: 10,
+                  fontSize: 15,
                   fontWeight: FontWeight.bold,
                   color: VirooColors.amberPrimary,
+                  fontFamily: 'Orbitron',
                 ),
               ),
               if (product.originalPrice != null &&
                   product.originalPrice! > product.price)
                 Padding(
-                  padding: const EdgeInsets.only(left: 4),
+                  padding: const EdgeInsets.only(left: 6),
                   child: Text(
                     '${product.originalPrice!.toStringAsFixed(0)} ج.م',
                     style: const TextStyle(
-                      fontSize: 7,
+                      fontSize: 10,
                       decoration: TextDecoration.lineThrough,
                       color: VirooColors.textSecondary,
+                      fontFamily: 'Cairo',
                     ),
                   ),
                 ),
+              const Spacer(),
+              Row(
+                children: [
+                  const Icon(Icons.visibility_rounded,
+                      size: 12, color: VirooColors.textSecondary),
+                  const SizedBox(width: 2),
+                  Text(
+                    _formatViews(product.views),
+                    style: const TextStyle(
+                      fontSize: 9,
+                      color: VirooColors.textSecondary,
+                      fontFamily: 'Cairo',
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
-          const SizedBox(height: 1),
+          const SizedBox(height: 4),
+
+          // التقييم + زر المشاركة
           Row(
             children: [
               const Icon(Icons.star_rounded,
-                  size: 7, color: VirooColors.warning),
-              const SizedBox(width: 1),
+                  size: 12, color: VirooColors.warning),
+              const SizedBox(width: 2),
               Text(
                 product.averageRating.toStringAsFixed(1),
-                style: const TextStyle(fontSize: 7, color: Colors.white),
+                style: const TextStyle(
+                  fontSize: 10,
+                  color: Colors.white,
+                  fontFamily: 'Cairo',
+                ),
               ),
-              const SizedBox(width: 2),
-              Container(width: 1, height: 5, color: VirooColors.textSecondary),
-              const SizedBox(width: 2),
+              const SizedBox(width: 4),
+              Container(
+                width: 1,
+                height: 8,
+                color: VirooColors.textSecondary,
+              ),
+              const SizedBox(width: 4),
               Text(
                 '${product.ratingCount}',
                 style: const TextStyle(
-                    fontSize: 6, color: VirooColors.textSecondary),
+                  fontSize: 9,
+                  color: VirooColors.textSecondary,
+                  fontFamily: 'Cairo',
+                ),
+              ),
+              const Spacer(),
+              // 📤 زر المشاركة
+              _buildShareButton(context),
+            ],
+          ),
+
+          const SizedBox(height: 4),
+
+          // زر التواصل (واتساب/اتصال)
+          Row(
+            children: [
+              _buildContactButton(context),
+              const Spacer(),
+              // عدد المفضلة
+              Row(
+                children: [
+                  const Icon(Icons.favorite_rounded,
+                      size: 10, color: VirooColors.error),
+                  const SizedBox(width: 2),
+                  Text(
+                    '${product.favorites}',
+                    style: const TextStyle(
+                      fontSize: 8,
+                      color: VirooColors.textSecondary,
+                      fontFamily: 'Cairo',
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -243,12 +420,213 @@ class VirooProductCard extends StatelessWidget {
     );
   }
 
-  String _getSellerName(String sellerId) {
-    const Map<String, String> sellers = {
-      'seller_123': 'متجر الإلكترونيات',
-      'seller_456': 'متجر الأزياء',
-      'seller_789': 'متجر المنزل',
-    };
-    return sellers[sellerId] ?? 'متجر';
+  // =============================================
+  // 📤 زر المشاركة
+  // =============================================
+  Widget _buildShareButton(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        final link = 'https://viroomall.com/product/${product.id}';
+        Clipboard.setData(ClipboardData(text: link));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('📋 تم نسخ رابط المنتج!'),
+            backgroundColor: VirooColors.success,
+            duration: Duration(seconds: 1),
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+        decoration: BoxDecoration(
+          color: VirooColors.info.withValues(alpha: 0.15),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: VirooColors.info.withValues(alpha: 0.3)),
+        ),
+        child: const Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.share_rounded, size: 10, color: VirooColors.info),
+            SizedBox(width: 2),
+            Text(
+              'مشاركة',
+              style: TextStyle(
+                fontSize: 8,
+                color: VirooColors.info,
+                fontFamily: 'Cairo',
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // =============================================
+  // 📞 زر التواصل
+  // =============================================
+  Widget _buildContactButton(BuildContext context) {
+    return GestureDetector(
+      onTap: () => _showContactOptions(context),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: VirooColors.success.withValues(alpha: 0.15),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: VirooColors.success.withValues(alpha: 0.3)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.chat_bubble_outline_rounded,
+                size: 12, color: VirooColors.success),
+            const SizedBox(width: 4),
+            const Text(
+              'تواصل',
+              style: TextStyle(
+                fontSize: 9,
+                color: VirooColors.success,
+                fontWeight: FontWeight.w500,
+                fontFamily: 'Cairo',
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // =============================================
+  // 📞 حوار التواصل
+  // =============================================
+  void _showContactOptions(BuildContext context) {
+    final phone =
+        product.sellerPhone.isNotEmpty ? product.sellerPhone : '01000000000';
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        decoration: const BoxDecoration(
+          color: VirooColors.surface,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(height: 8),
+                Container(
+                  width: 50,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.white24,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'تواصل مع البائع',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Cairo',
+                  ),
+                ),
+                const SizedBox(height: 20),
+                _contactOption(
+                  context,
+                  icon: Icons.chat_rounded,
+                  label: 'واتساب',
+                  color: const Color(0xFF25D366),
+                  onTap: () => _launchWhatsApp(phone),
+                ),
+                const SizedBox(height: 12),
+                _contactOption(
+                  context,
+                  icon: Icons.phone_rounded,
+                  label: 'اتصال',
+                  color: VirooColors.success,
+                  onTap: () => _launchPhone(phone),
+                ),
+                const SizedBox(height: 20),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _contactOption(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.pop(context);
+        onTap();
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: color, size: 24),
+            const SizedBox(width: 12),
+            Text(
+              label,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                fontFamily: 'Cairo',
+              ),
+            ),
+            const Spacer(),
+            Icon(Icons.arrow_forward_ios_rounded, color: color, size: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // =============================================
+  // 📞 تشغيل واتساب
+  // =============================================
+  Future<void> _launchWhatsApp(String phone) async {
+    final url = Uri.parse('https://wa.me/$phone');
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    }
+  }
+
+  // =============================================
+  // 📞 تشغيل الاتصال
+  // =============================================
+  Future<void> _launchPhone(String phone) async {
+    final url = Uri.parse('tel:$phone');
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    }
+  }
+
+  // =============================================
+  // 🔢 تنسيق عدد المشاهدات
+  // =============================================
+  String _formatViews(int views) {
+    if (views >= 1000000) return '${(views / 1000000).toStringAsFixed(1)}M';
+    if (views >= 1000) return '${(views / 1000).toStringAsFixed(1)}K';
+    return views.toString();
   }
 }

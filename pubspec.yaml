@@ -47,17 +47,22 @@ dependencies:
   intl: ^0.19.0
   equatable: ^2.0.5
   
-  # Image Processing
+  # Image Processing (كاميرا وقص وضغط)
   image_cropper: ^8.0.2
   flutter_image_compress: ^2.3.0
-  path_provider: ^2.1.5
+  path_provider: ^2.1.6
   path: ^1.9.0
+  video_player: ^2.11.1
   
-  # Code Generation
+  # 🆕 Video Processing
+  video_compress: ^3.1.2
+  file_picker: ^8.0.0
+  
+  # Code Generation (freezed)
   freezed_annotation: ^2.4.1
   json_annotation: ^4.9.0
   
-  # Environment Variables (السرية)
+  # Environment Variables
   flutter_dotenv: ^6.0.1
 
 dev_dependencies:
@@ -74,7 +79,7 @@ flutter:
   uses-material-design: true
 
   assets:
-    - .env              # 👈 الملف الجديد
+    - .env
     - assets/fonts/
 
   fonts:

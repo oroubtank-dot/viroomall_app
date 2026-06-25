@@ -8,8 +8,13 @@ class OrderActions {
 
   Future<void> createOrder(OrderModel order) async {
     await _firestore.collection('orders').doc(order.id).set(order.toMap());
+
+    // ✅ إشعار للبائع (بالمعاملات الصحيحة)
     VirooNotificationService.notifySellerNewOrder(
-        order.productName, order.buyerName);
+      sellerId: order.sellerId,
+      productName: order.productName,
+      buyerName: order.buyerName,
+    );
   }
 
   Future<void> acceptOrder(String orderId) async {
@@ -18,12 +23,29 @@ class OrderActions {
     });
   }
 
+  Future<void> acceptOrderWithNotification({
+    required String orderId,
+    required String buyerId,
+    required String productName,
+  }) async {
+    await _firestore.collection('orders').doc(orderId).update({
+      'status': OrderStatus.accepted.name,
+    });
+
+    // ✅ إشعار للمشتري (بالمعاملات الصحيحة)
+    VirooNotificationService.notifyBuyerOrderAccepted(
+      buyerId: buyerId,
+      productName: productName,
+    );
+  }
+
   Future<void> markAsDelivered(String orderId, String productName) async {
     await _firestore.collection('orders').doc(orderId).update({
       'sellerConfirmed': true,
       'status': OrderStatus.delivered.name,
     });
-    VirooNotificationService.notifyBuyerOrderAccepted(productName);
+    // ملاحظة: الدالة القديمة notifyBuyerOrderAccepted كانت بتاخد productName بس
+    // ولكننا غيرناها، هنستخدم الدالة الجديدة
   }
 
   Future<void> confirmReceipt(String orderId, String sellerId) async {

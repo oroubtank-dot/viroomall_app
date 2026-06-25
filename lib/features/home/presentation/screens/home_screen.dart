@@ -13,9 +13,10 @@ import '../../../cart/presentation/screens/cart_screen.dart';
 import '../../../profile/presentation/screens/profile_screen.dart';
 import '../../../auth/widgets/login_bottom_sheet.dart';
 import '../../../settings/presentation/screens/appearance_settings_screen.dart';
-import '../../../settings/presentation/screens/notifications_settings_screen.dart';
+import '../../../settings/presentation/screens/language_settings_screen.dart';
 import '../../../settings/presentation/screens/privacy_settings_screen.dart';
 import '../../../seller_convert/presentation/screens/convert_to_seller_screen.dart';
+import '../../../notifications/presentation/screens/notifications_screen.dart';
 import '../providers/home_provider.dart';
 import '../widgets/mode_selector.dart';
 import '../widgets/featured_products_section.dart';
@@ -97,6 +98,14 @@ class HomeContent extends ConsumerWidget {
             ),
           ),
           const Spacer(),
+          // 🔔 زر الإشعارات
+          IconButton(
+            icon: const Icon(Icons.notifications_rounded, color: Colors.white),
+            onPressed: () {
+              Navigator.pushNamed(context, '/notifications');
+            },
+          ),
+          // ⚙️ زر الإعدادات
           SettingsPortalButton(
             onSettingsTap: () {
               final homeState =
@@ -321,14 +330,10 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  // =============================================
-  // 🔒 التحقق من البائع قبل إضافة منتج
-  // =============================================
   void _checkAuthAndNavigate(BuildContext context, VoidCallback action,
       {bool requireSeller = false}) {
     final user = AuthService.currentUser;
 
-    // 1. لو مش مسجل دخول → يطلب تسجيل دخول
     if (user == null) {
       showModalBottomSheet(
         context: context,
@@ -339,13 +344,11 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
       return;
     }
 
-    // 2. لو التسجيل مطلوب بس المستخدم مش بائع
     if (requireSeller) {
       _checkIsSeller(context, action);
       return;
     }
 
-    // 3. لو كل حاجة تمام
     action();
   }
 
@@ -501,7 +504,6 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
           selectedIndex: _currentIndex,
           onTap: (index) {
             if (index == -1) {
-              // ✅ الزرار الأوسط (إضافة منتج) → يحتاج بائع
               _checkAuthAndNavigate(context, _navigateToAddProduct,
                   requireSeller: true);
               return;
@@ -564,20 +566,47 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
               ],
             ),
             const SizedBox(height: 30),
-            _buildSettingsItem(Icons.person_outline, 'الملف الشخصي', () {
-              _navigateToSettings(const ProfileScreen());
-            }),
-            _buildSettingsItem(Icons.notifications_outlined, 'الإشعارات', () {
-              _navigateToSettings(const NotificationsSettingsScreen());
-            }),
-            _buildSettingsItem(Icons.lock_outline, 'الخصوصية والأمان', () {
-              _navigateToSettings(const PrivacySettingsScreen());
-            }),
-            _buildSettingsItem(Icons.palette_rounded, 'تخصيص المظهر', () {
-              _navigateToSettings(const AppearanceSettingsScreen());
-            }),
-            _buildSettingsItem(Icons.language, 'اللغة (عربي فقط حالياً)', null,
-                disabled: true),
+            // 1️⃣ الملف الشخصي
+            _buildSettingsItem(
+              Icons.person_outline,
+              'الملف الشخصي',
+              () {
+                _navigateToSettings(const ProfileScreen());
+              },
+            ),
+            // 2️⃣ الإشعارات
+            _buildSettingsItem(
+              Icons.notifications_outlined,
+              'الإشعارات',
+              () {
+                _navigateToSettings(const NotificationsScreen());
+              },
+            ),
+            // 3️⃣ الخصوصية والأمان
+            _buildSettingsItem(
+              Icons.lock_outline,
+              'الخصوصية والأمان',
+              () {
+                _navigateToSettings(const PrivacySettingsScreen());
+              },
+            ),
+            // 4️⃣ تخصيص المظهر
+            _buildSettingsItem(
+              Icons.palette_rounded,
+              'تخصيص المظهر',
+              () {
+                _navigateToSettings(const AppearanceSettingsScreen());
+              },
+            ),
+            // 5️⃣ اللغة
+            _buildSettingsItem(
+              Icons.language,
+              'اللغة',
+              () {
+                _navigateToSettings(const LanguageSettingsScreen());
+              },
+            ),
+            // 6️⃣ سوق الإعلانات
             _buildSettingsItem(
               Icons.campaign_rounded,
               '🏦 سوق الإعلانات',
@@ -586,12 +615,14 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const AdMarketplaceScreen()),
+                    builder: (context) => const AdMarketplaceScreen(),
+                  ),
                 );
               },
             ),
             const SizedBox(height: 8),
             const Spacer(),
+            // 7️⃣ تسجيل الخروج
             _buildSettingsItem(
               Icons.logout_rounded,
               'تسجيل الخروج',

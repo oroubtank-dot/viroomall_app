@@ -1,5 +1,5 @@
 Folder PATH listing for volume jop
-Volume serial number is 000000EB CE64:B7E0
+Volume serial number is 0000000D CE64:B7E0
 D:\PROJECTS\VIROOMALL_APP\LIB
 |   firebase_options.dart
 |   main.dart
@@ -9,16 +9,25 @@ D:\PROJECTS\VIROOMALL_APP\LIB
 |   |       market_type.dart
 |   |       pricing_config.dart
 |   |       
+|   +---exceptions
+|   |       app_exceptions.dart
+|   |       
 |   +---models
 |   |       order_model.dart
 |   |       product_model.dart
 |   |       
 |   +---providers
-|   |       order_provider.dart
+|   |       product_mode_provider.dart
+|   |       
+|   +---repositories
+|   |       product_repository.dart
+|   |       user_repository.dart
 |   |       
 |   +---services
 |   |   |   auth_service.dart
+|   |   |   image_picker_service.dart
 |   |   |   notification_service.dart
+|   |   |   order_service.dart
 |   |   |   product_service.dart
 |   |   |   storage_service.dart
 |   |   |   
@@ -30,15 +39,15 @@ D:\PROJECTS\VIROOMALL_APP\LIB
 |   |       app_theme.dart
 |   |       app_widgets.dart
 |   |       
+|   +---utils
+|   |       helpers.dart
+|   |       
 |   \---widgets
 |       |   cart_notification.dart
 |       |   viroo_background.dart
-|       |   viroo_logo.dart
 |       |   viroo_search_bar.dart
 |       |   
 |       +---logo
-|       |       mall_brand_text.dart
-|       |       viroo_brand_text.dart
 |       |       viroo_mall_logo.dart
 |       |       vm_cart_icon.dart
 |       |       
@@ -47,27 +56,40 @@ D:\PROJECTS\VIROOMALL_APP\LIB
 |               
 +---features
 |   +---admin
+|   |   +---data
 |   |   \---presentation
 |   |       +---providers
 |   |       |       add_product_provider.dart
 |   |       |       
 |   |       +---screens
 |   |       |       add_product_screen.dart
+|   |       |       edit_product_screen.dart
+|   |       |       
+|   |       +---states
+|   |       |       add_product_state.dart
 |   |       |       
 |   |       \---widgets
+|   |               category_dropdown.dart
+|   |               farz_fields.dart
+|   |               gomla_fields.dart
 |   |               image_picker_bottom_sheet.dart
+|   |               location_field.dart
+|   |               mosta3mal_fields.dart
+|   |               product_basic_info.dart
 |   |               product_form_base.dart
 |   |               product_form_fields.dart
 |   |               product_form_sections.dart
+|   |               product_images_section.dart
+|   |               product_type_selector.dart
+|   |               seller_contact_info.dart
+|   |               tasawok_fields.dart
 |   |               
 |   +---ads
 |   |   +---data
-|   |   |       ads_repository.dart
 |   |   |       ads_service.dart
 |   |   |       
 |   |   +---domain
 |   |   |   \---models
-|   |   |           ad_model.dart
 |   |   |           ad_subscription_model.dart
 |   |   |           
 |   |   \---presentation
@@ -80,6 +102,17 @@ D:\PROJECTS\VIROOMALL_APP\LIB
 |   |       \---widgets
 |   |               ads_slider.dart
 |   |               
+|   +---auth
+|   |   |   login_screen.dart
+|   |   |   otp_screen.dart
+|   |   |   
+|   |   +---providers
+|   |   |       auth_provider.dart
+|   |   |       
+|   |   \---widgets
+|   |           biometric_toggle.dart
+|   |           login_bottom_sheet.dart
+|   |           
 |   +---cart
 |   |   \---presentation
 |   |       +---providers
@@ -92,11 +125,8 @@ D:\PROJECTS\VIROOMALL_APP\LIB
 |   |               product_preview_sheet.dart
 |   |               
 |   +---farz
+|   |   +---data
 |   |   +---domain
-|   |   |   +---entities
-|   |   |   \---usecases
-|   |   |           calculate_publish_fee.dart
-|   |   |           
 |   |   \---presentation
 |   |       +---providers
 |   |       +---screens
@@ -115,14 +145,10 @@ D:\PROJECTS\VIROOMALL_APP\LIB
 |   |       |       
 |   |       \---widgets
 |   |               favorite_button.dart
-|   |               favorite_icon_button.dart
 |   |               
 |   +---gomla
+|   |   +---data
 |   |   +---domain
-|   |   |   +---entities
-|   |   |   \---usecases
-|   |   |           calculate_publish_fee.dart
-|   |   |           
 |   |   \---presentation
 |   |       +---providers
 |   |       +---screens
@@ -146,27 +172,26 @@ D:\PROJECTS\VIROOMALL_APP\LIB
 |   |               mode_selector.dart
 |   |               product_card.dart
 |   |               
-|   +---marketplace
-|   |   \---domain
-|   |       \---entities
 |   +---mosta3mal
+|   |   +---data
 |   |   +---domain
-|   |   |   +---entities
-|   |   |   \---usecases
-|   |   |           calculate_publish_fee.dart
-|   |   |           
 |   |   \---presentation
 |   |       +---providers
 |   |       +---screens
 |   |       \---widgets
+|   +---notifications
+|   |   \---presentation
+|   |       +---screens
+|   |       |       notifications_screen.dart
+|   |       |       
+|   |       \---widgets
+|   +---onboarding
+|   |       onboarding_screen.dart
+|   |       
 |   +---orders
 |   |   +---domain
 |   |   |   +---enums
-|   |   |   |       order_status.dart
-|   |   |   |       
 |   |   |   \---models
-|   |   |           order_model.dart
-|   |   |           
 |   |   \---presentation
 |   |       +---providers
 |   |       |       order_provider.dart
@@ -177,14 +202,10 @@ D:\PROJECTS\VIROOMALL_APP\LIB
 |   |       |       seller_orders_screen.dart
 |   |       |       
 |   |       \---widgets
-|   |               rating_dialog.dart
+|   |               tracking_timeline.dart
 |   |               
 |   +---product
-|   |   +---domain
 |   |   \---presentation
-|   |       +---providers
-|   |       |       product_provider.dart
-|   |       |       
 |   |       +---screens
 |   |       |       product_details_screen.dart
 |   |       |       
@@ -204,13 +225,13 @@ D:\PROJECTS\VIROOMALL_APP\LIB
 |   |                   wholesale_section.dart
 |   |                   
 |   +---profile
+|   |   +---data
 |   |   +---domain
 |   |   |   +---models
-|   |   |   |   |   buyer_stats.dart
-|   |   |   |   |   seller_stats.dart
-|   |   |   |   |   user_model.dart
-|   |   |   |   |   
-|   |   |   |   \---models
+|   |   |   |       buyer_stats.dart
+|   |   |   |       seller_stats.dart
+|   |   |   |       user_model.dart
+|   |   |   |       
 |   |   |   \---services
 |   |   |           profile_service.dart
 |   |   |           
@@ -219,9 +240,14 @@ D:\PROJECTS\VIROOMALL_APP\LIB
 |   |       |       seller_product.dart
 |   |       |       
 |   |       +---providers
-|   |       |       profile_provider.dart
-|   |       |       
+|   |       |   |   profile_provider.dart
+|   |       |   |   
+|   |       |   \---dashboard
+|   |       |           seller_dashboard_provider.dart
+|   |       |           
 |   |       +---screens
+|   |       |       edit_profile_screen.dart
+|   |       |       edit_store_screen.dart
 |   |       |       favorites_screen.dart
 |   |       |       my_ads_screen.dart
 |   |       |       my_orders_screen.dart
@@ -232,17 +258,23 @@ D:\PROJECTS\VIROOMALL_APP\LIB
 |   |       |       wallet_screen.dart
 |   |       |       
 |   |       \---widgets
-|   |               buyer_stats_widget.dart
-|   |               expiring_alert_banner.dart
-|   |               filter_sort_bar.dart
-|   |               product_details_sheet.dart
-|   |               product_search_delegate.dart
-|   |               product_stats_card.dart
-|   |               profile_header.dart
-|   |               profile_menu_section.dart
-|   |               profile_share_button.dart
-|   |               seller_stats_widget.dart
-|   |               
+|   |           |   buyer_stats_widget.dart
+|   |           |   expiring_alert_banner.dart
+|   |           |   filter_sort_bar.dart
+|   |           |   product_details_sheet.dart
+|   |           |   product_search_delegate.dart
+|   |           |   product_stats_card.dart
+|   |           |   profile_header.dart
+|   |           |   profile_menu_section.dart
+|   |           |   profile_share_button.dart
+|   |           |   seller_stats_widget.dart
+|   |           |   
+|   |           \---dashboard
+|   |                   dashboard_chart.dart
+|   |                   dashboard_recent_orders.dart
+|   |                   dashboard_stat_card.dart
+|   |                   dashboard_top_products.dart
+|   |                   
 |   +---reviews
 |   |   +---data
 |   |   |       reviews_service.dart
@@ -268,6 +300,11 @@ D:\PROJECTS\VIROOMALL_APP\LIB
 |   |       \---providers
 |   |               search_provider.dart
 |   |               
+|   +---seller_convert
+|   |   \---presentation
+|   |       \---screens
+|   |               convert_to_seller_screen.dart
+|   |               
 |   +---settings
 |   |   \---presentation
 |   |       \---screens
@@ -277,11 +314,8 @@ D:\PROJECTS\VIROOMALL_APP\LIB
 |   |               privacy_settings_screen.dart
 |   |               
 |   +---tasawok
+|   |   +---data
 |   |   +---domain
-|   |   |   +---entities
-|   |   |   \---usecases
-|   |   |           calculate_publish_fee.dart
-|   |   |           
 |   |   \---presentation
 |   |       +---providers
 |   |       +---screens
@@ -307,19 +341,7 @@ D:\PROJECTS\VIROOMALL_APP\LIB
 |                   balance_card.dart
 |                   transaction_card.dart
 |                   
-\---presentation
-    \---screens
-        +---auth
-        |   |   login_screen.dart
-        |   |   otp_screen.dart
-        |   |   
-        |   +---providers
-        |   |       auth_provider.dart
-        |   |       
-        |   \---widgets
-        |           biometric_toggle.dart
-        |           login_bottom_sheet.dart
-        |           
-        \---onboarding
-                onboarding_screen.dart
-                
+\---l10n
+        app_ar.arb
+        app_en.arb
+        

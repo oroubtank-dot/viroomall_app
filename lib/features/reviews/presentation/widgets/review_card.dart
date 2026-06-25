@@ -28,8 +28,11 @@ class ReviewCard extends StatelessWidget {
                   color: VirooColors.amberPrimary.withAlpha(38),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.person_rounded,
-                    color: VirooColors.amberPrimary, size: 24),
+                child: const Icon(
+                  Icons.person_rounded,
+                  color: VirooColors.amberPrimary,
+                  size: 24,
+                ),
               ),
               const SizedBox(width: 10),
               Expanded(
@@ -112,8 +115,11 @@ class ReviewCard extends StatelessWidget {
                 onTap: () {},
                 child: Row(
                   children: [
-                    const Icon(Icons.thumb_up_alt_outlined,
-                        color: VirooColors.textSecondary, size: 14),
+                    const Icon(
+                      Icons.thumb_up_alt_outlined,
+                      color: VirooColors.textSecondary,
+                      size: 14,
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       '${review.likes}',
