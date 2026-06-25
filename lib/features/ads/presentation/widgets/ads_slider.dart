@@ -183,7 +183,8 @@ class _VirooAdsSliderState extends ConsumerState<VirooAdsSlider> {
                 decoration: BoxDecoration(
                   color: VirooColors.glassDark,
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: themeColor.withAlpha(76), width: 1.5),
+                  border:
+                      Border.all(color: themeColor.withAlpha(76), width: 1.5),
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -279,7 +280,8 @@ class _VirooAdsSliderState extends ConsumerState<VirooAdsSlider> {
                 decoration: BoxDecoration(
                   color: VirooColors.glassDark,
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: VirooColors.glassBorder, width: 1.5),
+                  border:
+                      Border.all(color: VirooColors.glassBorder, width: 1.5),
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -300,7 +302,8 @@ class _VirooAdsSliderState extends ConsumerState<VirooAdsSlider> {
                         decoration: BoxDecoration(
                           color: themeColor.withAlpha(25),
                           borderRadius: BorderRadius.circular(15),
-                          border: Border.all(color: themeColor.withAlpha(76), width: 1),
+                          border: Border.all(
+                              color: themeColor.withAlpha(76), width: 1),
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(15),
@@ -365,7 +368,7 @@ class _VirooAdsSliderState extends ConsumerState<VirooAdsSlider> {
                                                   ?.replaceAll(' ج', '') ??
                                               '0') ??
                                           0,
-                                      productType: 'new',
+                                      productType: ProductType.shopping,
                                       categoryId: 'general',
                                       images: ad['image']?.isNotEmpty == true
                                           ? [ad['image']!]
