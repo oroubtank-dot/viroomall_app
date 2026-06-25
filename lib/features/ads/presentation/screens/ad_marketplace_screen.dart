@@ -28,10 +28,25 @@ class _AdMarketplaceScreenState extends ConsumerState<AdMarketplaceScreen> {
   ];
   final List<int> _daysLeft = [3, 7, 2, 5, 1];
 
+  // 🆕 دالة مساعدة لتحويل اسم الوضع للونه
+  Color _themeColorFromMode(String mode) {
+    switch (mode) {
+      case 'shopping':
+        return VirooColors.shopping;
+      case 'wholesale':
+        return VirooColors.wholesale;
+      case 'used':
+        return VirooColors.used;
+      case 'outlet':
+        return VirooColors.outlet;
+      default:
+        return VirooColors.shopping;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final themeColor =
-        VirooColors.modeColors[_selectedMode] ?? VirooColors.shopping;
+    final themeColor = _themeColorFromMode(_selectedMode);
 
     return VirooBackground(
       showOrbs: true,

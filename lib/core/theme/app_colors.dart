@@ -129,16 +129,6 @@ class VirooColors {
 
   /// نيلي للتوهج
   static const Color indigoGlow = Color(0xFF4A1D8C);
-
-  // =============================================
-  // 🆕 ألوان الأوضاع الأربعة كـ Map
-  // =============================================
-  static const Map<String, Color> modeColors = {
-    'shopping': shopping,
-    'wholesale': wholesale,
-    'used': used,
-    'outlet': outlet,
-  };
 }
 
 /// =============================================
