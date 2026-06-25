@@ -7,8 +7,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/viroo_background.dart';
 import '../../../../core/services/image_picker_service.dart';
-import '../../../../core/services/auth_service.dart';
 import '../../../../core/models/product_model.dart';
+import '../../../../core/constants/product_type.dart';
 import '../widgets/product_type_selector.dart';
 import '../widgets/product_basic_info.dart';
 import '../widgets/category_dropdown.dart';
@@ -109,20 +109,20 @@ class _EditProductScreenState extends ConsumerState<EditProductScreen> {
           _sellerPhone = product.sellerPhone;
           _sellerWhatsapp = product.sellerWhatsapp;
 
-          if (product.productType == 'wholesale') {
+          if (product.productType == ProductType.wholesale) {
             _wholesalePrice = data['wholesalePrice']?.toString() ?? '';
             _minQuantity = data['minQuantity']?.toString() ?? '10';
             _maxQuantity = data['maxQuantity']?.toString() ?? '100';
           }
 
-          if (product.productType == 'used') {
+          if (product.productType == ProductType.used) {
             _reasonForSelling = data['reasonForSelling'] ?? '';
             _usageDuration = data['usageDuration'] ?? '';
             _hasOriginalBox = data['hasOriginalBox'] ?? false;
             _originalReceipt = data['originalReceipt'] ?? 'no';
           }
 
-          if (product.productType == 'outlet') {
+          if (product.productType == ProductType.outlet) {
             _discountPercentage = data['discountPercentage']?.toString() ?? '';
             _limitedQuantity = data['limitedQuantity']?.toString() ?? '';
             _expiryDate = (data['expiryDate'] as Timestamp?)?.toDate();
@@ -130,7 +130,7 @@ class _EditProductScreenState extends ConsumerState<EditProductScreen> {
             _couponCode = data['couponCode'] ?? '';
           }
 
-          if (product.productType == 'new') {
+          if (product.productType == ProductType.shopping) {
             _hasWarranty = data['hasWarranty'] ?? false;
             _warrantyMonths = data['warrantyMonths']?.toString() ?? '12';
             _priceIncludesTax = data['priceIncludesTax'] ?? true;
@@ -144,18 +144,16 @@ class _EditProductScreenState extends ConsumerState<EditProductScreen> {
     }
   }
 
-  String _getProductType(String type) {
+  String _getProductType(ProductType type) {
     switch (type) {
-      case 'new':
+      case ProductType.shopping:
         return 'farz';
-      case 'wholesale':
+      case ProductType.wholesale:
         return 'gomla';
-      case 'used':
+      case ProductType.used:
         return 'tasawok';
-      case 'outlet':
+      case ProductType.outlet:
         return 'mosta3mal';
-      default:
-        return 'farz';
     }
   }
 
@@ -231,13 +229,11 @@ class _EditProductScreenState extends ConsumerState<EditProductScreen> {
     if (confirm == true) {
       setState(() => _isSaving = true);
       try {
-        // حذف المنتج من Firestore
         await FirebaseFirestore.instance
             .collection('products')
             .doc(widget.productId)
             .delete();
 
-        // حذف الصور من Storage (اختياري)
         for (var imageUrl in _existingImages) {
           try {
             final ref = FirebaseStorage.instance.refFromURL(imageUrl);
@@ -282,7 +278,6 @@ class _EditProductScreenState extends ConsumerState<EditProductScreen> {
     setState(() => _isSaving = true);
 
     try {
-      // 1. رفع الصور الجديدة
       List<String> allImages = List.from(_existingImages);
 
       if (_newImages.isNotEmpty) {
@@ -295,7 +290,6 @@ class _EditProductScreenState extends ConsumerState<EditProductScreen> {
         }
       }
 
-      // 2. رفع الفيديو الجديد
       String? videoUrl = _existingVideoUrl;
       if (_videoFile != null) {
         final ref = FirebaseStorage.instance.ref().child(
@@ -307,7 +301,6 @@ class _EditProductScreenState extends ConsumerState<EditProductScreen> {
         videoUrl = null;
       }
 
-      // 3. تحديث البيانات
       final firestoreProductType = _getFirestoreType(_productType);
 
       Map<String, dynamic> additionalData = {};
@@ -379,15 +372,15 @@ class _EditProductScreenState extends ConsumerState<EditProductScreen> {
   String _getFirestoreType(String type) {
     switch (type) {
       case 'farz':
-        return 'new';
+        return ProductType.shopping.firestoreValue;
       case 'gomla':
-        return 'wholesale';
+        return ProductType.wholesale.firestoreValue;
       case 'tasawok':
-        return 'used';
+        return ProductType.used.firestoreValue;
       case 'mosta3mal':
-        return 'outlet';
+        return ProductType.outlet.firestoreValue;
       default:
-        return 'new';
+        return ProductType.shopping.firestoreValue;
     }
   }
 
@@ -417,12 +410,10 @@ class _EditProductScreenState extends ConsumerState<EditProductScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
-          // 🗑️ زر حذف
           IconButton(
             icon: const Icon(Icons.delete_rounded, color: VirooColors.error),
             onPressed: _deleteProduct,
           ),
-          // 💾 زر حفظ
           TextButton(
             onPressed: _isSaving ? null : _saveProduct,
             child: Text(
@@ -492,9 +483,6 @@ class _EditProductScreenState extends ConsumerState<EditProductScreen> {
     );
   }
 
-  // ============================================================
-  // 📸 قسم الصور
-  // ============================================================
   Widget _buildImagesSection() {
     final totalImages = _existingImages.length + _newImages.length;
     final canAddMore = totalImages < 5;
@@ -563,9 +551,6 @@ class _EditProductScreenState extends ConsumerState<EditProductScreen> {
 
   Widget _buildImageItem(int index) {
     final isNew = index >= _existingImages.length;
-    final imageUrl = isNew
-        ? _newImages[index - _existingImages.length].path
-        : _existingImages[index];
 
     return Stack(children: [
       Container(
@@ -601,9 +586,6 @@ class _EditProductScreenState extends ConsumerState<EditProductScreen> {
     ]);
   }
 
-  // ============================================================
-  // 🎬 قسم الفيديو
-  // ============================================================
   Widget _buildVideoSection() {
     final hasVideo =
         _videoFile != null || (_existingVideoUrl != null && !_deleteVideo);
@@ -712,9 +694,6 @@ class _EditProductScreenState extends ConsumerState<EditProductScreen> {
     );
   }
 
-  // ============================================================
-  // 🔧 الحقول الخاصة بكل وضع
-  // ============================================================
   Widget _buildModeSpecificFields() {
     switch (_productType) {
       case 'farz':
