@@ -14,7 +14,6 @@ import '../../../profile/presentation/screens/profile_screen.dart';
 import '../../../auth/widgets/login_bottom_sheet.dart';
 import '../../../settings/presentation/screens/appearance_settings_screen.dart';
 import '../../../settings/presentation/screens/language_settings_screen.dart';
-import '../../../settings/presentation/screens/notifications_settings_screen.dart';
 import '../../../settings/presentation/screens/privacy_settings_screen.dart';
 import '../../../seller_convert/presentation/screens/convert_to_seller_screen.dart';
 import '../../../notifications/presentation/screens/notifications_screen.dart';
@@ -32,20 +31,34 @@ import '../../../ads/presentation/screens/ad_marketplace_screen.dart';
 import '../../../favorites/presentation/screens/favorites_screen.dart';
 import '../../../cart/presentation/providers/cart_provider.dart';
 import '../../../favorites/presentation/providers/favorites_provider.dart';
-import '../../../settings/presentation/screens/settings_screen.dart';
 
 class HomeContent extends ConsumerWidget {
   const HomeContent({super.key});
+
+  // دالة مساعدة للتحويل المؤقت من ShopMode لـ String للـ productModeProvider
+  String _modeToString(ShopMode mode) {
+    switch (mode) {
+      case ShopMode.shopping:
+        return 'farz';
+      case ShopMode.wholesale:
+        return 'gomla';
+      case ShopMode.used:
+        return 'mosta3mal';
+      case ShopMode.outlet:
+        return 'tasawok';
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedMode = ref.watch(shopModeProvider);
     final themeColor = ref.watch(modeColorProvider);
-    final productsAsync = ref.watch(productModeProvider(selectedMode.name));
+    final productsAsync =
+        ref.watch(productModeProvider(_modeToString(selectedMode)));
     final isLoggedIn = AuthService.currentUser != null;
 
     ref.listen(shopModeProvider, (previous, next) {
-      ref.read(productModeProvider(next.name).notifier).refresh();
+      ref.read(productModeProvider(_modeToString(next)).notifier).refresh();
     });
 
     return VirooBackground(
@@ -100,14 +113,12 @@ class HomeContent extends ConsumerWidget {
             ),
           ),
           const Spacer(),
-          // 🔔 زر الإشعارات
           IconButton(
             icon: const Icon(Icons.notifications_rounded, color: Colors.white),
             onPressed: () {
               Navigator.pushNamed(context, '/notifications');
             },
           ),
-          // ⚙️ زر الإعدادات
           SettingsPortalButton(
             onSettingsTap: () {
               final homeState =
@@ -171,8 +182,8 @@ class HomeContent extends ConsumerWidget {
               const SizedBox(height: 8),
               TextButton(
                 onPressed: () {
-                  ref.refresh(
-                      productModeProvider(ref.read(shopModeProvider).name));
+                  ref.refresh(productModeProvider(
+                      _modeToString(ref.read(shopModeProvider))));
                 },
                 child: const Text('إعادة المحاولة',
                     style: TextStyle(color: VirooColors.amberPrimary)),
@@ -240,7 +251,8 @@ class HomeContent extends ConsumerWidget {
 
   void _incrementViewCount(WidgetRef ref, ProductModel product) {
     ref
-        .read(productModeProvider(product.productType).notifier)
+        .read(productModeProvider(_modeToString(ref.read(shopModeProvider)))
+            .notifier)
         .incrementViewCount(product.id);
   }
 
@@ -309,11 +321,11 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _screens = const [
-      HomeContent(),
-      FavoritesScreen(),
-      CartScreen(),
-      ProfileScreen(),
+    _screens = [
+      const HomeContent(),
+      const FavoritesScreen(),
+      const CartScreen(),
+      const ProfileScreen(),
     ];
   }
 
@@ -568,7 +580,6 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
               ],
             ),
             const SizedBox(height: 30),
-            // 1️⃣ الملف الشخصي
             _buildSettingsItem(
               Icons.person_outline,
               'الملف الشخصي',
@@ -576,7 +587,6 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
                 _navigateToSettings(const ProfileScreen());
               },
             ),
-            // 2️⃣ الإشعارات
             _buildSettingsItem(
               Icons.notifications_outlined,
               'الإشعارات',
@@ -584,7 +594,6 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
                 _navigateToSettings(const NotificationsScreen());
               },
             ),
-            // 3️⃣ الخصوصية والأمان
             _buildSettingsItem(
               Icons.lock_outline,
               'الخصوصية والأمان',
@@ -592,7 +601,6 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
                 _navigateToSettings(const PrivacySettingsScreen());
               },
             ),
-            // 4️⃣ تخصيص المظهر
             _buildSettingsItem(
               Icons.palette_rounded,
               'تخصيص المظهر',
@@ -600,7 +608,6 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
                 _navigateToSettings(const AppearanceSettingsScreen());
               },
             ),
-            // 5️⃣ اللغة
             _buildSettingsItem(
               Icons.language,
               'اللغة',
@@ -608,7 +615,6 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
                 _navigateToSettings(const LanguageSettingsScreen());
               },
             ),
-            // 6️⃣ سوق الإعلانات
             _buildSettingsItem(
               Icons.campaign_rounded,
               '🏦 سوق الإعلانات',
@@ -624,7 +630,6 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
             ),
             const SizedBox(height: 8),
             const Spacer(),
-            // 7️⃣ تسجيل الخروج
             _buildSettingsItem(
               Icons.logout_rounded,
               'تسجيل الخروج',
