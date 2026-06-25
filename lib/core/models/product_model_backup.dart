@@ -1,7 +1,6 @@
 // lib/core/models/product_model.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import '../constants/product_type.dart';
 
 /// =============================================
 /// نموذج المنتج - Product Model
@@ -13,7 +12,7 @@ class ProductModel {
   final String description;
   final double price;
   final double? originalPrice;
-  final ProductType productType; // ✅ بقى Enum بدل String
+  final String productType; // 'new', 'used', 'wholesale', 'outlet'
   final String categoryId;
   final List<String> images;
   final String? videoUrl;
@@ -69,7 +68,7 @@ class ProductModel {
       description: data['description'] ?? '',
       price: (data['price'] ?? 0).toDouble(),
       originalPrice: data['originalPrice']?.toDouble(),
-      productType: ProductType.fromFirestore(data['productType']),
+      productType: data['productType'] ?? 'new',
       categoryId: data['categoryId'] ?? '',
       images: data['images'] is List ? List<String>.from(data['images']) : [],
       videoUrl: data['videoUrl'],
@@ -97,7 +96,7 @@ class ProductModel {
       'description': description,
       'price': price,
       'originalPrice': originalPrice,
-      'productType': productType.firestoreValue,
+      'productType': productType,
       'categoryId': categoryId,
       'images': images,
       'videoUrl': videoUrl,
@@ -125,7 +124,7 @@ class ProductModel {
     String? description,
     double? price,
     double? originalPrice,
-    ProductType? productType,
+    String? productType,
     String? categoryId,
     List<String>? images,
     String? videoUrl,
@@ -170,22 +169,53 @@ class ProductModel {
     );
   }
 
-  // ─────────────────────────────────────────────
-  // 🎨 الألوان والأيقونات (من الـ Enum مباشرة)
-  // ─────────────────────────────────────────────
+  /// الحصول على لون المنتج حسب نوعه
+  Color get modeColor {
+    switch (productType) {
+      case 'new':
+        return const Color(0xFFFF6B35);
+      case 'wholesale':
+        return const Color(0xFF2196F3);
+      case 'used':
+        return const Color(0xFF4CAF50);
+      case 'outlet':
+        return const Color(0xFFF44336);
+      default:
+        return const Color(0xFFFF6B35);
+    }
+  }
 
-  /// لون المنتج حسب نوعه
-  Color get modeColor => productType.color;
+  /// الحصول على أيقونة المنتج حسب نوعه
+  String get modeIcon {
+    switch (productType) {
+      case 'new':
+        return '🛍️';
+      case 'wholesale':
+        return '🏪';
+      case 'used':
+        return '♻️';
+      case 'outlet':
+        return '🔥';
+      default:
+        return '🛍️';
+    }
+  }
 
-  /// أيقونة المنتج حسب نوعه
-  String get modeIcon => productType.icon;
-
-  /// اسم الوضع بالعربي
-  String get modeLabel => productType.arabicName;
-
-  // ─────────────────────────────────────────────
-  // 📊 خصائص إضافية
-  // ─────────────────────────────────────────────
+  /// الحصول على اسم الوضع بالعربي
+  String get modeLabel {
+    switch (productType) {
+      case 'new':
+        return '🛍️ تسوق';
+      case 'wholesale':
+        return '🏪 جملة';
+      case 'used':
+        return '♻️ مستعمل';
+      case 'outlet':
+        return '🔥 تخفيضات وتصفية';
+      default:
+        return '🛍️ تسوق';
+    }
+  }
 
   /// حساب نسبة الخصم
   int? get discountPercentage {
@@ -204,7 +234,7 @@ class ProductModel {
       description: 'وصف المنتج التجريبي',
       price: 999.0,
       originalPrice: 1299.0,
-      productType: ProductType.shopping,
+      productType: 'new',
       categoryId: 'electronics',
       images: [],
       condition: 'new',
