@@ -19,6 +19,7 @@ import '../widgets/product_details/wholesale_section.dart';
 import '../widgets/product_details/used_condition_section.dart';
 import '../widgets/product_details/outlet_section.dart';
 import '../../../../core/widgets/cart_notification.dart';
+import '../../../../core/constants/product_type.dart';
 
 class ProductDetailsScreen extends ConsumerStatefulWidget {
   final String productId;
@@ -238,7 +239,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                     const SizedBox(height: 16),
                     ProductVideoSection(videoUrl: product.videoUrl),
                     const SizedBox(height: 16),
-                    if (product.productType == 'wholesale') ...[
+                    if (product.productType == ProductType.wholesale) ...[
                       WholesaleSection(
                         price: product.price,
                         minQuantity: 10,
@@ -307,7 +308,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                       ),
                       const SizedBox(height: 16),
                     ],
-                    if (product.productType == 'used') ...[
+                    if (product.productType == ProductType.used) ...[
                       UsedConditionSection(
                         condition: product.condition,
                         defects: product.defects,
@@ -391,7 +392,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                         ),
                       const SizedBox(height: 16),
                     ],
-                    if (product.productType == 'outlet') ...[
+                    if (product.productType == ProductType.outlet) ...[
                       OutletSection(
                         originalPrice:
                             product.originalPrice ?? product.price * 1.5,

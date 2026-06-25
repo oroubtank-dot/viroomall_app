@@ -106,7 +106,7 @@ class ProductImageSection extends StatelessWidget {
                         style: const TextStyle(fontSize: 18)),
                     const SizedBox(width: 6),
                     Text(
-                      _getProductTypeArabic(product.productType),
+                      product.modeLabel,
                       style: TextStyle(
                         color: modeColor,
                         fontWeight: FontWeight.w600,
@@ -122,18 +122,5 @@ class ProductImageSection extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  String _getProductTypeArabic(String type) {
-    switch (type) {
-      case 'wholesale':
-        return 'جملة';
-      case 'used':
-        return 'مستعمل';
-      case 'outlet':
-        return 'فرز إنتاج';
-      default:
-        return 'جديد';
-    }
   }
 }

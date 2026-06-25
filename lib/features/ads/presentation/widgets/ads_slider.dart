@@ -9,6 +9,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/cart_notification.dart';
 import '../../../../core/models/product_model.dart';
+import '../../../../core/constants/product_type.dart';
 
 class VirooAdsSlider extends ConsumerStatefulWidget {
   const VirooAdsSlider({super.key});
