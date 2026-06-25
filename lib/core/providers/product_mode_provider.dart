@@ -3,42 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/product_model.dart';
-import '../theme/app_colors.dart';
-
-// ماب بين اسم الوضع ونوع المنتج في Firestore
-const Map<String, String> modeToProductType = {
-  'farz': 'new', // فردي → جديد
-  'gomla': 'wholesale', // جملة → جملة
-  'mosta3mal': 'used', // مستعمل → مستعمل
-  'tasawok': 'outlet', // تسوق → تخفيضات
-};
-
-// ماب بين اسم الوضع ولونه
-final Map<String, Color> modeColors = {
-  'farz': VirooColors.shopping,
-  'gomla': VirooColors.wholesale,
-  'mosta3mal': VirooColors.used,
-  'tasawok': VirooColors.outlet,
-};
-
-// ماب بين اسم الوضع وأيقونته
-const Map<String, String> modeIcons = {
-  'farz': '🛍️',
-  'gomla': '🏪',
-  'mosta3mal': '♻️',
-  'tasawok': '🔥',
-};
+import '../constants/product_type.dart';
 
 class ProductModeNotifier
     extends StateNotifier<AsyncValue<List<ProductModel>>> {
-  final String mode;
+  final ProductType productType;
   DocumentSnapshot? _lastDocument;
   bool _hasMore = true;
   bool _isLoadingMore = false;
 
-  ProductModeNotifier(this.mode) : super(const AsyncValue.loading());
-
-  String get productType => modeToProductType[mode] ?? 'new';
+  ProductModeNotifier(this.productType) : super(const AsyncValue.loading());
 
   Future<void> loadProducts({bool refresh = false}) async {
     if (refresh) {
@@ -53,7 +27,7 @@ class ProductModeNotifier
       var query = FirebaseFirestore.instance
           .collection('products')
           .where('status', isEqualTo: 'approved')
-          .where('productType', isEqualTo: productType)
+          .where('productType', isEqualTo: productType.firestoreValue)
           .orderBy('createdAt', descending: true)
           .limit(10);
 
@@ -113,7 +87,8 @@ class ProductModeNotifier
   }
 }
 
-final productModeProvider = StateNotifierProvider.family<
-    ProductModeNotifier,
-    AsyncValue<List<ProductModel>>,
-    String>((ref, mode) => ProductModeNotifier(mode));
+final productModeProvider = StateNotifierProvider.family<ProductModeNotifier,
+    AsyncValue<List<ProductModel>>, String>((ref, modeKey) {
+  final type = ProductType.fromModeName(modeKey);
+  return ProductModeNotifier(type);
+});
