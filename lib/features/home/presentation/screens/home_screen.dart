@@ -14,6 +14,7 @@ import '../../../profile/presentation/screens/profile_screen.dart';
 import '../../../auth/widgets/login_bottom_sheet.dart';
 import '../../../settings/presentation/screens/appearance_settings_screen.dart';
 import '../../../settings/presentation/screens/language_settings_screen.dart';
+import '../../../settings/presentation/screens/notifications_settings_screen.dart';
 import '../../../settings/presentation/screens/privacy_settings_screen.dart';
 import '../../../seller_convert/presentation/screens/convert_to_seller_screen.dart';
 import '../../../notifications/presentation/screens/notifications_screen.dart';
@@ -31,6 +32,7 @@ import '../../../ads/presentation/screens/ad_marketplace_screen.dart';
 import '../../../favorites/presentation/screens/favorites_screen.dart';
 import '../../../cart/presentation/providers/cart_provider.dart';
 import '../../../favorites/presentation/providers/favorites_provider.dart';
+import '../../../settings/presentation/screens/settings_screen.dart';
 
 class HomeContent extends ConsumerWidget {
   const HomeContent({super.key});
