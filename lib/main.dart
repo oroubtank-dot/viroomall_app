@@ -31,6 +31,7 @@ import 'features/notifications/presentation/screens/notifications_screen.dart';
 import 'features/settings/presentation/screens/language_settings_screen.dart';
 import 'features/settings/presentation/screens/privacy_settings_screen.dart';
 import 'features/settings/presentation/screens/appearance_settings_screen.dart';
+import 'features/seller_profile/presentation/screens/seller_profile_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -137,6 +138,14 @@ class MyApp extends StatelessWidget {
               ),
             ),
           );
+        }
+        if (settings.name == '/seller-profile') {
+          final args = settings.arguments as String?;
+          if (args != null) {
+            return MaterialPageRoute(
+              builder: (context) => SellerProfileScreen(sellerId: args),
+            );
+          }
         }
         return null;
       },

@@ -188,7 +188,7 @@ class HomeContent extends ConsumerWidget {
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              childAspectRatio: 0.72,
+              childAspectRatio: 0.63,
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
             ),
@@ -224,6 +224,18 @@ class HomeContent extends ConsumerWidget {
                   }
                   cartNotifier.addToCart(product);
                   _showSnackBar(context, 'تم إضافة المنتج إلى السلة');
+                },
+                onSellerTap: () {
+                  Navigator.pushNamed(context, '/seller-profile',
+                      arguments: product.sellerId);
+                },
+                onFollowTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('سيتم تفعيل المتابعة قريباً!'),
+                      backgroundColor: VirooColors.info,
+                    ),
+                  );
                 },
                 isFavorite: isFavorite,
               );
