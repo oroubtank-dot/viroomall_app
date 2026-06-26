@@ -613,7 +613,6 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
               },
             ),
             const SizedBox(height: 8),
-            const Spacer(),
             _buildSettingsItem(
               Icons.logout_rounded,
               'تسجيل الخروج',

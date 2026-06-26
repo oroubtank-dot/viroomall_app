@@ -19,14 +19,13 @@ import '../../theme/app_colors.dart';
 /// =============================================
 class SettingsPortalButton extends StatefulWidget {
   final VoidCallback onSettingsTap;
+  final bool hasNotification;
 
   const SettingsPortalButton({
     super.key,
     required this.onSettingsTap,
     this.hasNotification = false,
   });
-
-  final bool hasNotification;
 
   @override
   State<SettingsPortalButton> createState() => _SettingsPortalButtonState();
@@ -78,13 +77,13 @@ class _SettingsPortalButtonState extends State<SettingsPortalButton>
 
   void _onTapDown(TapDownDetails details) {
     setState(() => _isPressed = true);
-    HapticFeedback.mediumImpact(); // تكة هزاز
-    _rotationController.forward(from: 0.0); // دوران الترس
+    HapticFeedback.mediumImpact();
+    _rotationController.forward(from: 0.0);
   }
 
   void _onTapUp(TapUpDetails details) {
     setState(() => _isPressed = false);
-    widget.onSettingsTap(); // تنفيذ الإجراء الخارجي
+    widget.onSettingsTap();
   }
 
   void _onTapCancel() {
@@ -108,7 +107,6 @@ class _SettingsPortalButtonState extends State<SettingsPortalButton>
         animation: Listenable.merge([_pulseController, _rotationController]),
         builder: (context, child) {
           return Transform.scale(
-            // 👆 يصغر 10% عند الضغط
             scale: _isPressed ? 0.9 : 1.0,
             child: Stack(
               clipBehavior: Clip.none,
@@ -151,7 +149,6 @@ class _SettingsPortalButtonState extends State<SettingsPortalButton>
                               : VirooColors.glassBorder,
                           width: 1.5,
                         ),
-                        // ظل داخلي (محفور في الزجاج)
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.25),
@@ -174,7 +171,6 @@ class _SettingsPortalButtonState extends State<SettingsPortalButton>
                         ),
                       ),
                       child: Transform.rotate(
-                        // 🔄 دوران الترس 360°
                         angle: _rotationController.value * 2 * pi,
                         child: const Icon(
                           Icons.settings_outlined,
@@ -288,17 +284,9 @@ class _SettingsRevealOverlayState extends State<SettingsRevealOverlay>
               return Positioned.fill(
                 child: GestureDetector(
                   onTap: widget.onClose,
-                  child: ClipRect(
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(
-                        sigmaX: 15 * _blurAnimation.value,
-                        sigmaY: 15 * _blurAnimation.value,
-                      ),
-                      child: Container(
-                        color: Colors.black.withOpacity(
-                          0.5 * _blurAnimation.value,
-                        ),
-                      ),
+                  child: Container(
+                    color: Colors.black.withOpacity(
+                      0.7 * _blurAnimation.value,
                     ),
                   ),
                 ),
@@ -321,12 +309,10 @@ class _SettingsRevealOverlayState extends State<SettingsRevealOverlay>
                     50 * (1 - _blurAnimation.value),
                     0,
                   ),
-                  child: Opacity(
-                    opacity: _blurAnimation.value.clamp(0.0, 1.0),
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.85,
-                      child: widget.settingsPanel,
-                    ),
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.85,
+                    height: MediaQuery.of(context).size.height,
+                    child: widget.settingsPanel,
                   ),
                 );
               },
