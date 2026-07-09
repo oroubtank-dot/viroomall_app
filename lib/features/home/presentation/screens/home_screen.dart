@@ -55,9 +55,12 @@ class HomeContent extends ConsumerWidget {
           child: Column(
             children: [
               _buildHeader(context, themeColor),
-              const Padding(
-                padding: EdgeInsets.all(20),
-                child: VirooSearchBar(),
+              GestureDetector(
+                onTap: () => Navigator.pushNamed(context, '/search'),
+                child: const Padding(
+                  padding: EdgeInsets.all(20),
+                  child: VirooSearchBar(),
+                ),
               ),
               const VirooAdsSlider(),
               const SizedBox(height: 8),
@@ -183,15 +186,9 @@ class HomeContent extends ConsumerWidget {
         }
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: GridView.builder(
+          child: ListView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 0.63,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-            ),
             itemCount: products.length,
             itemBuilder: (context, index) {
               final product = products[index];

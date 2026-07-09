@@ -32,6 +32,7 @@ import 'features/settings/presentation/screens/language_settings_screen.dart';
 import 'features/settings/presentation/screens/privacy_settings_screen.dart';
 import 'features/settings/presentation/screens/appearance_settings_screen.dart';
 import 'features/seller_profile/presentation/screens/seller_profile_screen.dart';
+import 'features/search/presentation/screens/search_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -100,6 +101,7 @@ class MyApp extends StatelessWidget {
         '/language': (context) => const LanguageSettingsScreen(),
         '/privacy': (context) => const PrivacySettingsScreen(),
         '/appearance': (context) => const AppearanceSettingsScreen(),
+        '/search': (context) => const SearchScreen(),
       },
       onGenerateRoute: (settings) {
         // ✅ معالجة الـ route الديناميكي /product و /edit-product

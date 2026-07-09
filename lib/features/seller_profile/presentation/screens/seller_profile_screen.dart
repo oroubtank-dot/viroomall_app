@@ -146,7 +146,6 @@ class _SellerProfileScreenState extends ConsumerState<SellerProfileScreen> {
             ),
           ),
           const Spacer(),
-          // 👤 زر المتابعة
           GestureDetector(
             onTap: _toggleFollow,
             child: Container(
@@ -206,7 +205,6 @@ class _SellerProfileScreenState extends ConsumerState<SellerProfileScreen> {
     return Column(
       children: [
         const SizedBox(height: 20),
-        // صورة الغلاف
         Container(
           height: 120,
           margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -232,18 +230,15 @@ class _SellerProfileScreenState extends ConsumerState<SellerProfileScreen> {
                 ),
         ),
         const SizedBox(height: 16),
-        // اسم المتجر
         Text(
           storeName,
           style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-            fontFamily: 'Cairo',
-          ),
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+              fontFamily: 'Cairo'),
         ),
         const SizedBox(height: 4),
-        // التقييم
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -260,40 +255,33 @@ class _SellerProfileScreenState extends ConsumerState<SellerProfileScreen> {
             Text(
               '$rating ($ratingCount تقييم)',
               style: const TextStyle(
-                color: VirooColors.textSecondary,
-                fontSize: 13,
-                fontFamily: 'Cairo',
-              ),
+                  color: VirooColors.textSecondary,
+                  fontSize: 13,
+                  fontFamily: 'Cairo'),
             ),
           ],
         ),
         const SizedBox(height: 4),
-        // الموقع
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Icon(Icons.location_on_outlined,
                 color: VirooColors.textSecondary, size: 14),
             const SizedBox(width: 4),
-            Text(
-              location,
-              style: const TextStyle(
-                color: VirooColors.textSecondary,
-                fontSize: 13,
-                fontFamily: 'Cairo',
-              ),
-            ),
+            Text(location,
+                style: const TextStyle(
+                    color: VirooColors.textSecondary,
+                    fontSize: 13,
+                    fontFamily: 'Cairo')),
           ],
         ),
         const SizedBox(height: 4),
-        // تاريخ الانضمام
         Text(
           'منضم منذ ${joinedDate.year}/${joinedDate.month}',
           style: const TextStyle(
-            color: VirooColors.textTertiary,
-            fontSize: 12,
-            fontFamily: 'Cairo',
-          ),
+              color: VirooColors.textTertiary,
+              fontSize: 12,
+              fontFamily: 'Cairo'),
         ),
       ],
     );
@@ -305,36 +293,32 @@ class _SellerProfileScreenState extends ConsumerState<SellerProfileScreen> {
       child: Row(
         children: [
           _buildStatCard(
-            icon: Icons.inventory_2_outlined,
-            value: '${_products.length}',
-            label: 'منتجات',
-            color: VirooColors.amberPrimary,
-          ),
+              icon: Icons.inventory_2_outlined,
+              value: '${_products.length}',
+              label: 'منتجات',
+              color: VirooColors.amberPrimary),
           const SizedBox(width: 10),
           _buildStatCard(
-            icon: Icons.visibility_outlined,
-            value: _formatCount(totalViews),
-            label: 'مشاهدة',
-            color: VirooColors.info,
-          ),
+              icon: Icons.visibility_outlined,
+              value: _formatCount(totalViews),
+              label: 'مشاهدة',
+              color: VirooColors.info),
           const SizedBox(width: 10),
           _buildStatCard(
-            icon: Icons.favorite_border_rounded,
-            value: _formatCount(_followersCount),
-            label: 'متابعين',
-            color: VirooColors.error,
-          ),
+              icon: Icons.favorite_border_rounded,
+              value: _formatCount(_followersCount),
+              label: 'متابعين',
+              color: VirooColors.error),
         ],
       ),
     );
   }
 
-  Widget _buildStatCard({
-    required IconData icon,
-    required String value,
-    required String label,
-    required Color color,
-  }) {
+  Widget _buildStatCard(
+      {required IconData icon,
+      required String value,
+      required String label,
+      required Color color}) {
     return Expanded(
       child: GlassContainer(
         padding: const EdgeInsets.symmetric(vertical: 12),
@@ -343,34 +327,26 @@ class _SellerProfileScreenState extends ConsumerState<SellerProfileScreen> {
           children: [
             Icon(icon, color: color, size: 22),
             const SizedBox(height: 6),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: color,
-                fontFamily: 'Orbitron',
-              ),
-            ),
+            Text(value,
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                    fontFamily: 'Orbitron')),
             const SizedBox(height: 2),
-            Text(
-              label,
-              style: const TextStyle(
-                fontSize: 11,
-                color: VirooColors.textSecondary,
-                fontFamily: 'Cairo',
-              ),
-            ),
+            Text(label,
+                style: const TextStyle(
+                    fontSize: 11,
+                    color: VirooColors.textSecondary,
+                    fontFamily: 'Cairo')),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildContactButtons({
-    required String phone,
-    required String whatsapp,
-  }) {
+  Widget _buildContactButtons(
+      {required String phone, required String whatsapp}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
@@ -397,12 +373,11 @@ class _SellerProfileScreenState extends ConsumerState<SellerProfileScreen> {
     );
   }
 
-  Widget _buildContactButton({
-    required IconData icon,
-    required String label,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
+  Widget _buildContactButton(
+      {required IconData icon,
+      required String label,
+      required Color color,
+      required VoidCallback onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -417,15 +392,12 @@ class _SellerProfileScreenState extends ConsumerState<SellerProfileScreen> {
           children: [
             Icon(icon, color: color, size: 20),
             const SizedBox(width: 8),
-            Text(
-              label,
-              style: TextStyle(
-                color: color,
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
-                fontFamily: 'Cairo',
-              ),
-            ),
+            Text(label,
+                style: TextStyle(
+                    color: color,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    fontFamily: 'Cairo')),
           ],
         ),
       ),
@@ -443,30 +415,24 @@ class _SellerProfileScreenState extends ConsumerState<SellerProfileScreen> {
               Icon(Icons.info_outline_rounded,
                   color: VirooColors.amberPrimary, size: 18),
               SizedBox(width: 8),
-              Text(
-                '✨ عن المتجر',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: VirooColors.textPrimary,
-                  fontFamily: 'Cairo',
-                ),
-              ),
+              Text('✨ عن المتجر',
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: VirooColors.textPrimary,
+                      fontFamily: 'Cairo')),
             ],
           ),
           const SizedBox(height: 10),
           GlassContainer(
             padding: const EdgeInsets.all(16),
             borderRadius: BorderRadius.circular(14),
-            child: Text(
-              about,
-              style: const TextStyle(
-                color: VirooColors.textSecondary,
-                fontSize: 14,
-                height: 1.6,
-                fontFamily: 'Cairo',
-              ),
-            ),
+            child: Text(about,
+                style: const TextStyle(
+                    color: VirooColors.textSecondary,
+                    fontSize: 14,
+                    height: 1.6,
+                    fontFamily: 'Cairo')),
           ),
         ],
       ),
@@ -477,14 +443,11 @@ class _SellerProfileScreenState extends ConsumerState<SellerProfileScreen> {
     if (_products.isEmpty) {
       return const Padding(
         padding: EdgeInsets.all(30),
-        child: Text(
-          'لا توجد منتجات حالياً',
-          style: TextStyle(
-            color: VirooColors.textSecondary,
-            fontSize: 14,
-            fontFamily: 'Cairo',
-          ),
-        ),
+        child: Text('لا توجد منتجات حالياً',
+            style: TextStyle(
+                color: VirooColors.textSecondary,
+                fontSize: 14,
+                fontFamily: 'Cairo')),
       );
     }
 
@@ -498,45 +461,61 @@ class _SellerProfileScreenState extends ConsumerState<SellerProfileScreen> {
               const Icon(Icons.shopping_bag_outlined,
                   color: VirooColors.amberPrimary, size: 18),
               const SizedBox(width: 8),
-              const Text(
-                '📦 منتجات المتجر',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: VirooColors.textPrimary,
-                  fontFamily: 'Cairo',
-                ),
-              ),
+              const Text('📦 منتجات المتجر',
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: VirooColors.textPrimary,
+                      fontFamily: 'Cairo')),
               const Spacer(),
-              Text(
-                '${_products.length} منتجات',
-                style: const TextStyle(
-                  color: VirooColors.textSecondary,
-                  fontSize: 12,
-                  fontFamily: 'Cairo',
-                ),
-              ),
+              Text('${_products.length} منتجات',
+                  style: const TextStyle(
+                      color: VirooColors.textSecondary,
+                      fontSize: 12,
+                      fontFamily: 'Cairo')),
             ],
           ),
           const SizedBox(height: 12),
-          GridView.builder(
+          ListView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 0.60,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-            ),
             itemCount: _products.length,
             itemBuilder: (context, index) {
               final product = _products[index];
-              return VirooProductCard(
-                product: product,
-                onTap: () {
-                  Navigator.pushNamed(context, '/product',
-                      arguments: product.id);
-                },
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: VirooProductCard(
+                  product: product,
+                  onTap: () {
+                    Navigator.pushNamed(context, '/product',
+                        arguments: product.id);
+                  },
+                  onFavoriteTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('تم إضافة المنتج إلى المفضلة!'),
+                          backgroundColor: VirooColors.success),
+                    );
+                  },
+                  onCartTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('تم إضافة المنتج إلى السلة!'),
+                          backgroundColor: VirooColors.success),
+                    );
+                  },
+                  onFollowTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('سيتم تفعيل المتابعة قريباً!'),
+                          backgroundColor: VirooColors.info),
+                    );
+                  },
+                  onSellerTap: () {
+                    Navigator.pushNamed(context, '/seller-profile',
+                        arguments: product.sellerId);
+                  },
+                ),
               );
             },
           ),

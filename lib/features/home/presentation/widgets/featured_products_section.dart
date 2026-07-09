@@ -95,27 +95,55 @@ class FeaturedProductsSection extends ConsumerWidget {
                 }
 
                 final products = snapshot.data!.docs;
-                return GridView.builder(
+                return ListView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 0.75,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                  ),
                   itemCount: products.length > 4 ? 4 : products.length,
                   itemBuilder: (context, index) {
                     final product = ProductModel.fromFirestore(products[index]);
-                    return VirooProductCard(
-                      product: product,
-                      onTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          '/product',
-                          arguments: product.id,
-                        );
-                      },
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: VirooProductCard(
+                        product: product,
+                        onTap: () {
+                          Navigator.pushNamed(
+                            context,
+                            '/product',
+                            arguments: product.id,
+                          );
+                        },
+                        onFavoriteTap: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('تم إضافة المنتج إلى المفضلة!'),
+                              backgroundColor: VirooColors.success,
+                            ),
+                          );
+                        },
+                        onCartTap: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('تم إضافة المنتج إلى السلة!'),
+                              backgroundColor: VirooColors.success,
+                            ),
+                          );
+                        },
+                        onFollowTap: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('سيتم تفعيل المتابعة قريباً!'),
+                              backgroundColor: VirooColors.info,
+                            ),
+                          );
+                        },
+                        onSellerTap: () {
+                          Navigator.pushNamed(
+                            context,
+                            '/seller-profile',
+                            arguments: product.sellerId,
+                          );
+                        },
+                      ),
                     );
                   },
                 );
