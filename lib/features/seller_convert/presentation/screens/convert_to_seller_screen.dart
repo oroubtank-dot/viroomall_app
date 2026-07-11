@@ -6,6 +6,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_widgets.dart';
 import '../../../../core/widgets/viroo_background.dart';
 import '../../../../core/services/auth_service.dart';
+import '../../../../core/services/storage_service.dart';
 import '../../../profile/domain/models/user_model.dart';
 import '../../../profile/presentation/providers/profile_provider.dart';
 
@@ -106,6 +107,9 @@ class _ConvertToSellerScreenState extends ConsumerState<ConvertToSellerScreen> {
           .collection('users')
           .doc(user.uid)
           .update(userData);
+
+          // حفظ حالة البائع محلياً
+await StorageService.setIsSeller(true);
 
       // تحديث الـ UserModel في الـ Provider
       final doc = await FirebaseFirestore.instance
